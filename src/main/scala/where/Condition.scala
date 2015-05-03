@@ -55,7 +55,7 @@ case class Expression(string: String, references: ReferenceType*) extends Condit
       val expression = references.foldLeft(string) { (acc, reference) =>
         // avoiding replaceFirst because it has special handling of escape characters:
         // http://docs.oracle.com/javase/7/docs/api/java/lang/String.html#replaceFirst%28java.lang.String,%20java.lang.String%29
-        val pieces = acc.split("[?]")
+        val pieces = acc.split("[?]", 2)
         Seq(pieces.lift(0), Some(reference.toQuery(referenceableMap)), pieces.lift(1)).flatten mkString ""
       }
       s"($expression)"

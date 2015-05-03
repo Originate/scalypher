@@ -61,6 +61,14 @@ class WhereSpec extends WordSpec with Matchers {
         Expression("? > 1", node1.property("thing")).toQuery(referenceableMap) shouldBe """(a.thing > 1)"""
       }
 
+      "replace multiple question marks with multiple references" in {
+        Expression(
+          "? > 1 AND ? < 2",
+          node1.property("thing"),
+          node1.property("thang")
+        ).toQuery(referenceableMap) shouldBe """(a.thing > 1 AND a.thang < 2)"""
+      }
+
       "replace question marks with serialized value references" in {
         val expression = Expression("? > ?", node1.property("thing"), """string "with" quotes""").toQuery(referenceableMap)
         expression shouldBe """(a.thing > "string \"with\" quotes")"""
