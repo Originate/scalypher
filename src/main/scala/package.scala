@@ -1,4 +1,4 @@
-package com.scalypher
+package com.originate.scalypher
 
 package object types {
   trait Referenceable

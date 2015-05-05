@@ -1,7 +1,7 @@
-package com.scalypher.path
+package com.originate.scalypher.path
 
-import com.scalypher.types.Referenceable
-import com.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.ReferenceableMap
 
 case class PathPieces(startPiece: PathPiece, tail: Seq[PathPiece], relationship: Option[RelationshipType]) {
   def --(node: NodeType): PathPieces =

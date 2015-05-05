@@ -1,10 +1,10 @@
-package com.scalypher.where
+package com.originate.scalypher.where
 
-import com.scalypher.ConstantString
-import com.scalypher.ToQuery
-import com.scalypher.types.ReferenceableMap
-import com.scalypher.types.Referenceable
-import com.scalypher.path.Path
+import com.originate.scalypher.ConstantString
+import com.originate.scalypher.ToQuery
+import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.path.Path
 
 sealed trait Projection extends ToQuery
 case object Relationships extends ConstantString("RELATIONSHIPS") with Projection

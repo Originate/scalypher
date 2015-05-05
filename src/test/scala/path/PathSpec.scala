@@ -1,9 +1,9 @@
 package test.path
 
-import com.scalypher.path.AnyNode
-import com.scalypher.path.KindRelationship
-import com.scalypher.action.ReturnDistinct
-import com.scalypher.Query
+import com.originate.scalypher.path.AnyNode
+import com.originate.scalypher.path.KindRelationship
+import com.originate.scalypher.action.ReturnDistinct
+import com.originate.scalypher.Query
 
 import org.scalatest._
 

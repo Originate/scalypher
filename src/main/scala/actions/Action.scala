@@ -1,9 +1,9 @@
-package com.scalypher.action
+package com.originate.scalypher.action
 
-import com.scalypher.Query.toQueryWithProperty
-import com.scalypher.types.ReferenceableMap
-import com.scalypher.types.Referenceable
-import com.scalypher.PropertyReference
+import com.originate.scalypher.Query.toQueryWithProperty
+import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.PropertyReference
 
 sealed trait Action {
   def referenceables: Set[Referenceable]

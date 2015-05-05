@@ -1,11 +1,11 @@
-package com.scalypher.path
+package com.originate.scalypher.path
 
-import com.scalypher.types.ReferenceableMap
-import com.scalypher.types.Referenceable
-import com.scalypher.ToQueryWithIdentifiers
-import com.scalypher.path.Path.getIdentifierOrEmptyString
-import com.scalypher.where.Reference
-import com.scalypher.PropertyReference
+import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.ToQueryWithIdentifiers
+import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
+import com.originate.scalypher.where.Reference
+import com.originate.scalypher.PropertyReference
 
 sealed trait RelationshipType extends ToQueryWithIdentifiers with Referenceable {
   def --(node: NodeType): PathPiece =

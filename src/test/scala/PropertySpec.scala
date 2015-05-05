@@ -1,6 +1,6 @@
 package test
 
-import com.scalypher.Property
+import com.originate.scalypher.Property
 
 import org.scalatest._
 

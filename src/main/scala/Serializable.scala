@@ -1,4 +1,4 @@
-package com.scalypher
+package com.originate.scalypher
 
 trait Serializable[V] {
   def toQuery(value: V): String

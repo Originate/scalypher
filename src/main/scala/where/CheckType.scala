@@ -1,7 +1,7 @@
-package com.scalypher.where
+package com.originate.scalypher.where
 
-import com.scalypher.ConstantString
-import com.scalypher.ToQuery
+import com.originate.scalypher.ConstantString
+import com.originate.scalypher.ToQuery
 
 sealed trait CheckType extends ToQuery
 case object IsNull extends ConstantString("IS NULL") with CheckType

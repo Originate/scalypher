@@ -1,12 +1,12 @@
 package test
 
-import com.scalypher.where.Comparison
-import com.scalypher.where.NotEqual
-import com.scalypher.where.Equal
-import com.scalypher.where.ValueReference
-import com.scalypher.path.AnyNode
-import com.scalypher.action.ReturnDistinct
-import com.scalypher.Query
+import com.originate.scalypher.where.Comparison
+import com.originate.scalypher.where.NotEqual
+import com.originate.scalypher.where.Equal
+import com.originate.scalypher.where.ValueReference
+import com.originate.scalypher.path.AnyNode
+import com.originate.scalypher.action.ReturnDistinct
+import com.originate.scalypher.Query
 
 import org.scalatest._
 

@@ -1,12 +1,12 @@
 package test.where
 
-import com.scalypher.util.Exceptions.IdentifierDoesntExistException
-import com.scalypher.util.Exceptions.MismatchedInterpolatedStringWithReferences
-import com.scalypher.where._
-import com.scalypher.path.AnyNode
-import com.scalypher.path.CypherNode
-import com.scalypher.path.KindRelationship
-import com.scalypher.types.ReferenceableMap
+import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
+import com.originate.scalypher.util.Exceptions.MismatchedInterpolatedStringWithReferences
+import com.originate.scalypher.where._
+import com.originate.scalypher.path.AnyNode
+import com.originate.scalypher.path.CypherNode
+import com.originate.scalypher.path.KindRelationship
+import com.originate.scalypher.types.ReferenceableMap
 
 import org.scalatest._
 

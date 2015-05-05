@@ -1,6 +1,6 @@
-package com.scalypher
+package com.originate.scalypher
 
-import com.scalypher.util.Exceptions.IdentifierDoesntExistException
+import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
 import path.Path
 import where.Where
 import action.Action

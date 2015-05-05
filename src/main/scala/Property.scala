@@ -1,4 +1,4 @@
-package com.scalypher
+package com.originate.scalypher
 
 class Property private (key: String, serializedValue: String) {
   def toQuery: String =

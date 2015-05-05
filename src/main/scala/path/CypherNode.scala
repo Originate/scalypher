@@ -1,13 +1,13 @@
-package com.scalypher.path
+package com.originate.scalypher.path
 
-import com.scalypher.path.Path.getIdentifierOrEmptyString
-import com.scalypher.ToQueryWithIdentifiers
-import com.scalypher.types.ReferenceableMap
-import com.scalypher.types.Referenceable
-import com.scalypher.Label
-import com.scalypher.Property
-import com.scalypher.PropertyReference
-import com.scalypher.where.Reference
+import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
+import com.originate.scalypher.ToQueryWithIdentifiers
+import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.Label
+import com.originate.scalypher.Property
+import com.originate.scalypher.PropertyReference
+import com.originate.scalypher.where.Reference
 import scala.language.implicitConversions
 
 sealed trait NodeType extends ToQueryWithIdentifiers with Referenceable {

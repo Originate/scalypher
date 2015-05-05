@@ -1,4 +1,4 @@
-package com.scalypher.util
+package com.originate.scalypher.util
 
 object Exceptions {
 

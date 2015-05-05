@@ -1,12 +1,12 @@
-package com.scalypher.path
+package com.originate.scalypher.path
 
-import com.scalypher.types.Referenceable
-import com.scalypher.types.ReferenceableMap
-import com.scalypher.where.Where
-import com.scalypher.action.ReturnReference
-import com.scalypher.action.ReturnDistinct
-import com.scalypher.action.Delete
-import com.scalypher.Query
+import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.where.Where
+import com.originate.scalypher.action.ReturnReference
+import com.originate.scalypher.action.ReturnDistinct
+import com.originate.scalypher.action.Delete
+import com.originate.scalypher.Query
 
 case class PathWithWhere(path: Path, where: Where) {
   def returns(referenceable: Referenceable): Query =

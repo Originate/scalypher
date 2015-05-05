@@ -1,11 +1,11 @@
-package com.scalypher.where
+package com.originate.scalypher.where
 
-import com.scalypher.Query.toQueryWithProperty
-import com.scalypher.types.Referenceable
-import com.scalypher.types.ReferenceableMap
-import com.scalypher.PropertyReference
-import com.scalypher.ToQueryWithIdentifiers
-import com.scalypher.Serializable
+import com.originate.scalypher.Query.toQueryWithProperty
+import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.PropertyReference
+import com.originate.scalypher.ToQueryWithIdentifiers
+import com.originate.scalypher.Serializable
 import scala.language.implicitConversions
 
 sealed trait ReferenceType extends ToQueryWithIdentifiers {
