@@ -6,9 +6,9 @@ class Property private (key: String, serializedValue: String) {
 }
 
 object Property {
-  def apply[T](tuple: (String, T))(implicit serializer: Serializable[T]): Property =
+  def apply[T](tuple: (String, T))(implicit serializer: CypherExpressable[T]): Property =
     new Property(tuple._1, serializer.toQuery(tuple._2))
 
-  def apply[T](key: String, value: T)(implicit serializer: Serializable[T]): Property =
+  def apply[T](key: String, value: T)(implicit serializer: CypherExpressable[T]): Property =
     new Property(key, serializer.toQuery(value))
 }

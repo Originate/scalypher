@@ -5,7 +5,7 @@ import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.PropertyReference
 import com.originate.scalypher.ToQueryWithIdentifiers
-import com.originate.scalypher.Serializable
+import com.originate.scalypher.CypherExpressable
 import scala.language.implicitConversions
 
 sealed trait ReferenceType extends ToQueryWithIdentifiers {
@@ -32,7 +32,7 @@ sealed trait ReferenceType extends ToQueryWithIdentifiers {
 }
 
 object ReferenceType {
-  implicit def toValueReference[V : Serializable](value: V): ValueReference[V] =
+  implicit def toValueReference[V : CypherExpressable](value: V): ValueReference[V] =
     ValueReference[V](value)
 }
 
@@ -48,7 +48,7 @@ object Reference {
     Reference(referenceable, Some(property))
 }
 
-case class ValueReference[V : Serializable](value: V)(implicit serializer: Serializable[V]) extends ReferenceType {
+case class ValueReference[V](value: V)(implicit serializer: CypherExpressable[V]) extends ReferenceType {
   def toQuery(referenceableMap: ReferenceableMap): String =
     serializer.toQuery(value)
 }
