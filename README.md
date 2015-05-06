@@ -2,10 +2,9 @@
 
 A DSL for building Neo4j Cypher queries in Scala. This project is in pre alpha, and is not ready for production use.
 
-## Usage
+## Adding To Your Project
 
 To use Scalypher in an SBT project, you can use the `dependsOn` method in `build.sbt`:
-
 
 ```scala
 val ScalypherVersion = "0.0.1"
@@ -14,6 +13,78 @@ lazy val root: Project = Project("root", file(".")).dependsOn(
   ProjectRef(uri("git://github.com/Originate/scalypher.git#v" + ScalypherVersion), "scalypher")
 )
 ```
+
+## Getting Started
+
+Scalypher is designed to look similar to Cypher queries:
+
+```scala
+val startNode = AnyNode()
+
+val cypher = startNode --> AnyNode() where (
+		startNode.property("thing") <> "something"
+	) returns startNode
+
+cypher.toQuery
+// returns: 'MATCH (a1)-->() WHERE a1.thing <> "something" RETURN a1'
+```
+
+The main thing to note is that, if you would like to specify a node or relationship in a WHERE or RETURN
+expression, you need to retain a reference to it and use that when building your Cypher expressions.
+
+### Referencing The Path
+
+If you'd like to reference the path from your MATCH expression in your WHERE expression, you can do
+
+```scala
+val cypher = startNode --> AnyNode() where { path =>
+		startNode.property("thing") <> "something"
+	} returns startNode
+
+```
+
+### Getting Return Columns
+
+When building out your persistence layer, it is likely you will need to know the identifier used in your
+RETURN expressions. This can be obtained with:
+
+```scala
+query.getReturnColumn
+```
+
+### Passing In Custom Types
+
+Scalypher uses a `Serializable` typeclass in order to allow extending the DSL to handle any type you
+want to pass to it. Here's an example of how you could use `org.joda.time.Instant` as a value reference
+in your project.
+
+```scala
+import org.joda.time.Instant
+import com.originate.scalypher.Serializable
+
+object ScalypherSerializers {
+
+  implicit object SerializableInstant extends Serializable[Instant] {
+    def toQuery(instant: Instant): String =
+      wrapString(instant.toString)
+  }
+
+}
+```
+
+This can then be used in your code:
+
+```scala
+import ScalypherSerializers._
+
+val cypher = startNode --> AnyNode() where (
+		startNode.property("thing") == Instant.now
+	) returns startNode
+
+```
+
+Note that the `Serializable` trait provides the helper methods `safeWrapString` and `wrapString` to inject
+string literals into your Cypher query.
 
 ## Test
 
