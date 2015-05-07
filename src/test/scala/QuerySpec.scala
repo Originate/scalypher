@@ -18,6 +18,10 @@ class QuerySpec extends WordSpec with Matchers {
 
   "building a full query" must {
 
+    "allow a super simple node lookup" in {
+      (startNode returns startNode).toQuery shouldBe """MATCH (a1) RETURN a1"""
+    }
+
     "allow pathless simple syntax for simple queries" in {
       val query = startNode where (startNode.property("thing") === "something") returns startNode
       query.toQuery shouldBe """MATCH (a1) WHERE a1.thing = "something" RETURN a1"""
