@@ -58,17 +58,17 @@ you'll get back an identifier for each node, relationship, and one identifier fo
 
 ### Passing In Custom Types
 
-Scalypher uses a `CypherExpressable` typeclass in order to allow extending the DSL to handle any type you
+Scalypher uses a `CypherExpressible` typeclass in order to allow extending the DSL to handle any type you
 want to pass to it. Here's an example of how you could use `org.joda.time.Instant` as a value reference
 in your project.
 
 ```scala
 import org.joda.time.Instant
-import com.originate.scalypher.CypherExpressable
+import com.originate.scalypher.CypherExpressible
 
-object CypherExpressables {
+object CypherExpressibles {
 
-  implicit object CypherExpressableInstant extends CypherExpressable[Instant] {
+  implicit object CypherExpressibleInstant extends CypherExpressible[Instant] {
     def toQuery(instant: Instant): String =
       wrapString(instant.toString)
   }
@@ -79,7 +79,7 @@ object CypherExpressables {
 This can then be used in your code:
 
 ```scala
-import CypherExpressables._
+import CypherExpressibles._
 
 val cypher = startNode --> AnyNode() where (
 		startNode.property("thing") === Instant.now
@@ -87,7 +87,7 @@ val cypher = startNode --> AnyNode() where (
 
 ```
 
-Note that the `CypherExpressable` trait provides the helper methods `safeWrapString` and `wrapString` to inject
+Note that the `CypherExpressible` trait provides the helper methods `safeWrapString` and `wrapString` to inject
 string literals into your Cypher query (`safeWrapString` escapes quotes).
 
 ## Test

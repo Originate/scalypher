@@ -1,6 +1,6 @@
 package com.originate.scalypher
 
-trait CypherExpressable[V] {
+trait CypherExpressible[V] {
   def toQuery(value: V): String
 
   protected def safeWrapString(string: String): String =
@@ -10,18 +10,18 @@ trait CypherExpressable[V] {
     "\"" + string + "\""
 }
 
-object CypherExpressable {
-  implicit object CypherExpressableString extends CypherExpressable[String] {
+object CypherExpressible {
+  implicit object CypherExpressibleString extends CypherExpressible[String] {
     def toQuery(string: String): String =
       safeWrapString(string)
   }
 
-  implicit object CypherExpressableInt extends CypherExpressable[Int] {
+  implicit object CypherExpressibleInt extends CypherExpressible[Int] {
     def toQuery(int: Int): String =
       int.toString
   }
 
-  implicit object CypherExpressableDouble extends CypherExpressable[Double] {
+  implicit object CypherExpressibleDouble extends CypherExpressible[Double] {
     def toQuery(double: Double): String =
       double.toString
   }
