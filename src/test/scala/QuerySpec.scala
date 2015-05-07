@@ -5,6 +5,7 @@ import com.originate.scalypher.where.NotEqual
 import com.originate.scalypher.where.Equal
 import com.originate.scalypher.where.ValueReference
 import com.originate.scalypher.path.AnyNode
+import com.originate.scalypher.path.AnyRelationship
 import com.originate.scalypher.action.ReturnDistinct
 import com.originate.scalypher.Query
 
@@ -61,13 +62,17 @@ class QuerySpec extends WordSpec with Matchers {
 
     "not throw an exception" in {
       noException should be thrownBy {
-        query.getReturnColumn
+        query.getReturnColumns
       }
     }
 
     "give the identifier for the return node" in {
       val identifier = query.getIdentifier(node2).get
-      identifier shouldBe query.getReturnColumn
+      Set(identifier) shouldBe query.getReturnColumns
+    }
+
+  }
+
   "getting return columns" when {
 
     "given a return all expression" must {
