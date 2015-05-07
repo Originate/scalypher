@@ -28,30 +28,62 @@ class ReferenceSpec extends WordSpec with Matchers {
 
   }
 
-  "making comparisons" must {
+  "making comparisons" when {
 
-    "allow simple syntax for ===" in {
-      node1.property("a") === "b" shouldBe Comparison(node1.property("a"), Equal, ValueReference("b"))
+    "given a string" must {
+
+      "allow simple syntax for ===" in {
+        node1.property("a") === "b" shouldBe Comparison(node1.property("a"), Equal, ValueReference("b"))
+      }
+
+      "allow simple syntax for <>" in {
+        node1.property("a") <> "b" shouldBe Comparison(node1.property("a"), NotEqual, ValueReference("b"))
+      }
+
+      "allow simple syntax for <" in {
+        node1.property("a") < "b" shouldBe Comparison(node1.property("a"), LT, ValueReference("b"))
+      }
+
+      "allow simple syntax for >" in {
+        node1.property("a") > "b" shouldBe Comparison(node1.property("a"), GT, ValueReference("b"))
+      }
+
+      "allow simple syntax for <=" in {
+        node1.property("a") <= "b" shouldBe Comparison(node1.property("a"), LTE, ValueReference("b"))
+      }
+
+      "allow simple syntax for >=" in {
+        node1.property("a") >= "b" shouldBe Comparison(node1.property("a"), GTE, ValueReference("b"))
+      }
+
     }
 
-    "allow simple syntax for <>" in {
-      node1.property("a") <> "b" shouldBe Comparison(node1.property("a"), NotEqual, ValueReference("b"))
-    }
+    "given a number" must {
 
-    "allow simple syntax for <" in {
-      node1.property("a") < "b" shouldBe Comparison(node1.property("a"), LT, ValueReference("b"))
-    }
+      "allow simple syntax for ===" in {
+        node1.property("a") === 2 shouldBe Comparison(node1.property("a"), Equal, ValueReference(2))
+      }
 
-    "allow simple syntax for >" in {
-      node1.property("a") > "b" shouldBe Comparison(node1.property("a"), GT, ValueReference("b"))
-    }
+      "allow simple syntax for <>" in {
+        node1.property("a") <> 2 shouldBe Comparison(node1.property("a"), NotEqual, ValueReference(2))
+      }
 
-    "allow simple syntax for <=" in {
-      node1.property("a") <= "b" shouldBe Comparison(node1.property("a"), LTE, ValueReference("b"))
-    }
+      "allow simple syntax for <" in {
+        node1.property("a") < 2 shouldBe Comparison(node1.property("a"), LT, ValueReference(2))
+      }
 
-    "allow simple syntax for >=" in {
-      node1.property("a") >= "b" shouldBe Comparison(node1.property("a"), GTE, ValueReference("b"))
+      "allow simple syntax for >" in {
+        node1.property("a") > 2 shouldBe Comparison(node1.property("a"), GT, ValueReference(2))
+      }
+
+      "allow simple syntax for <=" in {
+        node1.property("a") <= 2 shouldBe Comparison(node1.property("a"), LTE, ValueReference(2))
+      }
+
+      "allow simple syntax for >=" in {
+        node1.property("a") >= 2 shouldBe Comparison(node1.property("a"), GTE, ValueReference(2))
+      }
+
     }
 
   }
