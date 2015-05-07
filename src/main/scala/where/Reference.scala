@@ -11,7 +11,7 @@ import scala.language.implicitConversions
 sealed trait ReferenceType extends ToQueryWithIdentifiers {
   def getReferenceable: Option[Referenceable] = None
 
-  def ==(reference: ReferenceType): Condition =
+  def ===(reference: ReferenceType): Condition =
     Comparison(this, Equal, reference)
 
   def <>(reference: ReferenceType): Condition =
