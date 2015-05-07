@@ -1,39 +1,55 @@
 package com.originate.scalypher.path
 
+import com.originate.scalypher.action.Delete
+import com.originate.scalypher.action.ReturnAll
+import com.originate.scalypher.action.ReturnDistinct
+import com.originate.scalypher.action.ReturnReference
+import com.originate.scalypher.Query
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.where.ReferenceType
 import com.originate.scalypher.where.Where
-import com.originate.scalypher.action.ReturnReference
-import com.originate.scalypher.action.ReturnDistinct
-import com.originate.scalypher.action.Delete
-import com.originate.scalypher.Query
 
 case class PathWithWhere(path: Path, where: Where) {
-  def returns(referenceable: Referenceable): Query =
-    Query(path, where, ReturnReference(referenceable))
+  def returns(reference: ReferenceType, rest: ReferenceType*): Query =
+    Query(path, where, ReturnReference(reference, rest: _*))
 
-  def returnDistinct(referenceable: Referenceable): Query =
-    Query(path, where, ReturnDistinct(referenceable))
+  def returnDistinct(reference: ReferenceType, rest: ReferenceType*): Query =
+    Query(path, where, ReturnDistinct(reference, rest: _*))
 
-  def delete(referenceable: Referenceable): Query =
-    Query(path, where, Delete(referenceable))
+  def returnAll: Query =
+    Query(path, where, ReturnAll)
+
+  def delete(reference: ReferenceType, rest: ReferenceType*): Query =
+    Query(path, where, Delete(reference, rest: _*))
 }
 
 case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
+  private[scalypher] def referenceables: Set[Referenceable] = {
+    val extraReferenceables = pieces flatMap { piece =>
+      Seq(Some(piece.node), piece.relationship).flatten
+    }
+
+    Set(this, start) ++ extraReferenceables.toSet
+  }
+
   def where(whereClause: Where): PathWithWhere =
     PathWithWhere(this, whereClause)
 
   def where(whereFunction: Path => Where): PathWithWhere =
     PathWithWhere(this, whereFunction(this))
 
-  def returns(referenceable: Referenceable): Query =
-    Query(this, ReturnReference(referenceable))
+  def returns(reference: ReferenceType, rest: ReferenceType*): Query =
+    Query(this, ReturnReference(reference, rest: _*))
 
-  def returnDistinct(referenceable: Referenceable): Query =
-    Query(this, ReturnDistinct(referenceable))
+  def returnDistinct(reference: ReferenceType, rest: ReferenceType*): Query =
+    Query(this, ReturnDistinct(reference, rest: _*))
 
-  def delete(referenceable: Referenceable): Query =
-    Query(this, Delete(referenceable))
+  def returnAll: Query =
+    Query(this, ReturnAll)
+
+  def delete(reference: ReferenceType, rest: ReferenceType*): Query =
+    Query(this, Delete(reference, rest: _*))
 
   def -->(node: NodeType): Path =
     copy(pieces = pieces :+ PathPiece(RightArrow, node))
