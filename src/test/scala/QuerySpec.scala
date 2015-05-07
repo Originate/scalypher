@@ -31,7 +31,7 @@ class QuerySpec extends WordSpec with Matchers {
     "allow simple syntax for more complex queries" in {
       val query = startNode --> AnyNode() where (
         (startNode.property("thing") <> "something") and
-        (startNode.property("otherThing") == "something")
+        (startNode.property("otherThing") === "something")
       ) returns startNode
       query.toQuery shouldBe """MATCH (a1)-->() WHERE a1.thing <> "something" AND a1.otherThing = "something" RETURN a1"""
     }
