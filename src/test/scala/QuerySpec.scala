@@ -68,6 +68,42 @@ class QuerySpec extends WordSpec with Matchers {
     "give the identifier for the return node" in {
       val identifier = query.getIdentifier(node2).get
       identifier shouldBe query.getReturnColumn
+  "getting return columns" when {
+
+    "given a return all expression" must {
+
+      "return columns for as many referenceables there are in the match expression" in {
+        val query = (AnyNode() -- AnyRelationship() -- AnyNode()).returnAll
+        query.getReturnColumns.size shouldBe 4
+      }
+
+    }
+
+    "given a return expression" must {
+
+      val startNode = AnyNode()
+      val endNode = AnyNode()
+
+      "can return one column" in {
+        val query = startNode -- AnyRelationship() -- endNode returns startNode
+        query.getReturnColumns.size shouldBe 1
+      }
+
+      "can return multiple columns" in {
+        val query = startNode -- AnyRelationship() -- endNode returns (startNode, endNode)
+        query.getReturnColumns.size shouldBe 2
+      }
+
+    }
+
+    "given a delete expression" must {
+
+      "have no return columns" in {
+        val startNode = AnyNode()
+        val query = startNode -- AnyRelationship() -- AnyNode() delete startNode
+        query.getReturnColumns.size shouldBe 0
+      }
+
     }
 
   }

@@ -27,20 +27,14 @@ case class Query(pathMatch: Path, where: Option[Where], action: Action) {
   def getIdentifier(referenceable: Referenceable): Option[String] =
     referenceableMap get referenceable
 
-  def getReturnColumn: String =
+  def getReturnColumns: Set[String] =
     action match {
-      case ReturnAll => ???
-      case Delete(_, _) => ""
+      case ReturnAll => referenceableMap.values.toSet
+      case _: Delete => Set.empty
       case _ =>
-        if (action.referenceables.size == 1) {
-          val identifier = for {
-            referenceable <- action.referenceables.headOption
-            identifier <- referenceableMap get referenceable
-          } yield identifier
-
-          identifier getOrElse (throw new IdentifierDoesntExistException())
+        action.referenceables map { referenceable =>
+          referenceableMap get referenceable getOrElse (throw new IdentifierDoesntExistException())
         }
-        else ???
     }
 
   def toQuery: String = {
@@ -58,10 +52,13 @@ case class Query(pathMatch: Path, where: Option[Where], action: Action) {
   }
 
   private val referenceableMap: ReferenceableMap = {
-    val whereReferenceables = where map (_.referenceables) getOrElse Set()
-    val referenceIdentifiers = (whereReferenceables ++ action.referenceables) map { referenceable =>
-      (referenceable, nextIdentifier)
-    }
+    val referenceables =
+      if (action == ReturnAll) pathMatch.referenceables
+      else {
+        val whereReferenceables = where map (_.referenceables) getOrElse Set()
+        (whereReferenceables ++ action.referenceables)
+      }
+    val referenceIdentifiers = referenceables map ((_, nextIdentifier))
 
     referenceIdentifiers.toMap
   }
