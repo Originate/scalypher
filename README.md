@@ -29,13 +29,13 @@ cypher.toQuery
 // returns: 'MATCH (a1)-->() WHERE a1.thing <> "something" RETURN a1'
 ```
 
-The main thing to note is that, if you would like to specify a node or relationship in a WHERE or RETURN
-expression, you need to retain a reference to it and use that when building your Cypher expressions. This
+The main thing to note is that, if you would like to specify a node or relationship in a `WHERE` or
+`RETURN` expression, you need to retain a reference to it and use that when building your Cypher expressions. This
 eliminates the need to manually choose identifiers for your nodes/relationships/paths.
 
 ### Referencing The Path
 
-If you'd like to reference the path from your MATCH expression in your WHERE expression, you can do
+If you'd like to reference the path from your `MATCH` expression in your `WHERE` expression, you can do
 
 ```scala
 val cypher = startNode --> AnyNode() where { path =>
@@ -82,7 +82,7 @@ This can then be used in your code:
 import CypherExpressables._
 
 val cypher = startNode --> AnyNode() where (
-		startNode.property("thing") == Instant.now
+		startNode.property("thing") === Instant.now
 	) returns startNode
 
 ```
