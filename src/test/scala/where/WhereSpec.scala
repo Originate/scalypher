@@ -29,6 +29,37 @@ class WhereSpec extends WordSpec with Matchers {
 
     }
 
+    "making comparisons" must {
+
+      val node1 = AnyNode()
+
+      "allow simple syntax for ===" in {
+        node1.property("a") === "b" shouldBe Comparison(node1.property("a"), Equal, ValueReference("b"))
+      }
+
+      "allow simple syntax for <>" in {
+        node1.property("a") <> "b" shouldBe Comparison(node1.property("a"), NotEqual, ValueReference("b"))
+      }
+
+      "allow simple syntax for <" in {
+        node1.property("a") < "b" shouldBe Comparison(node1.property("a"), LT, ValueReference("b"))
+      }
+
+      "allow simple syntax for >" in {
+        node1.property("a") > "b" shouldBe Comparison(node1.property("a"), GT, ValueReference("b"))
+      }
+
+      "allow simple syntax for <=" in {
+        node1.property("a") <= "b" shouldBe Comparison(node1.property("a"), LTE, ValueReference("b"))
+      }
+
+      "allow simple syntax for >=" in {
+        node1.property("a") >= "b" shouldBe Comparison(node1.property("a"), GTE, ValueReference("b"))
+      }
+
+
+    }
+
   }
 
   "Where Clauses" when {
