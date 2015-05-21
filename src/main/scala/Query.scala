@@ -9,19 +9,6 @@ import action.ReturnAll
 import action.Delete
 import types._
 
-abstract class ConstantString(stringified: String) {
-  def toQuery: String = stringified
-}
-
-trait ToQuery {
-  def toQuery: String
-}
-
-trait ToQueryWithIdentifiers {
-  def toQuery(referenceableMap: ReferenceableMap): String
-}
-
-case class PropertyReference(name: String)
 sealed trait Query extends ToQuery {
   def getReturnColumns: Set[String]
   protected def referenceableMap: ReferenceableMap
