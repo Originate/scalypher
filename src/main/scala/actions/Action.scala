@@ -7,10 +7,12 @@ import com.originate.scalypher.PropertyReference
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.ReferenceType
 
+
 sealed trait Action {
   def referenceables: Set[Referenceable]
   def toQuery(referenceableMap: ReferenceableMap): String
 }
+sealed trait ReturnAction extends Action
 
 abstract class ReferenceListAction(keyword: String) extends Action {
   def reference: ReferenceType
@@ -26,8 +28,8 @@ abstract class ReferenceListAction(keyword: String) extends Action {
     s"$keyword " + (references map (_.toQuery(referenceableMap)) mkString ", ")
 }
 
-case class ReturnReference(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN")
-case class ReturnDistinct(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN DISTINCT")
+case class ReturnReference(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN") with ReturnAction
+case class ReturnDistinct(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
 case class Delete(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("DELETE")
 
 case object ReturnAll extends Action {

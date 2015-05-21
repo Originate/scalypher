@@ -5,6 +5,7 @@ import com.originate.scalypher.action.ReturnAll
 import com.originate.scalypher.action.ReturnDistinct
 import com.originate.scalypher.action.ReturnReference
 import com.originate.scalypher.Query
+import com.originate.scalypher.MatchQuery
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.where.ReferenceType
@@ -12,16 +13,16 @@ import com.originate.scalypher.where.Where
 
 case class PathWithWhere(path: Path, where: Where) {
   def returns(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(path, where, ReturnReference(reference, rest: _*))
+    MatchQuery(path, where, ReturnReference(reference, rest: _*))
 
   def returnDistinct(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(path, where, ReturnDistinct(reference, rest: _*))
+    MatchQuery(path, where, ReturnDistinct(reference, rest: _*))
 
   def returnAll: Query =
-    Query(path, where, ReturnAll)
+    MatchQuery(path, where, ReturnAll)
 
   def delete(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(path, where, Delete(reference, rest: _*))
+    MatchQuery(path, where, Delete(reference, rest: _*))
 }
 
 case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
@@ -40,16 +41,16 @@ case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Ref
     PathWithWhere(this, whereFunction(this))
 
   def returns(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(this, ReturnReference(reference, rest: _*))
+    MatchQuery(this, ReturnReference(reference, rest: _*))
 
   def returnDistinct(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(this, ReturnDistinct(reference, rest: _*))
+    MatchQuery(this, ReturnDistinct(reference, rest: _*))
 
   def returnAll: Query =
-    Query(this, ReturnAll)
+    MatchQuery(this, ReturnAll)
 
   def delete(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(this, Delete(reference, rest: _*))
+    MatchQuery(this, Delete(reference, rest: _*))
 
   def -->(node: NodeType): Path =
     copy(pieces = pieces :+ PathPiece(RightArrow, node))

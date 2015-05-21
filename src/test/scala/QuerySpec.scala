@@ -7,6 +7,7 @@ import com.originate.scalypher.where.ValueReference
 import com.originate.scalypher.path.AnyNode
 import com.originate.scalypher.path.AnyRelationship
 import com.originate.scalypher.action.ReturnDistinct
+import com.originate.scalypher.MatchQuery
 import com.originate.scalypher.Query
 
 import org.scalatest._
@@ -48,7 +49,7 @@ class QuerySpec extends WordSpec with Matchers {
 
     "space out the match, where, and return clauses" in {
       val path = startNode --> AnyNode()
-      Query(path, where, returns).toQuery shouldBe """MATCH (a1)-->() WHERE a1.thing <> "something" RETURN DISTINCT a1"""
+      MatchQuery(path, where, returns).toQuery shouldBe """MATCH (a1)-->() WHERE a1.thing <> "something" RETURN DISTINCT a1"""
     }
 
   }
@@ -57,7 +58,7 @@ class QuerySpec extends WordSpec with Matchers {
 
     "space out the match and return clauses" in {
       val path = startNode --> AnyNode()
-      Query(path, returns).toQuery shouldBe "MATCH (a1)-->() RETURN DISTINCT a1"
+      MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)-->() RETURN DISTINCT a1"
     }
 
   }
@@ -67,7 +68,7 @@ class QuerySpec extends WordSpec with Matchers {
     val node2 = AnyNode()
     val path = startNode -- node2
     val where = Comparison(startNode.property("thing"), Equal, ValueReference("something"))
-    val query = Query(path, where, ReturnDistinct(node2))
+    val query = MatchQuery(path, where, ReturnDistinct(node2))
 
     "not throw an exception" in {
       noException should be thrownBy {
