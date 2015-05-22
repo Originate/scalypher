@@ -1,17 +1,20 @@
 package com.originate.scalypher
 
-import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
-import path.Path
-import path.NodeType
-import path.AnyNode
-import path.RelationshipType
-import path.AnyRelationship
-import where.Where
 import action.Action
+import action.Delete
 import action.ReturnAction
 import action.ReturnAll
-import action.Delete
+import action.ReturnDistinct
+import action.ReturnReference
+import path.AnyNode
+import path.AnyRelationship
+import path.NodeType
+import path.Path
+import path.RelationshipType
 import types._
+import util.Exceptions.IdentifierDoesntExistException
+import where.ReferenceType
+import where.Where
 
 sealed trait Query extends ToQuery {
 
@@ -80,6 +83,15 @@ case class CreateQuery(
   where: Option[Where],
   returnAction: Option[ReturnAction]
 ) extends Query {
+
+  def returns(reference: ReferenceType, rest: ReferenceType*): CreateQuery =
+    copy(returnAction = Some(ReturnReference(reference, rest: _*)))
+
+  def returnDistinct(reference: ReferenceType, rest: ReferenceType*): CreateQuery =
+    copy(returnAction = Some(ReturnDistinct(reference, rest: _*)))
+
+  def returnAll: CreateQuery =
+    copy(returnAction = Some(ReturnAll))
 
   def toQuery: String = {
     val matchString =

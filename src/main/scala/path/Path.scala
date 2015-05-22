@@ -6,6 +6,7 @@ import com.originate.scalypher.action.ReturnDistinct
 import com.originate.scalypher.action.ReturnReference
 import com.originate.scalypher.Query
 import com.originate.scalypher.MatchQuery
+import com.originate.scalypher.CreateQuery
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.where.ReferenceType
@@ -23,6 +24,9 @@ case class PathWithWhere(path: Path, where: Where) {
 
   def delete(reference: ReferenceType, rest: ReferenceType*): Query =
     MatchQuery(path, where, Delete(reference, rest: _*))
+
+  def create(createPath: Path): Query =
+    CreateQuery(createPath, Seq(path), Some(where), None)
 }
 
 case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {

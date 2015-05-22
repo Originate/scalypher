@@ -32,7 +32,7 @@ case class ReturnReference(reference: ReferenceType, rest: ReferenceType*) exten
 case class ReturnDistinct(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
 case class Delete(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("DELETE")
 
-case object ReturnAll extends Action {
+case object ReturnAll extends ReturnAction {
   def referenceables: Set[Referenceable] = Set()
 
   def toQuery(referenceableMap: ReferenceableMap): String =
