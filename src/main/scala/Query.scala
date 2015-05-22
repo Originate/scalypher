@@ -26,6 +26,9 @@ sealed trait Query extends ToQuery {
     s"a$identifierIndex"
   }
 
+  protected def buildQuery(strings: Option[String]*): String =
+    strings.flatten mkString " "
+
   protected def matchActionToReturnColumns(action: Action): Set[String] =
     action match {
       case ReturnAll => referenceableMap.values.toSet
@@ -78,17 +81,23 @@ case class CreateQuery(
 
   def toQuery: String = {
     val matchString =
-      if (matchPaths.isEmpty) ""
+      if (matchPaths.isEmpty) None
       else {
         val pathString = matchPaths map (_.toQuery(referenceableMap)) mkString ", "
-        val whereString = where map (" WHERE " + _.toQuery(referenceableMap) + " ") getOrElse " "
-
-        s"MATCH $pathString$whereString"
+        Some(s"MATCH $pathString")
       }
+    val whereString = matchString flatMap { _ =>
+      where map ("WHERE " + _.toQuery(referenceableMap))
+    }
+    val returnString = returnAction map (_.toQuery(referenceableMap))
+    val createString = Some(s"CREATE " + cleanedCreatePath.toQuery(createMap))
 
-    val returnString = returnAction map (" " + _.toQuery(referenceableMap)) getOrElse ""
-    val createString = cleanedCreatePath.toQuery(createMap)
-    s"${matchString}CREATE $createString$returnString"
+    buildQuery(
+      matchString,
+      whereString,
+      createString,
+      returnString
+    )
   }
 
   def getReturnColumns: Set[String] =
@@ -134,13 +143,12 @@ case class MatchQuery(pathMatch: Path, where: Option[Where], action: Action) ext
   def getReturnColumns: Set[String] =
     matchActionToReturnColumns(action)
 
-  def toQuery: String = {
-    val pathString = pathMatch.toQuery(referenceableMap)
-    val whereString = where map (" WHERE " + _.toQuery(referenceableMap) + " ") getOrElse " "
-    val returnString = action.toQuery(referenceableMap)
-
-    s"MATCH $pathString$whereString$returnString"
-  }
+  def toQuery: String =
+    buildQuery(
+      Some("MATCH " + pathMatch.toQuery(referenceableMap)),
+      where map ("WHERE " + _.toQuery(referenceableMap)),
+      Some(action.toQuery(referenceableMap))
+    )
 
   protected val referenceableMap: ReferenceableMap =
     referenceableMapWithPathWhereAndAction(Seq(pathMatch), where, Some(action))
