@@ -21,6 +21,15 @@ case class PathPiece(
   node: NodeType,
   relationship: Option[RelationshipType] = None
 ) {
+
+  def replaceNode(oldNode: NodeType, newNode: NodeType): PathPiece =
+    if (node == oldNode) copy(node = newNode)
+    else this
+
+  def replaceRelationship(oldRelationship: RelationshipType, newRelationship: RelationshipType): PathPiece =
+    if (relationship exists (_ == oldRelationship)) copy(relationship = Some(newRelationship))
+    else this
+
   def --(node: NodeType): PathPieces =
     PathPieces(this, Seq(PathPiece(DirectionlessArrow, node)), None)
 
@@ -32,6 +41,7 @@ case class PathPiece(
 
   def toQuery(referenceableMap: ReferenceableMap): String =
     arrow.toQuery(referenceableMap, relationship) + node.toQuery(referenceableMap)
+
 }
 
 object PathPiece {

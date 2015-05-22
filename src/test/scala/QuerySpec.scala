@@ -5,8 +5,11 @@ import com.originate.scalypher.where.NotEqual
 import com.originate.scalypher.where.Equal
 import com.originate.scalypher.where.ValueReference
 import com.originate.scalypher.path.AnyNode
+import com.originate.scalypher.path.CypherNode
 import com.originate.scalypher.path.AnyRelationship
+import com.originate.scalypher.path.KindRelationship
 import com.originate.scalypher.action.ReturnDistinct
+import com.originate.scalypher.CreateQuery
 import com.originate.scalypher.MatchQuery
 import com.originate.scalypher.Query
 
@@ -15,6 +18,48 @@ import org.scalatest._
 class QuerySpec extends WordSpec with Matchers {
 
   val startNode = AnyNode()
+
+  "CreateQuery" when {
+
+    val startNode = CypherNode("label1")
+    val createRelationship = KindRelationship("label")
+    val endNode = CypherNode("label2")
+    val matchPath = startNode -- endNode
+    val createPath = startNode -- createRelationship -- endNode
+    val where = startNode.property("id") <> "test"
+
+    "only a create path is given" must {
+
+      "produce a query that creates a node" in {
+        val create = CreateQuery(startNode, Seq(), None, None)
+        create.toQuery shouldBe "CREATE (:label1)"
+      }
+
+    }
+
+    "a match and create path is given" must {
+
+      "use simple identifiers for references in the create path" in {
+        val create = CreateQuery(createPath, Seq(matchPath), None, None)
+        create.toQuery shouldBe "MATCH (a1:label1)--(a2:label2) CREATE (a1)-[:label]-(a2)"
+      }
+
+      "allow multiple match paths" in {
+        val otherNode = AnyNode()
+        val matchPath2 = startNode --> otherNode
+        val createPath = startNode -- createRelationship -- endNode --> otherNode
+        val create = CreateQuery(createPath, Seq(matchPath, matchPath2), None, None)
+        create.toQuery should endWith regex """CREATE \(a\d\)-\[:label]-\(a\d\)-->\(a\d\)"""
+      }
+
+      "include a where path if provided" in {
+        val create = CreateQuery(createPath, Seq(matchPath), Some(where), None)
+        create.toQuery shouldBe """MATCH (a1:label1)--(a2:label2) WHERE a1.id <> "test" CREATE (a1)-[:label]-(a2)"""
+      }
+
+    }
+
+  }
 
   "MatchQuery" when {
 

@@ -2,6 +2,10 @@ package com.originate.scalypher
 
 import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
 import path.Path
+import path.NodeType
+import path.AnyNode
+import path.RelationshipType
+import path.AnyRelationship
 import where.Where
 import action.Action
 import action.ReturnAction
@@ -35,7 +39,8 @@ sealed trait Query extends ToQuery {
   protected def referenceableMapWithPathWhereAndAction(
     paths: Seq[Path],
     where: Option[Where],
-    action: Option[Action]
+    action: Option[Action],
+    forcedReferenceables: Set[Referenceable] = Set.empty
   ): ReferenceableMap = {
     val whereReferenceables = where map (_.referenceables) getOrElse Set()
     val referenceables = action match {
@@ -43,7 +48,7 @@ sealed trait Query extends ToQuery {
       case Some(action) => whereReferenceables ++ action.referenceables
       case _ => whereReferenceables
     }
-    val referenceIdentifiers = referenceables map ((_, nextIdentifier))
+    val referenceIdentifiers = (referenceables ++ forcedReferenceables) map ((_, nextIdentifier))
 
     referenceIdentifiers.toMap
   }
@@ -72,7 +77,16 @@ case class CreateQuery(
 ) extends Query {
 
   def toQuery: String = {
-    "CREATE "
+    val matchString =
+      if (matchPaths.isEmpty) ""
+      else {
+        val pathString = matchPaths map (_.toQuery(referenceableMap)) mkString ", "
+        val whereString = where map (" WHERE " + _.toQuery(referenceableMap) + " ") getOrElse " "
+        s"MATCH $pathString$whereString"
+      }
+
+    val createString = cleanedCreatePath.toQuery(createMap)
+    s"${matchString}CREATE $createString"
   }
 
   def getReturnColumns: Set[String] =
@@ -83,10 +97,33 @@ case class CreateQuery(
 
   protected val referenceableMap: ReferenceableMap =
     referenceableMapWithPathWhereAndAction(
-      matchPaths :+ createPath,
+      matchPaths,
       where,
-      returnAction
+      returnAction,
+      createPath.referenceables - createPath
     )
+
+  protected val PathTranform(cleanedCreatePath, createMap) = {
+    val overlapReferenceables = matchPaths flatMap (_.referenceables) intersect createPath.referenceables.toSeq
+    val relevantMap = referenceableMap filterKeys { key =>
+      overlapReferenceables contains key
+    }
+
+    relevantMap.foldLeft(PathTranform(createPath)) { case (acc @ PathTranform(path, map), (referenceable, identifier)) =>
+      referenceable match {
+        case node: NodeType =>
+          val newNode = AnyNode()
+          PathTranform(path.replaceNode(node, newNode), map - referenceable + (newNode -> identifier))
+        case relationship: RelationshipType =>
+          val newRelationship = AnyRelationship()
+          PathTranform(path.replaceRelationship(relationship, newRelationship), map - referenceable + (newRelationship -> identifier))
+        case _ =>
+          acc
+      }
+    }
+  }
+
+  private case class PathTranform(path: Path, map: ReferenceableMap = Map[Referenceable, String]())
 
 }
 

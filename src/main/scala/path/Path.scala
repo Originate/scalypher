@@ -26,13 +26,6 @@ case class PathWithWhere(path: Path, where: Where) {
 }
 
 case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
-  private[scalypher] def referenceables: Set[Referenceable] = {
-    val extraReferenceables = pieces flatMap { piece =>
-      Seq(Some(piece.node), piece.relationship).flatten
-    }
-
-    Set(this, start) ++ extraReferenceables.toSet
-  }
 
   def where(whereClause: Where): PathWithWhere =
     PathWithWhere(this, whereClause)
@@ -91,6 +84,25 @@ case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Ref
 
     pathIdentifier + start.toQuery(referenceableMap) + (pieces map (_.toQuery(referenceableMap)) mkString "")
   }
+
+  private[scalypher] def replaceNode(oldNode: NodeType, newNode: NodeType): Path = {
+    val newPieces = pieces map (_.replaceNode(oldNode, newNode))
+
+    if (start == oldNode) Path(newNode, newPieces)
+    else copy(pieces = newPieces)
+  }
+
+  private[scalypher] def replaceRelationship(oldRelationship: RelationshipType, newRelationship: RelationshipType): Path =
+    copy(pieces = pieces map (_.replaceRelationship(oldRelationship, newRelationship)))
+
+  private[scalypher] def referenceables: Set[Referenceable] = {
+    val extraReferenceables = pieces flatMap { piece =>
+      Seq(Some(piece.node), piece.relationship).flatten
+    }
+
+    Set(this, start) ++ extraReferenceables.toSet
+  }
+
 }
 
 object Path {
