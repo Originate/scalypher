@@ -14,7 +14,9 @@ import action.Delete
 import types._
 
 sealed trait Query extends ToQuery {
+
   def getReturnColumns: Set[String]
+
   protected def referenceableMap: ReferenceableMap
 
   def getIdentifier(referenceable: Referenceable): Option[String] =
