@@ -57,6 +57,11 @@ class QuerySpec extends WordSpec with Matchers {
         create.toQuery shouldBe """MATCH (a1:label1)--(a2:label2) WHERE a1.id <> "test" CREATE (a1)-[:label]-(a2)"""
       }
 
+      "include a return statement if provided" in {
+        val create = CreateQuery(createPath, Seq(matchPath), None, Some(ReturnDistinct(startNode)))
+        create.toQuery shouldBe """MATCH (a1:label1)--(a2:label2) CREATE (a1)-[:label]-(a2) RETURN DISTINCT a1"""
+      }
+
     }
 
   }

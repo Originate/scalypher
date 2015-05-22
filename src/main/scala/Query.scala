@@ -82,11 +82,13 @@ case class CreateQuery(
       else {
         val pathString = matchPaths map (_.toQuery(referenceableMap)) mkString ", "
         val whereString = where map (" WHERE " + _.toQuery(referenceableMap) + " ") getOrElse " "
+
         s"MATCH $pathString$whereString"
       }
 
+    val returnString = returnAction map (" " + _.toQuery(referenceableMap)) getOrElse ""
     val createString = cleanedCreatePath.toQuery(createMap)
-    s"${matchString}CREATE $createString"
+    s"${matchString}CREATE $createString$returnString"
   }
 
   def getReturnColumns: Set[String] =
