@@ -79,9 +79,9 @@ object Query {
 
 case class CreateQuery(
   createPath: Path,
-  matchPaths: Seq[Path],
-  where: Option[Where],
-  returnAction: Option[ReturnAction]
+  matchPaths: Seq[Path] = Seq.empty,
+  where: Option[Where] = None,
+  returnAction: Option[ReturnAction] = None
 ) extends Query {
 
   def returns(reference: ReferenceType, rest: ReferenceType*): CreateQuery =
