@@ -28,9 +28,11 @@ abstract class ReferenceListAction(keyword: String) extends Action {
     s"$keyword " + (references map (_.toQuery(referenceableMap)) mkString ", ")
 }
 
-case class ReturnReference(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN") with ReturnAction
-case class ReturnDistinct(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
 case class Delete(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("DELETE")
+
+case class ReturnReference(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN") with ReturnAction
+
+case class ReturnDistinct(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
 
 case object ReturnAll extends ReturnAction {
   def referenceables: Set[Referenceable] = Set()
