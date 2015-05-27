@@ -12,9 +12,6 @@ case class MergeQuery(
   returnAction: Option[ReturnAction] = None
 ) extends MatchCreateQuery {
 
-  def withReturnAction(action: ReturnAction): MergeQuery =
-    copy(returnAction = Some(action))
-
   def toQuery: String = {
     val matchString = ifNonEmpty(matchPaths) { paths =>
       stringListWithPrefix("MATCH", matchPaths map (_.toQuery(referenceableMap)))
@@ -36,6 +33,9 @@ case class MergeQuery(
       returnString
     )
   }
+
+  protected def withReturnAction(action: ReturnAction): MergeQuery =
+    copy(returnAction = Some(action))
 
   private val onCreateOrMergeReferenceables =
     createProperties.flatMap(_.getReferenceable).toSet ++

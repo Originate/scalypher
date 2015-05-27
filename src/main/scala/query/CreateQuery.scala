@@ -13,9 +13,6 @@ case class CreateQuery(
   returnAction: Option[ReturnAction] = None
 ) extends MatchCreateQuery {
 
-  def withReturnAction(action: ReturnAction): CreateQuery =
-    copy(returnAction = Some(action))
-
   def toQuery: String = {
     val matchString = ifNonEmpty(matchPaths) { paths =>
       stringListWithPrefix("MATCH", matchPaths map (_.toQuery(referenceableMap)))
@@ -33,6 +30,9 @@ case class CreateQuery(
       returnString
     )
   }
+
+  protected def withReturnAction(action: ReturnAction): CreateQuery =
+    copy(returnAction = Some(action))
 
   protected val referenceableMap: ReferenceableMap =
     referenceableMapWithPathWhereAndAction(

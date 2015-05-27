@@ -14,8 +14,6 @@ import types._
 
 trait MatchCreateQuery extends Query {
 
-  def withReturnAction(action: ReturnAction): MatchCreateQuery
-
   def returnAction: Option[ReturnAction]
 
   def returns(reference: Reference, rest: Reference*): MatchCreateQuery =
@@ -32,6 +30,8 @@ trait MatchCreateQuery extends Query {
       case Some(action) => matchActionToReturnColumns(action)
       case _ => Set.empty
     }
+
+  protected def withReturnAction(action: ReturnAction): MatchCreateQuery
 
   protected def modifiedReferenceableMap: ReferenceableMap = {
     val returnReferenceables = returnAction map (_.referenceables) getOrElse Set.empty
