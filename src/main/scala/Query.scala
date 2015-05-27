@@ -25,6 +25,13 @@ sealed trait Query extends ToQuery {
   def getIdentifier(referenceable: Referenceable): Option[String] =
     referenceableMap get referenceable
 
+  protected def ifNonEmpty[T](seq: Seq[T])(f: Seq[T] => String): Option[String] =
+    if (seq.isEmpty) None
+    else Some(f(seq))
+
+  protected def stringListWithPrefix(prefix: String, strings: Seq[String]): String =
+    s"""$prefix ${strings mkString ", "}"""
+
   protected var identifierIndex = 0
   protected def nextIdentifier: String = {
     identifierIndex += 1
@@ -77,42 +84,9 @@ object Query {
 
 }
 
-case class CreateQuery(
-  createPath: Path,
-  matchPaths: Seq[Path] = Seq.empty,
-  where: Option[Where] = None,
-  returnAction: Option[ReturnAction] = None
-) extends Query {
+trait MatchCreateQuery extends Query {
 
-  def returns(reference: ReferenceType, rest: ReferenceType*): CreateQuery =
-    copy(returnAction = Some(ReturnReference(reference, rest: _*)))
-
-  def returnDistinct(reference: ReferenceType, rest: ReferenceType*): CreateQuery =
-    copy(returnAction = Some(ReturnDistinct(reference, rest: _*)))
-
-  def returnAll: CreateQuery =
-    copy(returnAction = Some(ReturnAll))
-
-  def toQuery: String = {
-    val matchString =
-      if (matchPaths.isEmpty) None
-      else {
-        val pathString = matchPaths map (_.toQuery(referenceableMap)) mkString ", "
-        Some(s"MATCH $pathString")
-      }
-    val whereString = matchString flatMap { _ =>
-      where map ("WHERE " + _.toQuery(referenceableMap))
-    }
-    val returnString = returnAction map (_.toQuery(referenceableMap))
-    val createString = Some(s"CREATE " + cleanedCreatePath.toQuery(createMap))
-
-    buildQuery(
-      matchString,
-      whereString,
-      createString,
-      returnString
-    )
-  }
+  def returnAction: Option[ReturnAction]
 
   def getReturnColumns: Set[String] =
     returnAction match {
@@ -120,21 +94,25 @@ case class CreateQuery(
       case _ => Set.empty
     }
 
-  protected val referenceableMap: ReferenceableMap =
-    referenceableMapWithPathWhereAndAction(
-      matchPaths,
-      where,
-      returnAction,
-      createPath.referenceables - createPath
-    )
+  protected def modifiedReferenceableMap: ReferenceableMap = {
+    val returnReferenceables = returnAction map (_.referenceables) getOrElse Set.empty
+    val returnMap = referenceableMap filterKeys (returnReferenceables contains _)
+    createMap ++ returnMap
+  }
 
-  protected val PathTranform(cleanedCreatePath, createMap) = {
-    val overlapReferenceables = matchPaths flatMap (_.referenceables) intersect createPath.referenceables.toSeq
+  protected case class PathTranform(path: Path, map: ReferenceableMap = Map[Referenceable, String]())
+
+  protected def cleanedCreatePath: Path
+
+  protected def createMap: ReferenceableMap
+
+  protected def cleanPathAndExtractMap(path: Path, matchPaths: Seq[Path]): (Path, ReferenceableMap) = {
+    val overlapReferenceables = matchPaths flatMap (_.referenceables) intersect path.referenceables.toSeq
     val relevantMap = referenceableMap filterKeys { key =>
       overlapReferenceables contains key
     }
 
-    relevantMap.foldLeft(PathTranform(createPath)) { case (acc @ PathTranform(path, map), (referenceable, identifier)) =>
+    val pathTransform = relevantMap.foldLeft(PathTranform(path)) { case (acc @ PathTranform(path, map), (referenceable, identifier)) =>
       referenceable match {
         case node: NodeType =>
           val newNode = AnyNode()
@@ -146,9 +124,104 @@ case class CreateQuery(
           acc
       }
     }
+
+    (pathTransform.path, pathTransform.map)
   }
 
-  private case class PathTranform(path: Path, map: ReferenceableMap = Map[Referenceable, String]())
+}
+
+case class MergeQuery(
+  mergePath: Path,
+  matchPaths: Seq[Path] = Seq.empty,
+  createProperties: Seq[SetProperty] = Seq.empty,
+  mergeProperties: Seq[SetProperty] = Seq.empty,
+  returnAction: Option[ReturnAction] = None
+) extends MatchCreateQuery {
+
+  def toQuery: String = {
+    val matchString = ifNonEmpty(matchPaths) { paths =>
+      stringListWithPrefix("MATCH", matchPaths map (_.toQuery(referenceableMap)))
+    }
+    val mergeString = Some(s"MERGE " + cleanedCreatePath.toQuery(modifiedReferenceableMap))
+    val onCreateString = ifNonEmpty(createProperties) { properties =>
+      stringListWithPrefix("ON CREATE SET", properties map (_.toQuery(referenceableMap)))
+    }
+    val onMergeString = ifNonEmpty(mergeProperties) { properties =>
+      stringListWithPrefix("ON MERGE SET", properties map (_.toQuery(referenceableMap)))
+    }
+    val returnString = returnAction map (_.toQuery(referenceableMap))
+
+    buildQuery(
+      matchString,
+      mergeString,
+      onCreateString,
+      onMergeString,
+      returnString
+    )
+  }
+
+  private val onCreateOrMergeReferenceables =
+    createProperties.flatMap(_.getReferenceable).toSet ++
+      mergeProperties.flatMap(_.getReferenceable).toSet
+
+  protected val referenceableMap: ReferenceableMap =
+    referenceableMapWithPathWhereAndAction(
+      matchPaths,
+      None,
+      returnAction,
+      mergePath.referenceables - mergePath ++ onCreateOrMergeReferenceables
+    )
+
+  protected val (cleanedCreatePath, createMap) =
+    cleanPathAndExtractMap(mergePath, matchPaths)
+
+}
+
+
+case class CreateQuery(
+  createPath: Path,
+  matchPaths: Seq[Path] = Seq.empty,
+  where: Option[Where] = None,
+  returnAction: Option[ReturnAction] = None
+) extends MatchCreateQuery {
+
+  def returns(reference: ReferenceType, rest: ReferenceType*): CreateQuery =
+    copy(returnAction = Some(ReturnReference(reference, rest: _*)))
+
+  def returnDistinct(reference: ReferenceType, rest: ReferenceType*): CreateQuery =
+    copy(returnAction = Some(ReturnDistinct(reference, rest: _*)))
+
+  def returnAll: CreateQuery =
+    copy(returnAction = Some(ReturnAll))
+
+  def toQuery: String = {
+    val matchString = ifNonEmpty(matchPaths) { paths =>
+      stringListWithPrefix("MATCH", matchPaths map (_.toQuery(referenceableMap)))
+    }
+    val whereString = matchString flatMap { _ =>
+      where map ("WHERE " + _.toQuery(referenceableMap))
+    }
+    val createString = Some("CREATE " + cleanedCreatePath.toQuery(modifiedReferenceableMap))
+    val returnString = returnAction map (_.toQuery(referenceableMap))
+
+    buildQuery(
+      matchString,
+      whereString,
+      createString,
+      returnString
+    )
+  }
+
+  protected val referenceableMap: ReferenceableMap =
+    referenceableMapWithPathWhereAndAction(
+      matchPaths,
+      where,
+      returnAction,
+      createPath.referenceables - createPath
+    )
+
+  protected val (cleanedCreatePath, createMap) =
+    cleanPathAndExtractMap(createPath, matchPaths)
 
 }
 
