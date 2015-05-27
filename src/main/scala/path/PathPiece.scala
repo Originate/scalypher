@@ -17,7 +17,7 @@ object PathPieces {
 }
 
 case class PathPiece(
-  arrow: ArrowType,
+  arrow: Arrow,
   node: Node,
   relationship: Option[Relationship] = None
 ) {
@@ -46,7 +46,7 @@ case class PathPiece(
 
 object PathPiece {
   def apply(
-    arrow: ArrowType,
+    arrow: Arrow,
     node: Node,
     relationship: Relationship
   ): PathPiece =
