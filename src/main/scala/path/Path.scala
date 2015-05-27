@@ -6,6 +6,7 @@ import com.originate.scalypher.action.ReturnDistinct
 import com.originate.scalypher.action.ReturnReference
 import com.originate.scalypher.Query
 import com.originate.scalypher.MatchQuery
+import com.originate.scalypher.MergeQuery
 import com.originate.scalypher.CreateQuery
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
@@ -27,12 +28,18 @@ case class PathWithWhere(path: Path, where: Where) {
 
   def create(createPath: Path): CreateQuery =
     CreateQuery(createPath, Seq(path), Some(where))
+
+  def merge(mergePath: Path): MergeQuery =
+    MergeQuery(mergePath, Seq(path))
 }
 
 case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
 
   def create(createPath: Path): CreateQuery =
     CreateQuery(createPath, Seq(this))
+
+  def merge(mergePath: Path): MergeQuery =
+    MergeQuery(mergePath, Seq(this))
 
   def where(whereClause: Where): PathWithWhere =
     PathWithWhere(this, whereClause)
