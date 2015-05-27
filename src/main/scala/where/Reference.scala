@@ -4,6 +4,7 @@ import com.originate.scalypher.Query.toQueryWithProperty
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.PropertyName
+import com.originate.scalypher.SetProperty
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.CypherExpressible
 import scala.language.implicitConversions
@@ -46,6 +47,9 @@ case class ObjectReference(referenceable: Referenceable) extends Reference {
 case class ReferenceWithProperty(referenceable: Referenceable, property: PropertyName) extends Reference {
   def toQuery(referenceableMap: ReferenceableMap): String =
     toQueryWithProperty(referenceableMap, referenceable, Some(property))
+
+  def set[T : CypherExpressible](value: T): SetProperty =
+    SetProperty(this, value)
 
   override def getReferenceable = Some(referenceable)
 }

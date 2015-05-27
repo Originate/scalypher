@@ -47,6 +47,9 @@ case class MergeQuery(
     createProperties.flatMap(_.getReferenceable).toSet ++
       mergeProperties.flatMap(_.getReferenceable).toSet
 
+  protected override val forcedCreateReferenceables: Set[Referenceable] =
+    onCreateOrMergeReferenceables
+
   protected val referenceableMap: ReferenceableMap =
     referenceableMapWithPathWhereAndAction(
       matchPaths,

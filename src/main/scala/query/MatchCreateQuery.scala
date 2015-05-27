@@ -33,9 +33,13 @@ trait MatchCreateQuery extends Query {
 
   protected def withReturnAction(action: ReturnAction): MatchCreateQuery
 
+  protected def forcedCreateReferenceables: Set[Referenceable] = Set.empty
+
   protected def modifiedReferenceableMap: ReferenceableMap = {
     val returnReferenceables = returnAction map (_.referenceables) getOrElse Set.empty
-    val returnMap = referenceableMap filterKeys (returnReferenceables contains _)
+    val returnMap = referenceableMap filterKeys { referenceable =>
+      (returnReferenceables contains referenceable) || (forcedCreateReferenceables contains referenceable)
+    }
     createMap ++ returnMap
   }
 

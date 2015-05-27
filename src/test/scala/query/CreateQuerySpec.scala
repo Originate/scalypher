@@ -37,7 +37,10 @@ class CreateQuerySpec extends WordSpec with Matchers {
       val matchPath2 = startNode --> otherNode
       val createPath = startNode -- createRelationship -- endNode --> otherNode
       val create = CreateQuery(createPath, Seq(matchPath, matchPath2), None, None)
-      create.toQuery should endWith regex """CREATE \(a\d\)-\[:label]-\(a\d\)-->\(a\d\)"""
+
+      val query = create.toQuery
+      query should startWith regex """MATCH \(a\d:label1\)--\(a\d:label2\), \(a\d:label1\)-->\(a\d\)"""
+      query should endWith regex """CREATE \(a\d\)-\[:label]-\(a\d\)-->\(a\d\)"""
     }
 
     "include a where path if provided" in {
