@@ -36,7 +36,7 @@ object ReferenceType {
     ValueReference[V](value)
 }
 
-case class Reference(referenceable: Referenceable) extends ReferenceType {
+case class ObjectReference(referenceable: Referenceable) extends ReferenceType {
   def toQuery(referenceableMap: ReferenceableMap): String =
     toQueryWithProperty(referenceableMap, referenceable, None)
 
