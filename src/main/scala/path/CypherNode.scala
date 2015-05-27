@@ -8,13 +8,13 @@ import com.originate.scalypher.Query
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
-import com.originate.scalypher.where.Reference
+import com.originate.scalypher.where.ReferenceWithProperty
 
 import scala.language.implicitConversions
 
 sealed trait NodeType extends ToQueryWithIdentifiers with Referenceable {
-  def property(propertyReference: String): Reference =
-    Reference(this, PropertyReference(propertyReference))
+  def property(propertyReference: String): ReferenceWithProperty =
+    ReferenceWithProperty(this, PropertyReference(propertyReference))
 }
 
 object NodeType {

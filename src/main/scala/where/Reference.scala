@@ -36,16 +36,18 @@ object ReferenceType {
     ValueReference[V](value)
 }
 
-case class Reference(referenceable: Referenceable, property: Option[PropertyReference] = None) extends ReferenceType {
+case class Reference(referenceable: Referenceable) extends ReferenceType {
   def toQuery(referenceableMap: ReferenceableMap): String =
-    toQueryWithProperty(referenceableMap, referenceable, property)
+    toQueryWithProperty(referenceableMap, referenceable, None)
 
   override def getReferenceable = Some(referenceable)
 }
 
-object Reference {
-  def apply(referenceable: Referenceable, property: PropertyReference): Reference =
-    Reference(referenceable, Some(property))
+case class ReferenceWithProperty(referenceable: Referenceable, property: PropertyReference) extends ReferenceType {
+  def toQuery(referenceableMap: ReferenceableMap): String =
+    toQueryWithProperty(referenceableMap, referenceable, Some(property))
+
+  override def getReferenceable = Some(referenceable)
 }
 
 case class ValueReference[V](value: V)(implicit serializer: CypherExpressible[V]) extends ReferenceType {
