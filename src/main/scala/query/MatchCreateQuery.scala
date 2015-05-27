@@ -6,7 +6,7 @@ import action.ReturnDistinct
 import action.ReturnReference
 import path.AnyNode
 import path.AnyRelationship
-import path.NodeType
+import path.Node
 import path.Path
 import path.RelationshipType
 import where.Reference
@@ -53,7 +53,7 @@ trait MatchCreateQuery extends Query {
 
     val pathTransform = relevantMap.foldLeft(PathTranform(path)) { case (acc @ PathTranform(path, map), (referenceable, identifier)) =>
       referenceable match {
-        case node: NodeType =>
+        case node: Node =>
           val newNode = AnyNode()
           PathTranform(path.replaceNode(node, newNode), map - referenceable + (newNode -> identifier))
         case relationship: RelationshipType =>

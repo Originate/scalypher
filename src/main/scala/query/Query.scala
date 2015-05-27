@@ -8,7 +8,7 @@ import action.ReturnDistinct
 import action.ReturnReference
 import path.AnyNode
 import path.AnyRelationship
-import path.NodeType
+import path.Node
 import path.Path
 import path.RelationshipType
 import types._

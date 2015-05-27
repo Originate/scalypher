@@ -4,10 +4,10 @@ import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 
 case class PathPieces(startPiece: PathPiece, tail: Seq[PathPiece], relationship: Option[RelationshipType]) {
-  def --(node: NodeType): PathPieces =
+  def --(node: Node): PathPieces =
     copy(tail = tail :+ PathPiece(DirectionlessArrow, node, relationship), relationship = None)
 
-  def -->(node: NodeType): PathPieces =
+  def -->(node: Node): PathPieces =
     copy(tail = tail :+ PathPiece(RightArrow, node, relationship), relationship = None)
 }
 
@@ -18,11 +18,11 @@ object PathPieces {
 
 case class PathPiece(
   arrow: ArrowType,
-  node: NodeType,
+  node: Node,
   relationship: Option[RelationshipType] = None
 ) {
 
-  def replaceNode(oldNode: NodeType, newNode: NodeType): PathPiece =
+  def replaceNode(oldNode: Node, newNode: Node): PathPiece =
     if (node == oldNode) copy(node = newNode)
     else this
 
@@ -30,13 +30,13 @@ case class PathPiece(
     if (relationship exists (_ == oldRelationship)) copy(relationship = Some(newRelationship))
     else this
 
-  def --(node: NodeType): PathPieces =
+  def --(node: Node): PathPieces =
     PathPieces(this, Seq(PathPiece(DirectionlessArrow, node)), None)
 
   def --(relationship: RelationshipType): PathPieces =
     PathPieces(this, Seq(), Some(relationship))
 
-  def -->(node: NodeType): PathPieces =
+  def -->(node: Node): PathPieces =
     PathPieces(this, Seq(PathPiece(RightArrow, node)), None)
 
   def toQuery(referenceableMap: ReferenceableMap): String =
@@ -47,7 +47,7 @@ case class PathPiece(
 object PathPiece {
   def apply(
     arrow: ArrowType,
-    node: NodeType,
+    node: Node,
     relationship: RelationshipType
   ): PathPiece =
     PathPiece(arrow, node, Some(relationship))

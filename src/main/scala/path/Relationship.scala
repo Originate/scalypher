@@ -8,7 +8,7 @@ import com.originate.scalypher.where.ReferenceWithProperty
 import com.originate.scalypher.PropertyName
 
 sealed trait RelationshipType extends ToQueryWithIdentifiers with Referenceable {
-  def --(node: NodeType): PathPiece =
+  def --(node: Node): PathPiece =
     PathPiece(DirectionlessArrow, node, this)
 
   def property(propertyName: String): ReferenceWithProperty =
@@ -97,9 +97,9 @@ object AnyLengthRelationship {
 }
 
 case class DanglingRelationship(path: Path, relationship: RelationshipType) {
-  def --(node: NodeType): Path =
+  def --(node: Node): Path =
     path --(relationship, node)
 
-  def -->(node: NodeType): Path =
+  def -->(node: Node): Path =
     path -->(relationship, node)
 }

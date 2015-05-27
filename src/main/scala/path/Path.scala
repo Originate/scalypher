@@ -29,7 +29,7 @@ case class PathWithWhere(path: Path, where: Where) {
     CreateQuery(createPath, Seq(path), Some(where))
 }
 
-case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
+case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
 
   def create(createPath: Path): CreateQuery =
     CreateQuery(createPath, Seq(this))
@@ -52,19 +52,19 @@ case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Ref
   def delete(reference: Reference, rest: Reference*): Query =
     MatchQuery(this, Delete(reference, rest: _*))
 
-  def -->(node: NodeType): Path =
+  def -->(node: Node): Path =
     copy(pieces = pieces :+ PathPiece(RightArrow, node))
 
-  def -->(relationship: RelationshipType, node: NodeType): Path =
+  def -->(relationship: RelationshipType, node: Node): Path =
     copy(pieces = pieces :+ PathPiece(RightArrow, node, relationship))
 
   def <--(path: Path): Path =
     copy(pieces = (pieces :+ PathPiece(LeftArrow, path.start)) ++ path.pieces)
 
-  def <--(node: NodeType): Path =
+  def <--(node: Node): Path =
     copy(pieces = pieces :+ PathPiece(LeftArrow, node))
 
-  def <--(relationship: RelationshipType, node: NodeType): Path =
+  def <--(relationship: RelationshipType, node: Node): Path =
     copy(pieces = pieces :+ PathPiece(LeftArrow, node, relationship))
 
   def <--(pathPiece: PathPiece): Path = {
@@ -77,10 +77,10 @@ case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Ref
     copy(pieces = (pieces :+ fixedArrow) ++ pathPieces.tail)
   }
 
-  def --(node: NodeType): Path =
+  def --(node: Node): Path =
     copy(pieces = pieces :+ PathPiece(DirectionlessArrow, node))
 
-  def --(relationship: RelationshipType, node: NodeType): Path =
+  def --(relationship: RelationshipType, node: Node): Path =
     copy(pieces = pieces :+ PathPiece(DirectionlessArrow, node, relationship))
 
   def --(relationship: RelationshipType): DanglingRelationship =
@@ -92,7 +92,7 @@ case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Ref
     pathIdentifier + start.toQuery(referenceableMap) + (pieces map (_.toQuery(referenceableMap)) mkString "")
   }
 
-  private[scalypher] def replaceNode(oldNode: NodeType, newNode: NodeType): Path = {
+  private[scalypher] def replaceNode(oldNode: Node, newNode: Node): Path = {
     val newPieces = pieces map (_.replaceNode(oldNode, newNode))
 
     if (start == oldNode) Path(newNode, newPieces)

@@ -12,17 +12,17 @@ import com.originate.scalypher.where.ReferenceWithProperty
 
 import scala.language.implicitConversions
 
-sealed trait NodeType extends ToQueryWithIdentifiers with Referenceable {
+sealed trait Node extends ToQueryWithIdentifiers with Referenceable {
   def property(propertyName: String): ReferenceWithProperty =
     ReferenceWithProperty(this, PropertyName(propertyName))
 }
 
-object NodeType {
-  implicit def toPath(node: NodeType): Path =
+object Node {
+  implicit def toPath(node: Node): Path =
     Path(node)
 }
 
-class AnyNode extends NodeType {
+class AnyNode extends Node {
   def toQuery(referenceableMap: ReferenceableMap): String = {
     val identifier = getIdentifierOrEmptyString(referenceableMap, this)
     s"($identifier)"
@@ -37,7 +37,7 @@ object AnyNode {
 class CypherNode(
   val labels: Seq[Label] = Seq.empty,
   val properties: Seq[Property] = Seq.empty
-) extends NodeType {
+) extends Node {
   def toQuery(referenceableMap: ReferenceableMap): String = {
     val identifier = getIdentifierOrEmptyString(referenceableMap, this)
     val labelsQuery = labels map (_.toQuery) mkString ""
