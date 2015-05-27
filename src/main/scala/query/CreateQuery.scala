@@ -17,9 +17,9 @@ case class CreateQuery(
     val matchString = ifNonEmpty(matchPaths) { paths =>
       stringListWithPrefix("MATCH", matchPaths map (_.toQuery(referenceableMap)))
     }
-    val whereString = matchString flatMap { _ =>
-      where map ("WHERE " + _.toQuery(referenceableMap))
-    }
+    val whereString =
+      if (matchString.isEmpty) None
+      else where map ("WHERE " + _.toQuery(referenceableMap))
     val createString = Some("CREATE " + cleanedCreatePath.toQuery(modifiedReferenceableMap))
     val returnString = returnAction map (_.toQuery(referenceableMap))
 
