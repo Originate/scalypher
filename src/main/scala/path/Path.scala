@@ -55,7 +55,7 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referen
   def -->(node: Node): Path =
     copy(pieces = pieces :+ PathPiece(RightArrow, node))
 
-  def -->(relationship: RelationshipType, node: Node): Path =
+  def -->(relationship: Relationship, node: Node): Path =
     copy(pieces = pieces :+ PathPiece(RightArrow, node, relationship))
 
   def <--(path: Path): Path =
@@ -64,7 +64,7 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referen
   def <--(node: Node): Path =
     copy(pieces = pieces :+ PathPiece(LeftArrow, node))
 
-  def <--(relationship: RelationshipType, node: Node): Path =
+  def <--(relationship: Relationship, node: Node): Path =
     copy(pieces = pieces :+ PathPiece(LeftArrow, node, relationship))
 
   def <--(pathPiece: PathPiece): Path = {
@@ -80,10 +80,10 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referen
   def --(node: Node): Path =
     copy(pieces = pieces :+ PathPiece(DirectionlessArrow, node))
 
-  def --(relationship: RelationshipType, node: Node): Path =
+  def --(relationship: Relationship, node: Node): Path =
     copy(pieces = pieces :+ PathPiece(DirectionlessArrow, node, relationship))
 
-  def --(relationship: RelationshipType): DanglingRelationship =
+  def --(relationship: Relationship): DanglingRelationship =
     DanglingRelationship(this, relationship)
 
   def toQuery(referenceableMap: ReferenceableMap): String = {
@@ -99,7 +99,7 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referen
     else copy(pieces = newPieces)
   }
 
-  private[scalypher] def replaceRelationship(oldRelationship: RelationshipType, newRelationship: RelationshipType): Path =
+  private[scalypher] def replaceRelationship(oldRelationship: Relationship, newRelationship: Relationship): Path =
     copy(pieces = pieces map (_.replaceRelationship(oldRelationship, newRelationship)))
 
   private[scalypher] def referenceables: Set[Referenceable] = {

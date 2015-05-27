@@ -8,7 +8,7 @@ import path.AnyNode
 import path.AnyRelationship
 import path.Node
 import path.Path
-import path.RelationshipType
+import path.Relationship
 import where.Reference
 import types._
 
@@ -56,7 +56,7 @@ trait MatchCreateQuery extends Query {
         case node: Node =>
           val newNode = AnyNode()
           PathTranform(path.replaceNode(node, newNode), map - referenceable + (newNode -> identifier))
-        case relationship: RelationshipType =>
+        case relationship: Relationship =>
           val newRelationship = AnyRelationship()
           PathTranform(path.replaceRelationship(relationship, newRelationship), map - referenceable + (newRelationship -> identifier))
         case _ =>

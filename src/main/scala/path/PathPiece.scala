@@ -3,7 +3,7 @@ package com.originate.scalypher.path
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 
-case class PathPieces(startPiece: PathPiece, tail: Seq[PathPiece], relationship: Option[RelationshipType]) {
+case class PathPieces(startPiece: PathPiece, tail: Seq[PathPiece], relationship: Option[Relationship]) {
   def --(node: Node): PathPieces =
     copy(tail = tail :+ PathPiece(DirectionlessArrow, node, relationship), relationship = None)
 
@@ -12,28 +12,28 @@ case class PathPieces(startPiece: PathPiece, tail: Seq[PathPiece], relationship:
 }
 
 object PathPieces {
-  def apply(pathPiece: PathPiece, relationship: RelationshipType): PathPieces =
+  def apply(pathPiece: PathPiece, relationship: Relationship): PathPieces =
     PathPieces(pathPiece, Seq(), Some(relationship))
 }
 
 case class PathPiece(
   arrow: ArrowType,
   node: Node,
-  relationship: Option[RelationshipType] = None
+  relationship: Option[Relationship] = None
 ) {
 
   def replaceNode(oldNode: Node, newNode: Node): PathPiece =
     if (node == oldNode) copy(node = newNode)
     else this
 
-  def replaceRelationship(oldRelationship: RelationshipType, newRelationship: RelationshipType): PathPiece =
+  def replaceRelationship(oldRelationship: Relationship, newRelationship: Relationship): PathPiece =
     if (relationship exists (_ == oldRelationship)) copy(relationship = Some(newRelationship))
     else this
 
   def --(node: Node): PathPieces =
     PathPieces(this, Seq(PathPiece(DirectionlessArrow, node)), None)
 
-  def --(relationship: RelationshipType): PathPieces =
+  def --(relationship: Relationship): PathPieces =
     PathPieces(this, Seq(), Some(relationship))
 
   def -->(node: Node): PathPieces =
@@ -48,7 +48,7 @@ object PathPiece {
   def apply(
     arrow: ArrowType,
     node: Node,
-    relationship: RelationshipType
+    relationship: Relationship
   ): PathPiece =
     PathPiece(arrow, node, Some(relationship))
 }

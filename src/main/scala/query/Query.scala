@@ -10,7 +10,7 @@ import path.AnyNode
 import path.AnyRelationship
 import path.Node
 import path.Path
-import path.RelationshipType
+import path.Relationship
 import types._
 import util.Exceptions.IdentifierDoesntExistException
 import where.Reference
