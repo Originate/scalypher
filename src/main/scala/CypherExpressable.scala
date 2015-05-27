@@ -32,10 +32,10 @@ object CypherExpressible {
       if (boolean) "TRUE" else "FALSE"
   }
 
-  implicit def optionExpressible[T](implicit querifier: CypherExpressible[T]): CypherExpressible[Option[T]] =
+  implicit def optionExpressible[T](implicit serializer: CypherExpressible[T]): CypherExpressible[Option[T]] =
     new CypherExpressible[Option[T]] {
       def toQuery(valueOption: Option[T]): String =
-        valueOption map querifier.toQuery getOrElse "NULL"
+        valueOption map serializer.toQuery getOrElse "NULL"
     }
 
 }
