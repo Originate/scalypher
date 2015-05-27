@@ -25,7 +25,7 @@ case class Comparison(reference1: Reference, comparator: Comparator, reference2:
     Set(reference1, reference2) flatMap (_.getReferenceable)
 }
 
-case class Check(reference: Reference, check: CheckType) extends Condition {
+case class NullCondition(reference: Reference, check: NullCheck) extends Condition {
   def toQuery(referenceableMap: ReferenceableMap): String =
     Seq(reference.toQuery(referenceableMap), check.toQuery) mkString " "
 
