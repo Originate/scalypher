@@ -5,7 +5,7 @@ import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.where.ObjectReference
-import com.originate.scalypher.where.ReferenceType
+import com.originate.scalypher.where.Reference
 
 
 sealed trait Action {
@@ -15,11 +15,11 @@ sealed trait Action {
 sealed trait ReturnAction extends Action
 
 abstract class ReferenceListAction(keyword: String) extends Action {
-  def reference: ReferenceType
+  def reference: Reference
 
-  def rest: Seq[ReferenceType]
+  def rest: Seq[Reference]
 
-  private val references: Set[ReferenceType] = (reference +: rest).toSet
+  private val references: Set[Reference] = (reference +: rest).toSet
 
   def referenceables: Set[Referenceable] =
     references flatMap (_.getReferenceable)
@@ -28,11 +28,11 @@ abstract class ReferenceListAction(keyword: String) extends Action {
     s"$keyword " + (references map (_.toQuery(referenceableMap)) mkString ", ")
 }
 
-case class Delete(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("DELETE")
+case class Delete(reference: Reference, rest: Reference*) extends ReferenceListAction("DELETE")
 
-case class ReturnReference(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN") with ReturnAction
+case class ReturnReference(reference: Reference, rest: Reference*) extends ReferenceListAction("RETURN") with ReturnAction
 
-case class ReturnDistinct(reference: ReferenceType, rest: ReferenceType*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
+case class ReturnDistinct(reference: Reference, rest: Reference*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
 
 case object ReturnAll extends ReturnAction {
   def referenceables: Set[Referenceable] = Set()

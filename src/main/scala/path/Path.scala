@@ -9,20 +9,20 @@ import com.originate.scalypher.MatchQuery
 import com.originate.scalypher.CreateQuery
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
-import com.originate.scalypher.where.ReferenceType
+import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
 case class PathWithWhere(path: Path, where: Where) {
-  def returns(reference: ReferenceType, rest: ReferenceType*): Query =
+  def returns(reference: Reference, rest: Reference*): Query =
     MatchQuery(path, where, ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: ReferenceType, rest: ReferenceType*): Query =
+  def returnDistinct(reference: Reference, rest: Reference*): Query =
     MatchQuery(path, where, ReturnDistinct(reference, rest: _*))
 
   def returnAll: Query =
     MatchQuery(path, where, ReturnAll)
 
-  def delete(reference: ReferenceType, rest: ReferenceType*): Query =
+  def delete(reference: Reference, rest: Reference*): Query =
     MatchQuery(path, where, Delete(reference, rest: _*))
 
   def create(createPath: Path): CreateQuery =
@@ -40,16 +40,16 @@ case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Ref
   def where(whereFunction: Path => Where): PathWithWhere =
     PathWithWhere(this, whereFunction(this))
 
-  def returns(reference: ReferenceType, rest: ReferenceType*): Query =
+  def returns(reference: Reference, rest: Reference*): Query =
     MatchQuery(this, ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: ReferenceType, rest: ReferenceType*): Query =
+  def returnDistinct(reference: Reference, rest: Reference*): Query =
     MatchQuery(this, ReturnDistinct(reference, rest: _*))
 
   def returnAll: Query =
     MatchQuery(this, ReturnAll)
 
-  def delete(reference: ReferenceType, rest: ReferenceType*): Query =
+  def delete(reference: Reference, rest: Reference*): Query =
     MatchQuery(this, Delete(reference, rest: _*))
 
   def -->(node: NodeType): Path =

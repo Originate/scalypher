@@ -13,7 +13,7 @@ import path.Path
 import path.RelationshipType
 import types._
 import util.Exceptions.IdentifierDoesntExistException
-import where.ReferenceType
+import where.Reference
 import where.Where
 
 trait Query extends ToQuery {

@@ -9,7 +9,7 @@ import path.AnyRelationship
 import path.NodeType
 import path.Path
 import path.RelationshipType
-import where.ReferenceType
+import where.Reference
 import types._
 
 trait MatchCreateQuery extends Query {
@@ -18,10 +18,10 @@ trait MatchCreateQuery extends Query {
 
   def returnAction: Option[ReturnAction]
 
-  def returns(reference: ReferenceType, rest: ReferenceType*): MatchCreateQuery =
+  def returns(reference: Reference, rest: Reference*): MatchCreateQuery =
     withReturnAction(ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: ReferenceType, rest: ReferenceType*): MatchCreateQuery =
+  def returnDistinct(reference: Reference, rest: Reference*): MatchCreateQuery =
     withReturnAction(ReturnDistinct(reference, rest: _*))
 
   def returnAll: MatchCreateQuery =
