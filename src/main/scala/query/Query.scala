@@ -75,7 +75,7 @@ object Query {
   def toQueryWithProperty(
     referenceableMap: ReferenceableMap,
     referenceable: Referenceable,
-    property: Option[PropertyReference] = None
+    property: Option[PropertyName] = None
   ): String = {
     val identifier = referenceableMap.get(referenceable) getOrElse (throw new IdentifierDoesntExistException())
     val propertyString = property map (p => s".${p.name}") getOrElse ""

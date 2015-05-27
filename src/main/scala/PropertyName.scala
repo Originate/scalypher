@@ -1,3 +1,3 @@
 package com.originate.scalypher
 
-case class PropertyReference(name: String)
+case class PropertyName(name: String)

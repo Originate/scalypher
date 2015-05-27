@@ -3,7 +3,7 @@ package com.originate.scalypher.path
 import com.originate.scalypher.Label
 import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
 import com.originate.scalypher.Property
-import com.originate.scalypher.PropertyReference
+import com.originate.scalypher.PropertyName
 import com.originate.scalypher.Query
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.types.Referenceable
@@ -13,8 +13,8 @@ import com.originate.scalypher.where.ReferenceWithProperty
 import scala.language.implicitConversions
 
 sealed trait NodeType extends ToQueryWithIdentifiers with Referenceable {
-  def property(propertyReference: String): ReferenceWithProperty =
-    ReferenceWithProperty(this, PropertyReference(propertyReference))
+  def property(propertyName: String): ReferenceWithProperty =
+    ReferenceWithProperty(this, PropertyName(propertyName))
 }
 
 object NodeType {

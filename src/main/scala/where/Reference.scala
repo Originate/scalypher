@@ -3,7 +3,7 @@ package com.originate.scalypher.where
 import com.originate.scalypher.Query.toQueryWithProperty
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
-import com.originate.scalypher.PropertyReference
+import com.originate.scalypher.PropertyName
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.CypherExpressible
 import scala.language.implicitConversions
@@ -43,7 +43,7 @@ case class Reference(referenceable: Referenceable) extends ReferenceType {
   override def getReferenceable = Some(referenceable)
 }
 
-case class ReferenceWithProperty(referenceable: Referenceable, property: PropertyReference) extends ReferenceType {
+case class ReferenceWithProperty(referenceable: Referenceable, property: PropertyName) extends ReferenceType {
   def toQuery(referenceableMap: ReferenceableMap): String =
     toQueryWithProperty(referenceableMap, referenceable, Some(property))
 

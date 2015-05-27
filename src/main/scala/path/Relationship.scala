@@ -5,14 +5,14 @@ import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
 import com.originate.scalypher.where.ReferenceWithProperty
-import com.originate.scalypher.PropertyReference
+import com.originate.scalypher.PropertyName
 
 sealed trait RelationshipType extends ToQueryWithIdentifiers with Referenceable {
   def --(node: NodeType): PathPiece =
     PathPiece(DirectionlessArrow, node, this)
 
-  def property(propertyReference: String): ReferenceWithProperty =
-    ReferenceWithProperty(this, PropertyReference(propertyReference))
+  def property(propertyName: String): ReferenceWithProperty =
+    ReferenceWithProperty(this, PropertyName(propertyName))
 
   protected def makeRelationshipString(
     referenceableMap: ReferenceableMap,
