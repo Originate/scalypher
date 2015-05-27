@@ -75,20 +75,32 @@ class MergeQuerySpec extends WordSpec with Matchers {
           }
         }
 
+        "created node/relationship is not referenced" in {
+          val query = (merge onMerge Seq()).toQuery
+          val (startId, endId, otherId, relationshipId) = extractIds(query)
+
+          val mergeTest = s"""MERGE ($startId)-[$relationshipId:label]-($endId)-->($otherId)"""
+          val onCreateTest = s"""ON CREATE SET $startId.a = "b""""
+          query should include (mergeTest)
+          query should include (onCreateTest)
+          query should not include ("""ON MERGE SET""")
+          relationshipId shouldBe ""
+        }
+
         "multiple properties are set" in {
           val query = merge.toQuery
           val (startId, endId, otherId, relationshipId) = extractIds(query)
+
           val mergeTest = s"""MERGE ($startId)-[$relationshipId:label]-($endId)-->($otherId)"""
           val onCreateTest = s"""ON CREATE SET $startId.a = "b""""
           val onMergeTest = s"""ON MERGE SET $relationshipId.c = "d", $otherId.e = "f""""
-          query should include (mergeTest)
-          query should include (onCreateTest)
           query should include (onMergeTest)
         }
 
         "multiple properties are set and a return clause is given" in {
           val query = (merge returns createRelationship).toQuery
           val (startId, endId, otherId, relationshipId) = extractIds(query)
+
           val mergeTest = s"""MERGE ($startId)-[$relationshipId:label]-($endId)-->($otherId)"""
           val onCreateTest = s"""ON CREATE SET $startId.a = "b""""
           val onMergeTest = s"""ON MERGE SET $relationshipId.c = "d", $otherId.e = "f""""
