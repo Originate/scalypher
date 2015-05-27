@@ -31,7 +31,7 @@ class QuerySpec extends WordSpec with Matchers {
     "only a create path is given" must {
 
       "produce a query that creates a node" in {
-        val create = CreateQuery(startNode, Seq(), None, None)
+        val create = CreateQuery(startNode)
         create.toQuery shouldBe "CREATE (:label1)"
       }
 
@@ -40,7 +40,7 @@ class QuerySpec extends WordSpec with Matchers {
     "a match and create path is given" must {
 
       "use simple identifiers for references in the create path" in {
-        val create = CreateQuery(createPath, Seq(matchPath), None, None)
+        val create = matchPath create createPath
         create.toQuery shouldBe "MATCH (a1:label1)--(a2:label2) CREATE (a1)-[:label]-(a2)"
       }
 
@@ -53,12 +53,12 @@ class QuerySpec extends WordSpec with Matchers {
       }
 
       "include a where path if provided" in {
-        val create = CreateQuery(createPath, Seq(matchPath), Some(where), None)
+        val create = matchPath where where create createPath
         create.toQuery shouldBe """MATCH (a1:label1)--(a2:label2) WHERE a1.id <> "test" CREATE (a1)-[:label]-(a2)"""
       }
 
       "include a return statement if provided" in {
-        val create = CreateQuery(createPath, Seq(matchPath), None, Some(ReturnDistinct(startNode)))
+        val create = matchPath create createPath returnDistinct startNode
         create.toQuery shouldBe """MATCH (a1:label1)--(a2:label2) CREATE (a1)-[:label]-(a2) RETURN DISTINCT a1"""
       }
 

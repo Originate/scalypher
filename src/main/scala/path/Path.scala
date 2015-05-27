@@ -25,11 +25,14 @@ case class PathWithWhere(path: Path, where: Where) {
   def delete(reference: ReferenceType, rest: ReferenceType*): Query =
     MatchQuery(path, where, Delete(reference, rest: _*))
 
-  def create(createPath: Path): Query =
-    CreateQuery(createPath, Seq(path), Some(where), None)
+  def create(createPath: Path): CreateQuery =
+    CreateQuery(createPath, Seq(path), Some(where))
 }
 
 case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
+
+  def create(createPath: Path): CreateQuery =
+    CreateQuery(createPath, Seq(this))
 
   def where(whereClause: Where): PathWithWhere =
     PathWithWhere(this, whereClause)
