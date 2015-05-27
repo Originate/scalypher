@@ -33,17 +33,12 @@ trait MatchCreateQuery extends Query {
 
   protected def withReturnAction(action: ReturnAction): MatchCreateQuery
 
-  protected def forcedCreateReferenceables: Set[Referenceable] = Set.empty
+  protected def forcedCreateReferenceables: Set[Referenceable]
 
   protected def modifiedReferenceableMap: ReferenceableMap = {
-    val returnReferenceables = returnAction map (_.referenceables) getOrElse Set.empty
-    val returnMap = referenceableMap filterKeys { referenceable =>
-      (returnReferenceables contains referenceable) || (forcedCreateReferenceables contains referenceable)
-    }
-    createMap ++ returnMap
+    val forcedMap = referenceableMap filterKeys (forcedCreateReferenceables contains _)
+    createMap ++ forcedMap
   }
-
-  protected case class PathTranform(path: Path, map: ReferenceableMap = Map[Referenceable, String]())
 
   protected def cleanedCreatePath: Path
 
@@ -70,5 +65,7 @@ trait MatchCreateQuery extends Query {
 
     (pathTransform.path, pathTransform.map)
   }
+
+  private case class PathTranform(path: Path, map: ReferenceableMap = Map[Referenceable, String]())
 
 }

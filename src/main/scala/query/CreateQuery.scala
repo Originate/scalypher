@@ -31,6 +31,9 @@ case class CreateQuery(
     )
   }
 
+  protected val forcedCreateReferenceables: Set[Referenceable] =
+    returnAction map (_.referenceables) getOrElse Set.empty
+
   protected def withReturnAction(action: ReturnAction): CreateQuery =
     copy(returnAction = Some(action))
 
