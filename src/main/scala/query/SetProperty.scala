@@ -17,5 +17,5 @@ object SetProperty {
   }
 
   private[scalypher] def withSerializedValue(reference: ReferenceWithProperty, serializedValue: String): SetProperty =
-    SetProperty(reference, serializedValue)
+    new SetProperty(reference, serializedValue)
 }
