@@ -41,9 +41,7 @@ class CypherNode(
   def toQuery(referenceableMap: ReferenceableMap): String = {
     val identifier = getIdentifierOrEmptyString(referenceableMap, this)
     val labelsQuery = labels map (_.toQuery) mkString ""
-    val propertiesQuery =
-      if (properties.isEmpty) ""
-      else "{" + (properties map (_.toQuery) mkString ",") + "}"
+    val propertiesQuery = Property.toQuery(properties)
 
     s"($identifier$labelsQuery$propertiesQuery)"
   }

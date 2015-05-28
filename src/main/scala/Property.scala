@@ -20,4 +20,9 @@ object Property {
 
   def apply[T](key: String, value: T)(implicit serializer: CypherExpressible[T]): Property =
     new Property(key, serializer.toQuery(value))
+
+  def toQuery(properties: Seq[Property]): String =
+    if (properties.isEmpty) ""
+    else "{" + (properties map (_.toQuery) mkString ",") + "}"
+
 }
