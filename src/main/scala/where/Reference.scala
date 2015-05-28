@@ -38,6 +38,9 @@ object Reference {
 }
 
 case class ObjectReference(referenceable: Referenceable) extends Reference {
+  def property(property: String): ReferenceWithProperty =
+    ReferenceWithProperty(referenceable, PropertyName(property))
+
   def toQuery(referenceableMap: ReferenceableMap): String =
     toQueryWithProperty(referenceableMap, referenceable, None)
 

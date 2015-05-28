@@ -15,4 +15,7 @@ object SetProperty {
   def apply[T](reference: ReferenceWithProperty, value: T)(implicit serializer: CypherExpressible[T]): SetProperty = {
     new SetProperty(reference, serializer.toQuery(value))
   }
+
+  private[scalypher] def withSerializedValue(reference: ReferenceWithProperty, serializedValue: String): SetProperty =
+    SetProperty(reference, serializedValue)
 }
