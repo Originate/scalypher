@@ -69,4 +69,10 @@ object CypherNode {
   def apply(labels: Seq[String], keyValues: Seq[(String, String)]): CypherNode =
     new CypherNode(labels map Label.apply, keyValues map (kv => Property.apply(kv)))
 
+  def apply(label: String, properties: Seq[Property]): CypherNode =
+    new CypherNode(Seq(Label(label)), properties)
+
+  def apply(label: Label, properties: Seq[Property]): CypherNode =
+    new CypherNode(Seq(label), properties)
+
 }
