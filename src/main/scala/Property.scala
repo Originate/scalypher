@@ -1,10 +1,14 @@
 package com.originate.scalypher
 
 import com.originate.scalypher.where.ObjectReference
+import com.originate.scalypher.types.Referenceable
 
 class Property private (key: String, serializedValue: String) {
   def toQuery: String =
     s"""$key:$serializedValue"""
+
+  def toSetProperty(referenceable: Referenceable): SetProperty =
+    toSetProperty(ObjectReference(referenceable))
 
   def toSetProperty(reference: ObjectReference): SetProperty =
     SetProperty.withSerializedValue(reference.property(key), serializedValue)
