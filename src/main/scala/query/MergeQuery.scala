@@ -27,7 +27,7 @@ case class MergeQuery(
       stringListWithPrefix("ON CREATE SET", properties map (_.toQuery(referenceableMap)))
     }
     val onMergeString = ifNonEmpty(mergeProperties) { properties =>
-      stringListWithPrefix("ON MERGE SET", properties map (_.toQuery(referenceableMap)))
+      stringListWithPrefix("ON MATCH SET", properties map (_.toQuery(referenceableMap)))
     }
     val returnString = returnAction map (_.toQuery(referenceableMap))
 

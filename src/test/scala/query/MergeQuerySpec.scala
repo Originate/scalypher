@@ -83,7 +83,7 @@ class MergeQuerySpec extends WordSpec with Matchers {
           val onCreateTest = s"""ON CREATE SET $startId.a = "b""""
           query should include (mergeTest)
           query should include (onCreateTest)
-          query should not include ("""ON MERGE SET""")
+          query should not include ("""ON MATCH SET""")
           relationshipId shouldBe ""
         }
 
@@ -93,7 +93,7 @@ class MergeQuerySpec extends WordSpec with Matchers {
 
           val mergeTest = s"""MERGE ($startId)-[$relationshipId:label]-($endId)-->($otherId)"""
           val onCreateTest = s"""ON CREATE SET $startId.a = "b""""
-          val onMergeTest = s"""ON MERGE SET $relationshipId.c = "d", $otherId.e = "f""""
+          val onMergeTest = s"""ON MATCH SET $relationshipId.c = "d", $otherId.e = "f""""
           query should include (onMergeTest)
         }
 
@@ -103,7 +103,7 @@ class MergeQuerySpec extends WordSpec with Matchers {
 
           val mergeTest = s"""MERGE ($startId)-[$relationshipId:label]-($endId)-->($otherId)"""
           val onCreateTest = s"""ON CREATE SET $startId.a = "b""""
-          val onMergeTest = s"""ON MERGE SET $relationshipId.c = "d", $otherId.e = "f""""
+          val onMergeTest = s"""ON MATCH SET $relationshipId.c = "d", $otherId.e = "f""""
           val returnTest = s"""RETURN $relationshipId"""
           query should include (mergeTest)
           query should include (onCreateTest)
@@ -146,12 +146,12 @@ class MergeQuerySpec extends WordSpec with Matchers {
 
     "include ON MERGE SET clause" in {
       val mergeQuery = MergeQuery(startNode) onMerge Seq(startNode.property("a").set("b"))
-      mergeQuery.toQuery shouldBe """MERGE (a1:label1) ON MERGE SET a1.a = "b""""
+      mergeQuery.toQuery shouldBe """MERGE (a1:label1) ON MATCH SET a1.a = "b""""
     }
 
     "allow multiple properties to be set" in {
       val mergeQuery = MergeQuery(startNode) onMerge Seq(startNode.property("a").set("b"), startNode.property("b").set("c"))
-      mergeQuery.toQuery shouldBe """MERGE (a1:label1) ON MERGE SET a1.a = "b", a1.b = "c""""
+      mergeQuery.toQuery shouldBe """MERGE (a1:label1) ON MATCH SET a1.a = "b", a1.b = "c""""
     }
 
   }
