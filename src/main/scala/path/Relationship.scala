@@ -6,6 +6,7 @@ import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
 import com.originate.scalypher.where.ReferenceWithProperty
 import com.originate.scalypher.PropertyName
+import com.originate.scalypher.Property
 
 sealed trait Relationship extends ToQueryWithIdentifiers with Referenceable {
   def --(node: Node): PathPiece =
@@ -24,6 +25,16 @@ sealed trait Relationship extends ToQueryWithIdentifiers with Referenceable {
   private def kindsToQuery(kinds: Seq[String]): String =
     if (kinds.isEmpty) ""
     else ":" + (kinds mkString "|")
+}
+
+class CreateRelationship(val kind: String, val properties: Seq[Property]) extends Relationship {
+  def toQuery(referenceableMap: ReferenceableMap): String =
+    makeRelationshipString(referenceableMap, Seq(kind), Property.toQuery(properties))
+}
+
+object CreateRelationship {
+  def apply(kind: String, properties: Seq[Property] = Seq.empty): CreateRelationship =
+    new CreateRelationship(kind, properties)
 }
 
 class AnyRelationship() extends Relationship {
