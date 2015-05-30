@@ -18,6 +18,9 @@ case class MergeQuery(
   def onMerge(properties: Seq[SetProperty]): MergeQuery =
     copy(mergeProperties = properties)
 
+  def onCreateAndMerge(properties: Seq[SetProperty]): MergeQuery =
+    copy(createProperties = properties, mergeProperties = properties)
+
   def toQuery: String = {
     val matchString = ifNonEmpty(matchPaths) { paths =>
       stringListWithPrefix("MATCH", matchPaths map (_.toQuery(referenceableMap)))
