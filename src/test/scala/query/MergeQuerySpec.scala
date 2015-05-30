@@ -67,11 +67,10 @@ class MergeQuerySpec extends WordSpec with Matchers {
           val Identifiers = """MATCH \((\w+):label1\)--\((\w+):label2\), \((\w+):label1\)-->\((\w+)\).*""".r
           val CreateIdentifier = """.*\[(\w*):label\].*""".r
 
-          query match {
-            case Identifiers(startId, endId, startId2, otherId) if startId == startId2 =>
-              query match {
-                case CreateIdentifier(relationshipId) => (startId, endId, otherId, relationshipId)
-              }
+          (query, query) match {
+            case (Identifiers(startId, endId, startId2, otherId), CreateIdentifier(relationshipId)) =>
+              startId shouldBe startId2
+              (startId, endId, otherId, relationshipId)
           }
         }
 
