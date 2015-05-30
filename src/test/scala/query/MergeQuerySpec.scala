@@ -94,6 +94,7 @@ class MergeQuerySpec extends WordSpec with Matchers {
           val onCreateTest = s"""ON CREATE SET $startId.a = "b""""
           val onMergeTest = s"""ON MATCH SET $relationshipId.c = "d", $otherId.e = "f""""
           query should include (onMergeTest)
+          query should include (onCreateTest)
         }
 
         "multiple properties are set and a return clause is given" in {
