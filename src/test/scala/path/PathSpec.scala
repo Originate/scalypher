@@ -3,6 +3,7 @@ package test.path
 import com.originate.scalypher.path.AnyNode
 import com.originate.scalypher.path.KindRelationship
 import com.originate.scalypher.action.ReturnDistinct
+import com.originate.scalypher.MatchQuery
 import com.originate.scalypher.Query
 
 import org.scalatest._
@@ -16,12 +17,12 @@ class PathSpec extends WordSpec with Matchers {
 
     "respect arrows" in {
       val path = startNode --> AnyNode() <-- AnyNode()
-      Query(path, returns).toQuery shouldBe "MATCH (a1)-->()<--() RETURN DISTINCT a1"
+      MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)-->()<--() RETURN DISTINCT a1"
     }
 
     "respect directionless arrows" in {
       val path = startNode -- AnyNode() -- AnyNode()
-      Query(path, returns).toQuery shouldBe "MATCH (a1)--()--() RETURN DISTINCT a1"
+      MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)--()--() RETURN DISTINCT a1"
     }
 
   }
@@ -32,40 +33,40 @@ class PathSpec extends WordSpec with Matchers {
 
     "respect right arrows" in {
       val path = startNode -- relationship1 --> AnyNode()
-      Query(path, returns).toQuery shouldBe "MATCH (a1)-[:a]->() RETURN DISTINCT a1"
+      MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)-[:a]->() RETURN DISTINCT a1"
     }
 
     "respect left arrows" in {
       val path = startNode <-- relationship1 -- AnyNode()
-      Query(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-() RETURN DISTINCT a1"
+      MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-() RETURN DISTINCT a1"
     }
 
     "handle deep nesting regardless of '-' operator precedence" when {
 
       "the path extends to another node" in {
         val path = startNode <-- relationship1 -- AnyNode() -- AnyNode()
-        Query(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()--() RETURN DISTINCT a1"
+        MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()--() RETURN DISTINCT a1"
       }
 
       "the path extends to a relationship and then a node" in {
         val endNode = AnyNode()
         val path = startNode <-- relationship1 -- AnyNode() -- relationship1 -- endNode
-        Query(path, ReturnDistinct(endNode)).toQuery shouldBe "MATCH ()<-[:a]-()-[:a]-(a1) RETURN DISTINCT a1"
+        MatchQuery(path, ReturnDistinct(endNode)).toQuery shouldBe "MATCH ()<-[:a]-()-[:a]-(a1) RETURN DISTINCT a1"
       }
 
       "the path extends to another node and then a right arrow" in {
         val path = startNode <-- relationship1 -- AnyNode() --> AnyNode()
-        Query(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()-->() RETURN DISTINCT a1"
+        MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()-->() RETURN DISTINCT a1"
       }
 
       "the path extends to another node and then a left arrow" in {
         val path = startNode <-- relationship1 -- AnyNode() <-- AnyNode()
-        Query(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()<--() RETURN DISTINCT a1"
+        MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()<--() RETURN DISTINCT a1"
       }
 
       "the path is long and convoluted" in {
         val path = startNode <-- relationship1 -- AnyNode() <-- AnyNode() -- relationship1 --> AnyNode() -- relationship1 -- AnyNode() -- relationship1 -- AnyNode() --> startNode
-        Query(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()<--()-[:a]->()-[:a]-()-[:a]-()-->(a1) RETURN DISTINCT a1"
+        MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()<--()-[:a]->()-[:a]-()-[:a]-()-->(a1) RETURN DISTINCT a1"
       }
 
     }

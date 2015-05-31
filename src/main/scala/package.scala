@@ -1,14 +1,14 @@
 package com.originate.scalypher
 
+import where.ObjectReference
 import where.Reference
-import where.ReferenceType
 
 package object types {
   trait Referenceable
 
   object Referenceable {
-    implicit def toReference(referenceable: Referenceable): ReferenceType =
-      Reference(referenceable)
+    implicit def toReference(referenceable: Referenceable): Reference =
+      ObjectReference(referenceable)
   }
 
   type ReferenceableMap = Map[Referenceable, String]

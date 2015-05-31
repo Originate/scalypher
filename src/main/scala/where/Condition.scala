@@ -1,7 +1,7 @@
 package com.originate.scalypher.where
 
 import com.originate.scalypher.util.Exceptions.MismatchedInterpolatedStringWithReferences
-import com.originate.scalypher.PropertyReference
+import com.originate.scalypher.PropertyName
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.path.AnyNode
@@ -17,7 +17,7 @@ object Condition {
     Where(condition)
 }
 
-case class Comparison(reference1: ReferenceType, comparator: Comparator, reference2: ReferenceType) extends Condition {
+case class Comparison(reference1: Reference, comparator: Comparator, reference2: Reference) extends Condition {
   def toQuery(referenceableMap: ReferenceableMap): String =
     Seq(reference1.toQuery(referenceableMap), comparator.toQuery, reference2.toQuery(referenceableMap)) mkString " "
 
@@ -25,7 +25,7 @@ case class Comparison(reference1: ReferenceType, comparator: Comparator, referen
     Set(reference1, reference2) flatMap (_.getReferenceable)
 }
 
-case class Check(reference: ReferenceType, check: CheckType) extends Condition {
+case class NullCondition(reference: Reference, check: NullCheck) extends Condition {
   def toQuery(referenceableMap: ReferenceableMap): String =
     Seq(reference.toQuery(referenceableMap), check.toQuery) mkString " "
 
@@ -46,7 +46,7 @@ case class PredicateCondition(predicate: Predicate, projection: Collection, wher
     projection.referenceables
 }
 
-case class Expression(string: String, references: ReferenceType*) extends Condition {
+case class Expression(string: String, references: Reference*) extends Condition {
   def toQuery(referenceableMap: ReferenceableMap): String = {
     val questionMarksCount = (string filter (_ == '?')).size
     if (questionMarksCount != references.size)

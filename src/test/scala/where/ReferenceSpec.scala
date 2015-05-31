@@ -7,6 +7,7 @@ import com.originate.scalypher.path.AnyNode
 import com.originate.scalypher.path.CypherNode
 import com.originate.scalypher.path.KindRelationship
 import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.CypherExpressible._
 
 import org.scalatest._
 
@@ -15,15 +16,60 @@ class ReferenceSpec extends WordSpec with Matchers {
   val node1 = AnyNode()
   val emptyMap: ReferenceableMap = Map.empty
 
-  "given a string" must {
+  "ValueReferences" when {
 
-    "serialize" in {
-      ValueReference("asdf").toQuery(emptyMap) shouldBe "\"asdf\""
+    "given a string" must {
+
+      "serialize" in {
+        ValueReference("asdf").toQuery(emptyMap) shouldBe "\"asdf\""
+      }
+
+      "escape quotes" in {
+        val string = """asdf "asdf" asdf"""
+        ValueReference(string).toQuery(emptyMap) shouldBe """"asdf \"asdf\" asdf""""
+      }
+
     }
 
-    "escape quotes" in {
-      val string = """asdf "asdf" asdf"""
-      ValueReference(string).toQuery(emptyMap) shouldBe """"asdf \"asdf\" asdf""""
+    "given a double" must {
+
+      "serialize" in {
+        ValueReference(2.01).toQuery(emptyMap) shouldBe "2.01"
+      }
+
+    }
+
+    "given an int" must {
+
+      "serialize" in {
+        ValueReference(2).toQuery(emptyMap) shouldBe "2"
+      }
+
+    }
+
+    "given a boolean" must {
+
+      "serialize" in {
+        ValueReference(true).toQuery(emptyMap) shouldBe "TRUE"
+        ValueReference(false).toQuery(emptyMap) shouldBe "FALSE"
+
+      }
+
+    }
+
+    "given an option" must {
+
+      val x: Option[String] = Some("string")
+      val y: Option[String] = None
+
+      "serialize some value" in {
+        ValueReference(x).toQuery(emptyMap) shouldBe """"string""""
+      }
+
+      "serialize no value" in {
+        ValueReference(y).toQuery(emptyMap) shouldBe "NULL"
+      }
+
     }
 
   }

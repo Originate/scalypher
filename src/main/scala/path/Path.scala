@@ -5,33 +5,41 @@ import com.originate.scalypher.action.ReturnAll
 import com.originate.scalypher.action.ReturnDistinct
 import com.originate.scalypher.action.ReturnReference
 import com.originate.scalypher.Query
+import com.originate.scalypher.MatchQuery
+import com.originate.scalypher.MergeQuery
+import com.originate.scalypher.CreateQuery
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
-import com.originate.scalypher.where.ReferenceType
+import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
 case class PathWithWhere(path: Path, where: Where) {
-  def returns(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(path, where, ReturnReference(reference, rest: _*))
+  def returns(reference: Reference, rest: Reference*): Query =
+    MatchQuery(path, where, ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(path, where, ReturnDistinct(reference, rest: _*))
+  def returnDistinct(reference: Reference, rest: Reference*): Query =
+    MatchQuery(path, where, ReturnDistinct(reference, rest: _*))
 
   def returnAll: Query =
-    Query(path, where, ReturnAll)
+    MatchQuery(path, where, ReturnAll)
 
-  def delete(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(path, where, Delete(reference, rest: _*))
+  def delete(reference: Reference, rest: Reference*): Query =
+    MatchQuery(path, where, Delete(reference, rest: _*))
+
+  def create(createPath: Path): CreateQuery =
+    CreateQuery(createPath, Seq(path), Some(where))
+
+  def merge(mergePath: Path): MergeQuery =
+    MergeQuery(mergePath, Seq(path))
 }
 
-case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
-  private[scalypher] def referenceables: Set[Referenceable] = {
-    val extraReferenceables = pieces flatMap { piece =>
-      Seq(Some(piece.node), piece.relationship).flatten
-    }
+case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
 
-    Set(this, start) ++ extraReferenceables.toSet
-  }
+  def create(createPath: Path): CreateQuery =
+    CreateQuery(createPath, Seq(this))
+
+  def merge(mergePath: Path): MergeQuery =
+    MergeQuery(mergePath, Seq(this))
 
   def where(whereClause: Where): PathWithWhere =
     PathWithWhere(this, whereClause)
@@ -39,31 +47,31 @@ case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Ref
   def where(whereFunction: Path => Where): PathWithWhere =
     PathWithWhere(this, whereFunction(this))
 
-  def returns(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(this, ReturnReference(reference, rest: _*))
+  def returns(reference: Reference, rest: Reference*): Query =
+    MatchQuery(this, ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(this, ReturnDistinct(reference, rest: _*))
+  def returnDistinct(reference: Reference, rest: Reference*): Query =
+    MatchQuery(this, ReturnDistinct(reference, rest: _*))
 
   def returnAll: Query =
-    Query(this, ReturnAll)
+    MatchQuery(this, ReturnAll)
 
-  def delete(reference: ReferenceType, rest: ReferenceType*): Query =
-    Query(this, Delete(reference, rest: _*))
+  def delete(reference: Reference, rest: Reference*): Query =
+    MatchQuery(this, Delete(reference, rest: _*))
 
-  def -->(node: NodeType): Path =
+  def -->(node: Node): Path =
     copy(pieces = pieces :+ PathPiece(RightArrow, node))
 
-  def -->(relationship: RelationshipType, node: NodeType): Path =
+  def -->(relationship: Relationship, node: Node): Path =
     copy(pieces = pieces :+ PathPiece(RightArrow, node, relationship))
 
   def <--(path: Path): Path =
     copy(pieces = (pieces :+ PathPiece(LeftArrow, path.start)) ++ path.pieces)
 
-  def <--(node: NodeType): Path =
+  def <--(node: Node): Path =
     copy(pieces = pieces :+ PathPiece(LeftArrow, node))
 
-  def <--(relationship: RelationshipType, node: NodeType): Path =
+  def <--(relationship: Relationship, node: Node): Path =
     copy(pieces = pieces :+ PathPiece(LeftArrow, node, relationship))
 
   def <--(pathPiece: PathPiece): Path = {
@@ -76,13 +84,13 @@ case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Ref
     copy(pieces = (pieces :+ fixedArrow) ++ pathPieces.tail)
   }
 
-  def --(node: NodeType): Path =
+  def --(node: Node): Path =
     copy(pieces = pieces :+ PathPiece(DirectionlessArrow, node))
 
-  def --(relationship: RelationshipType, node: NodeType): Path =
+  def --(relationship: Relationship, node: Node): Path =
     copy(pieces = pieces :+ PathPiece(DirectionlessArrow, node, relationship))
 
-  def --(relationship: RelationshipType): DanglingRelationship =
+  def --(relationship: Relationship): DanglingRelationship =
     DanglingRelationship(this, relationship)
 
   def toQuery(referenceableMap: ReferenceableMap): String = {
@@ -90,6 +98,25 @@ case class Path(start: NodeType, pieces: Seq[PathPiece] = Seq.empty) extends Ref
 
     pathIdentifier + start.toQuery(referenceableMap) + (pieces map (_.toQuery(referenceableMap)) mkString "")
   }
+
+  private[scalypher] def replaceNode(oldNode: Node, newNode: Node): Path = {
+    val newPieces = pieces map (_.replaceNode(oldNode, newNode))
+
+    if (start == oldNode) Path(newNode, newPieces)
+    else copy(pieces = newPieces)
+  }
+
+  private[scalypher] def replaceRelationship(oldRelationship: Relationship, newRelationship: Relationship): Path =
+    copy(pieces = pieces map (_.replaceRelationship(oldRelationship, newRelationship)))
+
+  private[scalypher] def referenceables: Set[Referenceable] = {
+    val extraReferenceables = pieces flatMap { piece =>
+      Seq(Some(piece.node), piece.relationship).flatten
+    }
+
+    Set(this, start) ++ extraReferenceables.toSet
+  }
+
 }
 
 object Path {

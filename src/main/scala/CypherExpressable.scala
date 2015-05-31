@@ -11,6 +11,7 @@ trait CypherExpressible[V] {
 }
 
 object CypherExpressible {
+
   implicit object CypherExpressibleString extends CypherExpressible[String] {
     def toQuery(string: String): String =
       safeWrapString(string)
@@ -25,4 +26,16 @@ object CypherExpressible {
     def toQuery(double: Double): String =
       double.toString
   }
+
+  implicit object CypherExpressibleBoolean extends CypherExpressible[Boolean] {
+    def toQuery(boolean: Boolean): String =
+      if (boolean) "TRUE" else "FALSE"
+  }
+
+  implicit def optionExpressible[T](implicit serializer: CypherExpressible[T]): CypherExpressible[Option[T]] =
+    new CypherExpressible[Option[T]] {
+      def toQuery(valueOption: Option[T]): String =
+        valueOption map serializer.toQuery getOrElse "NULL"
+    }
+
 }

@@ -3,42 +3,52 @@ package com.originate.scalypher.path
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 
-case class PathPieces(startPiece: PathPiece, tail: Seq[PathPiece], relationship: Option[RelationshipType]) {
-  def --(node: NodeType): PathPieces =
+case class PathPieces(startPiece: PathPiece, tail: Seq[PathPiece], relationship: Option[Relationship]) {
+  def --(node: Node): PathPieces =
     copy(tail = tail :+ PathPiece(DirectionlessArrow, node, relationship), relationship = None)
 
-  def -->(node: NodeType): PathPieces =
+  def -->(node: Node): PathPieces =
     copy(tail = tail :+ PathPiece(RightArrow, node, relationship), relationship = None)
 }
 
 object PathPieces {
-  def apply(pathPiece: PathPiece, relationship: RelationshipType): PathPieces =
+  def apply(pathPiece: PathPiece, relationship: Relationship): PathPieces =
     PathPieces(pathPiece, Seq(), Some(relationship))
 }
 
 case class PathPiece(
-  arrow: ArrowType,
-  node: NodeType,
-  relationship: Option[RelationshipType] = None
+  arrow: Arrow,
+  node: Node,
+  relationship: Option[Relationship] = None
 ) {
-  def --(node: NodeType): PathPieces =
+
+  def replaceNode(oldNode: Node, newNode: Node): PathPiece =
+    if (node == oldNode) copy(node = newNode)
+    else this
+
+  def replaceRelationship(oldRelationship: Relationship, newRelationship: Relationship): PathPiece =
+    if (relationship exists (_ == oldRelationship)) copy(relationship = Some(newRelationship))
+    else this
+
+  def --(node: Node): PathPieces =
     PathPieces(this, Seq(PathPiece(DirectionlessArrow, node)), None)
 
-  def --(relationship: RelationshipType): PathPieces =
+  def --(relationship: Relationship): PathPieces =
     PathPieces(this, Seq(), Some(relationship))
 
-  def -->(node: NodeType): PathPieces =
+  def -->(node: Node): PathPieces =
     PathPieces(this, Seq(PathPiece(RightArrow, node)), None)
 
   def toQuery(referenceableMap: ReferenceableMap): String =
     arrow.toQuery(referenceableMap, relationship) + node.toQuery(referenceableMap)
+
 }
 
 object PathPiece {
   def apply(
-    arrow: ArrowType,
-    node: NodeType,
-    relationship: RelationshipType
+    arrow: Arrow,
+    node: Node,
+    relationship: Relationship
   ): PathPiece =
     PathPiece(arrow, node, Some(relationship))
 }

@@ -4,15 +4,16 @@ import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
-import com.originate.scalypher.where.Reference
-import com.originate.scalypher.PropertyReference
+import com.originate.scalypher.where.ReferenceWithProperty
+import com.originate.scalypher.PropertyName
+import com.originate.scalypher.Property
 
-sealed trait RelationshipType extends ToQueryWithIdentifiers with Referenceable {
-  def --(node: NodeType): PathPiece =
+sealed trait Relationship extends ToQueryWithIdentifiers with Referenceable {
+  def --(node: Node): PathPiece =
     PathPiece(DirectionlessArrow, node, this)
 
-  def property(propertyReference: String): Reference =
-    Reference(this, PropertyReference(propertyReference))
+  def property(propertyName: String): ReferenceWithProperty =
+    ReferenceWithProperty(this, PropertyName(propertyName))
 
   protected def makeRelationshipString(
     referenceableMap: ReferenceableMap,
@@ -26,7 +27,17 @@ sealed trait RelationshipType extends ToQueryWithIdentifiers with Referenceable 
     else ":" + (kinds mkString "|")
 }
 
-class AnyRelationship() extends RelationshipType {
+class CreateRelationship(val kind: String, val properties: Seq[Property]) extends Relationship {
+  def toQuery(referenceableMap: ReferenceableMap): String =
+    makeRelationshipString(referenceableMap, Seq(kind), Property.toQuery(properties))
+}
+
+object CreateRelationship {
+  def apply(kind: String, properties: Seq[Property] = Seq.empty): CreateRelationship =
+    new CreateRelationship(kind, properties)
+}
+
+class AnyRelationship() extends Relationship {
   def toQuery(referenceableMap: ReferenceableMap): String =
     makeRelationshipString(referenceableMap, Seq.empty)
 }
@@ -36,7 +47,7 @@ object AnyRelationship {
     new AnyRelationship()
 }
 
-class KindRelationship(val kinds: String*) extends RelationshipType {
+class KindRelationship(val kinds: String*) extends Relationship {
   def toQuery(referenceableMap: ReferenceableMap): String =
     makeRelationshipString(referenceableMap, kinds)
 }
@@ -46,7 +57,7 @@ object KindRelationship {
     new KindRelationship(kinds: _*)
 }
 
-class DistanceRelationship(val length: Int, val kinds: String*) extends RelationshipType {
+class DistanceRelationship(val length: Int, val kinds: String*) extends Relationship {
   def toQuery(referenceableMap: ReferenceableMap): String =
     makeRelationshipString(referenceableMap, kinds, s"*$length")
 }
@@ -56,7 +67,7 @@ object DistanceRelationship {
     new DistanceRelationship(length, kinds: _*)
 }
 
-class MaxDistanceRelationship(val length: Int, val kinds: String*) extends RelationshipType {
+class MaxDistanceRelationship(val length: Int, val kinds: String*) extends Relationship {
   def toQuery(referenceableMap: ReferenceableMap): String =
     makeRelationshipString(referenceableMap, kinds, s"*..$length")
 }
@@ -66,7 +77,7 @@ object MaxDistanceRelationship {
     new MaxDistanceRelationship(length, kinds: _*)
 }
 
-class MinDistanceRelationship(val length: Int, val kinds: String*) extends RelationshipType {
+class MinDistanceRelationship(val length: Int, val kinds: String*) extends Relationship {
   def toQuery(referenceableMap: ReferenceableMap): String =
     makeRelationshipString(referenceableMap, kinds, s"*$length..")
 }
@@ -76,7 +87,7 @@ object MinDistanceRelationship {
     new MinDistanceRelationship(length, kinds: _*)
 }
 
-class RangeRelationship(val min: Int, max: Int, val kinds: String*) extends RelationshipType {
+class RangeRelationship(val min: Int, max: Int, val kinds: String*) extends Relationship {
   def toQuery(referenceableMap: ReferenceableMap): String =
     makeRelationshipString(referenceableMap, kinds, s"*$min..$max")
 }
@@ -86,7 +97,7 @@ object RangeRelationship {
     new RangeRelationship(min, max, kinds: _*)
 }
 
-class AnyLengthRelationship(val kinds: String*) extends RelationshipType {
+class AnyLengthRelationship(val kinds: String*) extends Relationship {
   def toQuery(referenceableMap: ReferenceableMap): String =
     makeRelationshipString(referenceableMap, kinds, s"*")
 }
@@ -96,10 +107,10 @@ object AnyLengthRelationship {
     new AnyLengthRelationship(kinds: _*)
 }
 
-case class DanglingRelationship(path: Path, relationship: RelationshipType) {
-  def --(node: NodeType): Path =
+case class DanglingRelationship(path: Path, relationship: Relationship) {
+  def --(node: Node): Path =
     path --(relationship, node)
 
-  def -->(node: NodeType): Path =
+  def -->(node: Node): Path =
     path -->(relationship, node)
 }
