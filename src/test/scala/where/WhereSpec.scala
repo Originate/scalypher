@@ -55,6 +55,16 @@ class WhereSpec extends WordSpec with Matchers {
 
   }
 
+  "given a SeqValueReference" must {
+
+    "serialize with IN" in {
+      val node = AnyNode()
+      (node.property("test") in Seq("a", "b")).toQuery(Map(node -> "a")) shouldBe
+        """a.test IN ["a", "b"]"""
+    }
+
+  }
+
   "given multiple AnyNodes" must {
 
     val node1 = AnyNode()

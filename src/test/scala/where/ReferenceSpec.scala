@@ -16,6 +16,18 @@ class ReferenceSpec extends WordSpec with Matchers {
   val node1 = AnyNode()
   val emptyMap: ReferenceableMap = Map.empty
 
+  "SeqValueReference" when {
+
+    "given a sequence of strings" must {
+
+      "serialize" in {
+        SeqValueReference(Seq("a", "b")).toQuery(emptyMap) shouldBe """["a", "b"]"""
+      }
+
+    }
+
+  }
+
   "ValueReferences" when {
 
     "given a string" must {
@@ -102,6 +114,10 @@ class ReferenceSpec extends WordSpec with Matchers {
         node1.property("a") >= "b" shouldBe Comparison(node1.property("a"), GTE, ValueReference("b"))
       }
 
+      "allow simple syntax for IN" in {
+        node1.property("a") in Seq("b", "c") shouldBe Comparison(node1.property("a"), IN, SeqValueReference(Seq("b", "c")))
+      }
+
     }
 
     "given a number" must {
@@ -128,6 +144,10 @@ class ReferenceSpec extends WordSpec with Matchers {
 
       "allow simple syntax for >=" in {
         node1.property("a") >= 2 shouldBe Comparison(node1.property("a"), GTE, ValueReference(2))
+      }
+
+      "allow simple syntax for IN" in {
+        node1.property("a") in Seq(1, 2) shouldBe Comparison(node1.property("a"), IN, SeqValueReference(Seq(1, 2)))
       }
 
     }

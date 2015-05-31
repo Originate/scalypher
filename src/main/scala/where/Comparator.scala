@@ -10,3 +10,4 @@ case object GT extends ConstantString(">") with Comparator
 case object GTE extends ConstantString(">=") with Comparator
 case object LT extends ConstantString("<") with Comparator
 case object LTE extends ConstantString("<=") with Comparator
+case object IN extends ConstantString("IN") with Comparator

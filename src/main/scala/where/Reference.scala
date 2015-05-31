@@ -30,11 +30,17 @@ sealed trait Reference extends ToQueryWithIdentifiers {
   def >=(reference: Reference): Condition =
     Comparison(this, GTE, reference)
 
+  def in[V](reference: SeqValueReference[V]): Condition =
+    Comparison(this, IN, reference)
+
 }
 
 object Reference {
   implicit def toValueReference[V : CypherExpressible](value: V): ValueReference[V] =
     ValueReference[V](value)
+
+  implicit def seqToValueReference[V : CypherExpressible](values: Seq[V]): SeqValueReference[V] =
+    SeqValueReference[V](values)
 }
 
 case class ObjectReference(referenceable: Referenceable) extends Reference {
@@ -60,4 +66,9 @@ case class ReferenceWithProperty(referenceable: Referenceable, property: Propert
 case class ValueReference[V](value: V)(implicit serializer: CypherExpressible[V]) extends Reference {
   def toQuery(referenceableMap: ReferenceableMap): String =
     serializer.toQuery(value)
+}
+
+case class SeqValueReference[V](values: Seq[V])(implicit serializer: CypherExpressible[V]) extends Reference {
+  def toQuery(referenceableMap: ReferenceableMap): String =
+    "[" + (values map serializer.toQuery mkString ", ") + "]"
 }
