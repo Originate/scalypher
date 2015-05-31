@@ -1,4 +1,4 @@
-package test.path
+package com.originate.scalypher.test.path
 
 import com.originate.scalypher.path.AnyNode
 import com.originate.scalypher.path.KindRelationship

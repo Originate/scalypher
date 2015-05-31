@@ -1,4 +1,4 @@
-package test.where
+package com.originate.scalypher.test.where
 
 import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
 import com.originate.scalypher.util.Exceptions.MismatchedInterpolatedStringWithReferences

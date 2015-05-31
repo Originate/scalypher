@@ -1,8 +1,8 @@
 package com.originate.scalypher
 
-import action.ReturnAction
-import path.Path
-import types._
+import com.originate.scalypher.action.ReturnAction
+import com.originate.scalypher.path.Path
+import com.originate.scalypher.types._
 
 case class MergeQuery(
   mergePath: Path,

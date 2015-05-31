@@ -1,9 +1,9 @@
 package com.originate.scalypher
 
-import action.Action
-import path.Path
-import types._
-import where.Where
+import com.originate.scalypher.action.Action
+import com.originate.scalypher.path.Path
+import com.originate.scalypher.types._
+import com.originate.scalypher.where.Where
 
 case class MatchQuery(pathMatch: Path, where: Option[Where], action: Action) extends Query {
 

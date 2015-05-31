@@ -1,4 +1,4 @@
-package test.query
+package com.originate.scalypher.test.query
 
 import com.originate.scalypher.where.Comparison
 import com.originate.scalypher.where.NotEqual

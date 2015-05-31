@@ -1,20 +1,20 @@
 package com.originate.scalypher
 
-import action.Action
-import action.Delete
-import action.ReturnAction
-import action.ReturnAll
-import action.ReturnDistinct
-import action.ReturnReference
-import path.AnyNode
-import path.AnyRelationship
-import path.Node
-import path.Path
-import path.Relationship
-import types._
-import util.Exceptions.IdentifierDoesntExistException
-import where.Reference
-import where.Where
+import com.originate.scalypher.action.Action
+import com.originate.scalypher.action.Delete
+import com.originate.scalypher.action.ReturnAction
+import com.originate.scalypher.action.ReturnAll
+import com.originate.scalypher.action.ReturnDistinct
+import com.originate.scalypher.action.ReturnReference
+import com.originate.scalypher.path.AnyNode
+import com.originate.scalypher.path.AnyRelationship
+import com.originate.scalypher.path.Node
+import com.originate.scalypher.path.Path
+import com.originate.scalypher.path.Relationship
+import com.originate.scalypher.types._
+import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
+import com.originate.scalypher.where.Reference
+import com.originate.scalypher.where.Where
 
 trait Query extends ToQuery {
 

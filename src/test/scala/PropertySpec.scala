@@ -1,4 +1,4 @@
-package test
+package com.originate.scalypher.test
 
 import com.originate.scalypher.Property
 

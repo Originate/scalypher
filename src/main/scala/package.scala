@@ -1,7 +1,7 @@
 package com.originate.scalypher
 
-import where.ObjectReference
-import where.Reference
+import com.originate.scalypher.where.ObjectReference
+import com.originate.scalypher.where.Reference
 
 package object types {
   trait Referenceable
