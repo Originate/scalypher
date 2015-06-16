@@ -1,5 +1,6 @@
 package com.originate.scalypher
 
+import com.originate.scalypher.action.ActionReference
 import com.originate.scalypher.action.ReturnAction
 import com.originate.scalypher.action.ReturnAll
 import com.originate.scalypher.action.ReturnDistinct
@@ -16,10 +17,10 @@ trait MatchCreateQuery extends Query {
 
   def returnAction: Option[ReturnAction]
 
-  def returns(reference: Reference, rest: Reference*): MatchCreateQuery =
+  def returns(reference: ActionReference, rest: ActionReference*): MatchCreateQuery =
     withReturnAction(ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: Reference, rest: Reference*): MatchCreateQuery =
+  def returnDistinct(reference: ActionReference, rest: ActionReference*): MatchCreateQuery =
     withReturnAction(ReturnDistinct(reference, rest: _*))
 
   def returnAll: MatchCreateQuery =

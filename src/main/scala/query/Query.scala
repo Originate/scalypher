@@ -2,6 +2,7 @@ package com.originate.scalypher
 
 import com.originate.scalypher.action.Action
 import com.originate.scalypher.action.Delete
+import com.originate.scalypher.action.ReferenceListAction
 import com.originate.scalypher.action.ReturnAction
 import com.originate.scalypher.action.ReturnAll
 import com.originate.scalypher.action.ReturnDistinct
@@ -45,10 +46,7 @@ trait Query extends ToQuery {
     action match {
       case ReturnAll => referenceableMap.values.toSet
       case _: Delete => Set.empty
-      case _ =>
-        action.referenceables map { referenceable =>
-          referenceableMap get referenceable getOrElse (throw new IdentifierDoesntExistException())
-        }
+      case referenceListAction: ReferenceListAction => referenceListAction.returnColumns(referenceableMap)
     }
 
   protected def referenceableMapWithPathWhereAndAction(

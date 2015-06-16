@@ -1,29 +1,30 @@
 package com.originate.scalypher.path
 
+import com.originate.scalypher.action.ActionReference
 import com.originate.scalypher.action.Delete
 import com.originate.scalypher.action.ReturnAll
 import com.originate.scalypher.action.ReturnDistinct
 import com.originate.scalypher.action.ReturnReference
-import com.originate.scalypher.Query
+import com.originate.scalypher.CreateQuery
 import com.originate.scalypher.MatchQuery
 import com.originate.scalypher.MergeQuery
-import com.originate.scalypher.CreateQuery
+import com.originate.scalypher.Query
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
 case class PathWithWhere(path: Path, where: Where) {
-  def returns(reference: Reference, rest: Reference*): Query =
+  def returns(reference: ActionReference, rest: ActionReference*): Query =
     MatchQuery(path, where, ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: Reference, rest: Reference*): Query =
+  def returnDistinct(reference: ActionReference, rest: ActionReference*): Query =
     MatchQuery(path, where, ReturnDistinct(reference, rest: _*))
 
   def returnAll: Query =
     MatchQuery(path, where, ReturnAll)
 
-  def delete(reference: Reference, rest: Reference*): Query =
+  def delete(reference: ActionReference, rest: ActionReference*): Query =
     MatchQuery(path, where, Delete(reference, rest: _*))
 
   def create(createPath: Path): CreateQuery =
@@ -47,16 +48,16 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referen
   def where(whereFunction: Path => Where): PathWithWhere =
     PathWithWhere(this, whereFunction(this))
 
-  def returns(reference: Reference, rest: Reference*): Query =
+  def returns(reference: ActionReference, rest: ActionReference*): Query =
     MatchQuery(this, ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: Reference, rest: Reference*): Query =
+  def returnDistinct(reference: ActionReference, rest: ActionReference*): Query =
     MatchQuery(this, ReturnDistinct(reference, rest: _*))
 
   def returnAll: Query =
     MatchQuery(this, ReturnAll)
 
-  def delete(reference: Reference, rest: Reference*): Query =
+  def delete(reference: ActionReference, rest: ActionReference*): Query =
     MatchQuery(this, Delete(reference, rest: _*))
 
   def -->(node: Node): Path =

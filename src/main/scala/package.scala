@@ -5,7 +5,10 @@ import com.originate.scalypher.where.ObjectReference
 import com.originate.scalypher.where.Reference
 
 package object types {
-  trait Referenceable
+  trait Referenceable {
+    def as(name: String): ActionReference =
+      ActionReference(ObjectReference(this), Some(name))
+  }
 
   object Referenceable {
     implicit def toReference(referenceable: Referenceable): Reference =

@@ -98,14 +98,47 @@ class MatchQuerySpec extends WordSpec with Matchers {
 
       val endNode = AnyNode()
 
-      "can return one column" in {
+      "return one column" in {
         val query = startNode -- AnyRelationship() -- endNode returns startNode
         query.getReturnColumns.size shouldBe 1
       }
 
-      "can return multiple columns" in {
+      "return multiple columns" in {
         val query = startNode -- AnyRelationship() -- endNode returns (startNode, endNode)
         query.getReturnColumns.size shouldBe 2
+      }
+
+    }
+
+    "given a return expression with a property" must {
+
+      val endNode = AnyNode()
+
+      "return the identifier with the property" in {
+        val query = startNode -- AnyRelationship() -- endNode returns startNode.property("thing")
+        query.getReturnColumns.head should endWith (".thing")
+      }
+
+    }
+
+    "given a return expression with an alias" must {
+
+      val endNode = AnyNode()
+
+      "return the alias" in {
+        val query = startNode -- AnyRelationship() -- endNode returns startNode.as("thing")
+        query.getReturnColumns.head shouldBe ("thing")
+      }
+
+    }
+
+    "given a return expression with a property and alias" must {
+
+      val endNode = AnyNode()
+
+      "return the alias" in {
+        val query = startNode -- AnyRelationship() -- endNode returns startNode.property("name").as("thing")
+        query.getReturnColumns.head shouldBe ("thing")
       }
 
     }

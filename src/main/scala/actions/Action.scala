@@ -26,6 +26,9 @@ abstract class ReferenceListAction(keyword: String) extends Action {
 
   def toQuery(referenceableMap: ReferenceableMap): String =
     s"$keyword " + (references map (_.toQuery(referenceableMap)) mkString ", ")
+
+  def returnColumns(referenceableMap: ReferenceableMap): Set[String] =
+    references.map(_.toColumn(referenceableMap)).toSet
 }
 
 case class Delete(reference: ActionReference, rest: ActionReference*) extends ReferenceListAction("DELETE")
@@ -52,5 +55,11 @@ case class ActionReference(reference: Reference, as: Option[String] = None) {
     }
     Seq(Some(reference.toQuery(referenceableMap)), asString).flatten mkString " "
   }
+
+  def toColumn(referenceableMap: ReferenceableMap): String =
+    as match {
+      case Some(column) => column
+      case _ => reference.toQuery(referenceableMap)
+    }
 
 }
