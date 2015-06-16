@@ -1,12 +1,12 @@
 package com.originate.scalypher.action
 
-import com.originate.scalypher.Query.toQueryWithProperty
-import com.originate.scalypher.types.ReferenceableMap
-import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.PropertyName
+import com.originate.scalypher.Query.toQueryWithProperty
+import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.util.Exceptions.IdentifierAliasCollisionException
 import com.originate.scalypher.where.ObjectReference
 import com.originate.scalypher.where.Reference
-
 
 sealed trait Action {
   def referenceables: Set[Referenceable]
@@ -15,24 +15,24 @@ sealed trait Action {
 sealed trait ReturnAction extends Action
 
 abstract class ReferenceListAction(keyword: String) extends Action {
-  def reference: Reference
+  def reference: ActionReference
 
-  def rest: Seq[Reference]
+  def rest: Seq[ActionReference]
 
-  private val references: Set[Reference] = (reference +: rest).toSet
+  private val references: Set[ActionReference] = (reference +: rest).toSet
 
   def referenceables: Set[Referenceable] =
-    references flatMap (_.getReferenceable)
+    references flatMap (_.reference.getReferenceable)
 
   def toQuery(referenceableMap: ReferenceableMap): String =
     s"$keyword " + (references map (_.toQuery(referenceableMap)) mkString ", ")
 }
 
-case class Delete(reference: Reference, rest: Reference*) extends ReferenceListAction("DELETE")
+case class Delete(reference: ActionReference, rest: ActionReference*) extends ReferenceListAction("DELETE")
 
-case class ReturnReference(reference: Reference, rest: Reference*) extends ReferenceListAction("RETURN") with ReturnAction
+case class ReturnReference(reference: ActionReference, rest: ActionReference*) extends ReferenceListAction("RETURN") with ReturnAction
 
-case class ReturnDistinct(reference: Reference, rest: Reference*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
+case class ReturnDistinct(reference: ActionReference, rest: ActionReference*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
 
 case object ReturnAll extends ReturnAction {
   def referenceables: Set[Referenceable] = Set()
@@ -41,3 +41,16 @@ case object ReturnAll extends ReturnAction {
     "RETURN *"
 }
 
+case class ActionReference(reference: Reference, as: Option[String] = None) {
+  def as(name: String): ActionReference =
+    copy(as = Some(name))
+
+  def toQuery(referenceableMap: ReferenceableMap): String = {
+    val asString = as map { name =>
+      if (referenceableMap.values.toSet contains name) throw new IdentifierAliasCollisionException(name)
+      s"AS $name"
+    }
+    Seq(Some(reference.toQuery(referenceableMap)), asString).flatten mkString " "
+  }
+
+}

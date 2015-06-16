@@ -1,5 +1,6 @@
 package com.originate.scalypher.where
 
+import com.originate.scalypher.action.ActionReference
 import com.originate.scalypher.Query.toQueryWithProperty
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
@@ -36,6 +37,12 @@ sealed trait Reference extends ToQueryWithIdentifiers {
 }
 
 object Reference {
+  implicit def toActionReference(reference: Reference): ActionReference =
+    ActionReference(reference)
+
+  implicit def toActionReferenceSeq(references: Seq[Reference]): Seq[ActionReference] =
+    references map (ActionReference(_))
+
   implicit def toValueReference[V : CypherExpressible](value: V): ValueReference[V] =
     ValueReference[V](value)
 

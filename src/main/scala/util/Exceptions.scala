@@ -8,4 +8,7 @@ object Exceptions {
   class IdentifierDoesntExistException
     extends Exception("Identifier not found for referenceable node/path/relationship")
 
+  class IdentifierAliasCollisionException(name: String)
+    extends Exception(s"Alias $name cannot be used because it collides with an object's name in your path, consider using a different name")
+
 }
