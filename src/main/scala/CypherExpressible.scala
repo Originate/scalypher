@@ -1,7 +1,7 @@
 package com.originate.scalypher
 
 trait CypherExpressible[V] {
-  private val UnsafeCharacters = Seq(
+  protected val UnsafeCharacters = Seq(
     "\"",
     "'"
   )
