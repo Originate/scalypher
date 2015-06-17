@@ -1,10 +1,19 @@
 package com.originate.scalypher
 
 trait CypherExpressible[V] {
+  private val UnsafeCharacters = Seq(
+    "\"",
+    "'"
+  )
+
   def toQuery(value: V): String
 
   protected def safeWrapString(string: String): String =
-    wrapString(string.replaceAll("\"", """\\\""""))
+    wrapString(
+      UnsafeCharacters.fold(string) { (string, character) =>
+        string.replaceAll(character, s"""\\\\$character""")
+      }
+    )
 
   protected def wrapString(string: String): String =
     "\"" + string + "\""

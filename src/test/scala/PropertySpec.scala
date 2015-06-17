@@ -20,6 +20,12 @@ class PropertySpec extends WordSpec with Matchers {
       Property(key, string).toQuery shouldBe s"""$key:"$escaped""""
     }
 
+    "escape single" in {
+      val string = """asdf'asdf'asdf"""
+      val escaped = """asdf\'asdf\'asdf"""
+      Property(key, string).toQuery shouldBe s"""$key:"$escaped""""
+    }
+
   }
 
 }

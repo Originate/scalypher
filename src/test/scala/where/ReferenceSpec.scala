@@ -41,6 +41,11 @@ class ReferenceSpec extends WordSpec with Matchers {
         ValueReference(string).toQuery(emptyMap) shouldBe """"asdf \"asdf\" asdf""""
       }
 
+      "escape single quotes" in {
+        val string = """asdf 'asdf' asdf"""
+        ValueReference(string).toQuery(emptyMap) shouldBe """"asdf \'asdf\' asdf""""
+      }
+
     }
 
     "given a double" must {
