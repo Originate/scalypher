@@ -17,7 +17,7 @@ object Condition {
     Where(condition)
 
   implicit def optionToWhere(condition: Option[Condition]): Option[Where] =
-    Some(Where(condition))
+    condition map (Where(_))
 }
 
 case class Comparison(reference1: Reference, comparator: Comparator, reference2: Reference) extends Condition {
