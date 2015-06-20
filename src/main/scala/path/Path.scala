@@ -14,26 +14,6 @@ import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
-case class PathWithWhere(path: Path, where: Where) {
-  def returns(reference: ActionReference, rest: ActionReference*): Query =
-    MatchQuery(path, where, ReturnReference(reference, rest: _*))
-
-  def returnDistinct(reference: ActionReference, rest: ActionReference*): Query =
-    MatchQuery(path, where, ReturnDistinct(reference, rest: _*))
-
-  def returnAll: Query =
-    MatchQuery(path, where, ReturnAll)
-
-  def delete(reference: ActionReference, rest: ActionReference*): Query =
-    MatchQuery(path, where, Delete(reference, rest: _*))
-
-  def create(createPath: Path): CreateQuery =
-    CreateQuery(createPath, Seq(path), Some(where))
-
-  def merge(mergePath: Path): MergeQuery =
-    MergeQuery(mergePath, Seq(path))
-}
-
 case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
 
   def create(createPath: Path): CreateQuery =
@@ -43,6 +23,9 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referen
     MergeQuery(mergePath, Seq(this))
 
   def where(whereClause: Where): PathWithWhere =
+    PathWithWhere(this, whereClause)
+
+  def where(whereClause: Option[Where]): PathWithWhere =
     PathWithWhere(this, whereClause)
 
   def where(whereFunction: Path => Where): PathWithWhere =
