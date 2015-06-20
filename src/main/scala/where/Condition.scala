@@ -15,6 +15,9 @@ sealed trait Condition {
 object Condition {
   implicit def toWhere(condition: Condition): Where =
     Where(condition)
+
+  implicit def optionToWhere(condition: Option[Condition]): Option[Where] =
+    Some(Where(condition))
 }
 
 case class Comparison(reference1: Reference, comparator: Comparator, reference2: Reference) extends Condition {
