@@ -15,7 +15,7 @@ package object types {
       ObjectReference(referenceable)
 
     implicit def toActionReference(referenceable: Referenceable): ActionReference =
-      ActionReference(ObjectReference(referenceable))
+      ActionReference(referenceable)
   }
 
   type ReferenceableMap = Map[Referenceable, String]
