@@ -54,7 +54,7 @@ class AssignmentSpec extends WordSpec with Matchers {
 
   }
 
-  "mergning properties" must {
+  "merging properties" must {
 
     "set nodes to properties" in {
       val assignment = startNode assign (properties: _*)
