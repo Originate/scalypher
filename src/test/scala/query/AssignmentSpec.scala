@@ -66,6 +66,12 @@ class AssignmentSpec extends WordSpec with Matchers {
       assignment.toQuery(map) shouldBe """a3 += {name:"matt",age:12}"""
     }
 
+    "retain ordering on properties" in {
+      val properties = Seq(Property("name", "matt"), Property("name", "andy"))
+      val assignment = relationship assign (properties: _*)
+      assignment.toQuery(map) shouldBe """a3 += {name:"matt",name:"andy"}"""
+    }
+
   }
 
   "overwriting all properties" must {
