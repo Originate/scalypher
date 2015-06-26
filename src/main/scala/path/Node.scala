@@ -19,6 +19,9 @@ sealed trait Node extends ToQueryWithIdentifiers with Referenceable with Addable
   def property(propertyName: String): ReferenceWithProperty =
     ReferenceWithProperty(this, PropertyName(propertyName))
 
+  def :=(node: Node): OverwriteAssignment =
+    assign(node)
+
   def assign(node: Node): OverwriteAssignment =
     OverwriteAssignment(ObjectReference(this), ObjectReference(node))
 }

@@ -20,33 +20,33 @@ class SetQuerySpec extends WordSpec with Matchers {
   "building a set query" must {
 
     "allow setting values" in {
-      val query = path set (startNode.property("name") assign "x")
+      val query = path set (startNode.property("name") := "x")
       query.toQuery shouldBe """MATCH (a1)-->() SET a1.name = "x""""
     }
 
     "allow setting multiple values" in {
       val query = path set (
-        startNode.property("name") assign "x",
-        startNode.property("age") assign 2
+        startNode.property("name") := "x",
+        startNode.property("age") := 2
       )
       query.toQuery shouldBe """MATCH (a1)-->() SET a1.name = "x", a1.age = 2"""
     }
 
     "retain ordering when setting multiple values on the same property" in {
       val query = path set (
-        startNode.property("name") assign "x",
-        startNode.property("name") assign "y"
+        startNode.property("name") := "x",
+        startNode.property("name") := "y"
       )
       query.toQuery shouldBe """MATCH (a1)-->() SET a1.name = "x", a1.name = "y""""
     }
 
     "allow a where clause" in {
-      val query = path where (startNode.property("name") <> 1) set (startNode.property("name") assign "x")
+      val query = path where (startNode.property("name") <> 1) set (startNode.property("name") := "x")
       query.toQuery shouldBe """MATCH (a1)-->() WHERE a1.name <> 1 SET a1.name = "x""""
     }
 
     "allow returns statements" in {
-      val query = path set (startNode.property("name") assign "x") returns startNode
+      val query = path set (startNode.property("name") := "x") returns startNode
       query.toQuery shouldBe """MATCH (a1)-->() SET a1.name = "x" RETURN a1"""
     }
 
@@ -54,7 +54,7 @@ class SetQuerySpec extends WordSpec with Matchers {
       val query = path where (
         startNode.property("name") <> 1
       ) set (
-        startNode.property("name") assign "x"
+        startNode.property("name") := "x"
       ) returns startNode
       query.toQuery shouldBe """MATCH (a1)-->() WHERE a1.name <> 1 SET a1.name = "x" RETURN a1"""
     }

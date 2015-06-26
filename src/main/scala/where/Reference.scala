@@ -63,6 +63,9 @@ case class ObjectReference(referenceable: Referenceable) extends Reference {
 }
 
 case class ReferenceWithProperty(referenceable: Referenceable, property: PropertyName) extends Reference {
+  def :=[T](reference: ValueReference[T]): PropertyAssignment[T] =
+    assign(reference)
+
   def assign[T](reference: ValueReference[T]): PropertyAssignment[T] =
     PropertyAssignment(this, reference)
 

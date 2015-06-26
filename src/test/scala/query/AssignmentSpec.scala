@@ -43,12 +43,12 @@ class AssignmentSpec extends WordSpec with Matchers {
   "assigning properties" must {
 
     "set elements to strings" in {
-      val assignment = startNode.property("name") assign "asdf"
+      val assignment = startNode.property("name") := "asdf"
       assignment.toQuery(map) shouldBe """a1.name = "asdf""""
     }
 
     "set elements to numbers" in {
-      val assignment = startNode.property("name") assign 12
+      val assignment = startNode.property("name") := 12
       assignment.toQuery(map) shouldBe "a1.name = 12"
     }
 
@@ -57,18 +57,18 @@ class AssignmentSpec extends WordSpec with Matchers {
   "merging properties" must {
 
     "set nodes to properties" in {
-      val assignment = startNode assign (properties: _*)
+      val assignment = startNode := (properties: _*)
       assignment.toQuery(map) shouldBe """a1 += {name:"matt",age:12}"""
     }
 
     "set relationships to properties" in {
-      val assignment = relationship assign (properties: _*)
+      val assignment = relationship := (properties: _*)
       assignment.toQuery(map) shouldBe """a3 += {name:"matt",age:12}"""
     }
 
     "retain ordering on properties" in {
       val properties = Seq(Property("name", "matt"), Property("name", "andy"))
-      val assignment = relationship assign (properties: _*)
+      val assignment = relationship := (properties: _*)
       assignment.toQuery(map) shouldBe """a3 += {name:"matt",name:"andy"}"""
     }
 
@@ -77,7 +77,7 @@ class AssignmentSpec extends WordSpec with Matchers {
   "overwriting all properties" must {
 
     "assign an object to another object" in {
-      val assignment = startNode assign endNode
+      val assignment = startNode := endNode
       assignment.toQuery(map) shouldBe "a1 = a2"
     }
 
