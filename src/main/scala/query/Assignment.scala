@@ -20,11 +20,6 @@ case class RemovePropertyAssignment(reference: ReferenceWithProperty) extends As
     s"${reference.toQuery(referenceableMap)} = NULL"
 }
 
-trait MergeableProperties { self: Referenceable =>
-  def assign(properties: Property*): MergePropertiesAssignment =
-    MergePropertiesAssignment(ObjectReference(this), properties)
-}
-
 case class MergePropertiesAssignment(
   reference: ObjectReference,
   properties: Seq[Property]
