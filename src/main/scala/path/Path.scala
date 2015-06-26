@@ -8,13 +8,18 @@ import com.originate.scalypher.action.ReturnReference
 import com.originate.scalypher.CreateQuery
 import com.originate.scalypher.MatchQuery
 import com.originate.scalypher.MergeQuery
+import com.originate.scalypher.SetQuery
 import com.originate.scalypher.Query
+import com.originate.scalypher.Assignment
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
 case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
+
+  def set(assignment: Assignment, rest: Assignment*): SetQuery =
+    SetQuery(this, assignment, rest: _*)
 
   def create(createPath: Path): CreateQuery =
     CreateQuery(createPath, Seq(this))

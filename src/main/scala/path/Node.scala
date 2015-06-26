@@ -2,6 +2,8 @@ package com.originate.scalypher.path
 
 import com.originate.scalypher.Label
 import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
+import com.originate.scalypher.MergeableProperties
+import com.originate.scalypher.OverwriteAssignment
 import com.originate.scalypher.Property
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.Query
@@ -9,12 +11,16 @@ import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.where.ReferenceWithProperty
+import com.originate.scalypher.where.ObjectReference
 
 import scala.language.implicitConversions
 
-sealed trait Node extends ToQueryWithIdentifiers with Referenceable {
+sealed trait Node extends ToQueryWithIdentifiers with Referenceable with MergeableProperties {
   def property(propertyName: String): ReferenceWithProperty =
     ReferenceWithProperty(this, PropertyName(propertyName))
+
+  def assign(node: Node): OverwriteAssignment =
+    OverwriteAssignment(ObjectReference(this), ObjectReference(node))
 }
 
 object Node {
