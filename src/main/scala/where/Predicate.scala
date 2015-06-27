@@ -1,8 +1,6 @@
 package com.originate.scalypher.where
 
 import com.originate.scalypher.ConstantString
-import com.originate.scalypher.path.AnyNode
-import com.originate.scalypher.path.AnyRelationship
 import com.originate.scalypher.path.Path
 import com.originate.scalypher.ToQuery
 
