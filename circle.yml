@@ -1,5 +1,6 @@
 dependencies:
   override:
+    - echo "no dependencies"
 test:
   override:
     - sbt clean coverage test
