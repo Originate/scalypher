@@ -12,6 +12,48 @@ import org.scalatest._
 
 class WhereSpec extends WordSpec with Matchers {
 
+  "given a predicate" must {
+
+    val startNode = AnyNode()
+    val path = startNode --> AnyNode()
+    val referenceableMap: ReferenceableMap = Map(path -> "path")
+
+    "allow simple node conditions" in {
+      val predicate = All.nodes(path) { node =>
+        node.property("name") <> "matt"
+      }
+
+      predicate.toQuery(referenceableMap) shouldBe """ALL (x IN NODES(path) WHERE x.name <> "matt")"""
+    }
+
+    "allow simple relationship conditions" in {
+      val predicate = All.relationships(path) { relationship =>
+        relationship.property("name") <> "matt"
+      }
+
+      predicate.toQuery(referenceableMap) shouldBe """ALL (x IN RELATIONSHIPS(path) WHERE x.name <> "matt")"""
+    }
+
+    "allow referencing elements outside of the predicate condition" in {
+      val map = referenceableMap + (startNode -> "node")
+      val predicate = All.nodes(path) { node =>
+        (node.property("name") <> startNode.property("name"))
+      }
+
+      predicate.toQuery(map) shouldBe """ALL (x IN NODES(path) WHERE x.name <> node.name)"""
+    }
+
+    "allow multiple conditions in the predicate" in {
+      val predicate = All.nodes(path) { node =>
+        (node.property("name") <> "matt") and
+          (node.property("age") <> 12)
+      }
+
+      predicate.toQuery(referenceableMap) shouldBe """ALL (x IN NODES(path) WHERE x.name <> "matt" AND x.age <> 12)"""
+    }
+
+  }
+
   "given an Expression" must {
 
     val node1 = AnyNode()

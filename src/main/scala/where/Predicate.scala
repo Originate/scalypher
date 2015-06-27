@@ -5,13 +5,12 @@ import com.originate.scalypher.path.AnyNode
 import com.originate.scalypher.path.AnyRelationship
 import com.originate.scalypher.path.Path
 import com.originate.scalypher.ToQuery
-import com.originate.scalypher.types.Referenceable
 
 sealed trait Predicate extends ToQuery {
-  def nodes(path: Path)(f: Referenceable => Where): PredicateCondition =
+  def nodes(path: Path)(f: ObjectReference => Where): PredicateCondition =
     PredicateCondition(this, Nodes(path), f)
 
-  def relationships(path: Path)(f: Referenceable => Where): PredicateCondition =
+  def relationships(path: Path)(f: ObjectReference => Where): PredicateCondition =
     PredicateCondition(this, Relationships(path), f)
 }
 

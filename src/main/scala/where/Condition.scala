@@ -39,13 +39,13 @@ case class NullCondition(reference: Reference, check: NullCheck) extends Conditi
 case class PredicateCondition(
   predicate: Predicate,
   projection: Collection,
-  where: Referenceable => Where
+  where: ObjectReference => Where
 ) extends Condition {
   def toQuery(referenceableMap: ReferenceableMap): String = {
     val identifier = "x"
     val node = AnyNode()
     val adjustedMap = referenceableMap + (node -> identifier)
-    val conditionString = where(node).toQuery(adjustedMap)
+    val conditionString = where(ObjectReference(node)).toQuery(adjustedMap)
 
     Seq(
       predicate.toQuery,
