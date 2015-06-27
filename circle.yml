@@ -1,0 +1,4 @@
+test:
+  override:
+    - sbt clean coverage test
+    - sbt coveralls
