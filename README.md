@@ -115,7 +115,7 @@ conditions in your query like this
 import com.originate.scalypher.where.All
 
 val cypher = startNode -> AnyNode() where { path =>
-    All.nodes(path) { node =>
+    All nodesIn path where { node =>
       node.property("name") <> "matt"
     }
   } returns startNode
@@ -123,6 +123,8 @@ val cypher = startNode -> AnyNode() where { path =>
 cypher.toQuery
 // returns: MATCH a2 = (a1)-->() WHERE ALL (x IN NODES(a2) WHERE x.name <> "matt") RETURN a1
 ```
+
+Note that you can use the singular version as well `Any nodeIn path where { node => ... }`
 
 ### Custom Expressions
 

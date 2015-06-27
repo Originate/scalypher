@@ -19,7 +19,7 @@ class WhereSpec extends WordSpec with Matchers {
     val referenceableMap: ReferenceableMap = Map(path -> "path")
 
     "allow simple node conditions" in {
-      val predicate = All.nodes(path) { node =>
+      val predicate = All nodesIn path where { node =>
         node.property("name") <> "matt"
       }
 
@@ -27,7 +27,7 @@ class WhereSpec extends WordSpec with Matchers {
     }
 
     "allow simple relationship conditions" in {
-      val predicate = All.relationships(path) { relationship =>
+      val predicate = All relationshipsIn path where { relationship =>
         relationship.property("name") <> "matt"
       }
 
@@ -36,7 +36,7 @@ class WhereSpec extends WordSpec with Matchers {
 
     "allow referencing elements outside of the predicate condition" in {
       val map = referenceableMap + (startNode -> "node")
-      val predicate = All.nodes(path) { node =>
+      val predicate = All nodesIn path where { node =>
         (node.property("name") <> startNode.property("name"))
       }
 
@@ -44,7 +44,7 @@ class WhereSpec extends WordSpec with Matchers {
     }
 
     "allow multiple conditions in the predicate" in {
-      val predicate = All.nodes(path) { node =>
+      val predicate = All nodesIn path where { node =>
         (node.property("name") <> "matt") and
           (node.property("age") <> 12)
       }

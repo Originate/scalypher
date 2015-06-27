@@ -6,15 +6,29 @@ import com.originate.scalypher.path.AnyRelationship
 import com.originate.scalypher.path.Path
 import com.originate.scalypher.ToQuery
 
-sealed trait Predicate extends ToQuery {
-  def nodes(path: Path)(f: ObjectReference => Where): PredicateCondition =
-    PredicateCondition(this, Nodes(path), f)
+case class PredicateWithProjection(
+  predicate: Predicate,
+  projection: PathProjection
+) {
+  def where(f: ObjectReference => Where): PredicateCondition =
+    PredicateCondition(predicate, projection, f)
+}
 
-  def relationships(path: Path)(f: ObjectReference => Where): PredicateCondition =
-    PredicateCondition(this, Relationships(path), f)
+sealed trait Predicate extends ToQuery {
+  def nodesIn(path: Path): PredicateWithProjection =
+    PredicateWithProjection(this, Nodes(path))
+
+  def nodeIn(path: Path): PredicateWithProjection =
+    PredicateWithProjection(this, Nodes(path))
+
+  def relationshipsIn(path: Path): PredicateWithProjection =
+    PredicateWithProjection(this, Relationships(path))
+
+  def relationshipIn(path: Path): PredicateWithProjection =
+    PredicateWithProjection(this, Relationships(path))
 }
 
 case object All extends ConstantString("ALL") with Predicate
 case object Any extends ConstantString("ANY") with Predicate
-case object NonePredicate extends ConstantString("NONE") with Predicate
+case object No extends ConstantString("NONE") with Predicate
 case object Single extends ConstantString("SINGLE") with Predicate
