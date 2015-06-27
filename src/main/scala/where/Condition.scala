@@ -43,9 +43,9 @@ case class PredicateCondition(
 ) extends Condition {
   def toQuery(referenceableMap: ReferenceableMap): String = {
     val identifier = "x"
-    val node = AnyNode()
-    val adjustedMap = referenceableMap + (node -> identifier)
-    val conditionString = where(ObjectReference(node)).toQuery(adjustedMap)
+    val referenceable = AnyNode()
+    val adjustedMap = referenceableMap + (referenceable -> identifier)
+    val conditionString = where(ObjectReference(referenceable)).toQuery(adjustedMap)
 
     Seq(
       predicate.toQuery,
