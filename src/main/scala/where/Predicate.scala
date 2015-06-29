@@ -12,21 +12,25 @@ case class PredicateWithProjection(
     PredicateCondition(predicate, projection, f)
 }
 
-sealed trait Predicate extends ToQuery {
-  def nodesIn(path: Path): PredicateWithProjection =
-    PredicateWithProjection(this, Nodes(path))
+sealed trait Predicate extends ToQuery
 
-  def nodeIn(path: Path): PredicateWithProjection =
+trait PluralProjectionPredicate extends Predicate {
+  def nodesIn(path: Path): PredicateWithProjection =
     PredicateWithProjection(this, Nodes(path))
 
   def relationshipsIn(path: Path): PredicateWithProjection =
     PredicateWithProjection(this, Relationships(path))
+}
+
+trait SingularProjectionPredicate extends Predicate {
+  def nodeIn(path: Path): PredicateWithProjection =
+    PredicateWithProjection(this, Nodes(path))
 
   def relationshipIn(path: Path): PredicateWithProjection =
     PredicateWithProjection(this, Relationships(path))
 }
 
-case object All extends ConstantString("ALL") with Predicate
-case object Any extends ConstantString("ANY") with Predicate
-case object No extends ConstantString("NONE") with Predicate
-case object Single extends ConstantString("SINGLE") with Predicate
+case object All extends ConstantString("ALL") with PluralProjectionPredicate
+case object Any extends ConstantString("ANY") with PluralProjectionPredicate
+case object No extends ConstantString("NONE") with PluralProjectionPredicate
+case object Single extends ConstantString("SINGLE") with SingularProjectionPredicate

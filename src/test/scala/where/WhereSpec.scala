@@ -26,6 +26,14 @@ class WhereSpec extends WordSpec with Matchers {
       predicate.toQuery(referenceableMap) shouldBe """ALL (x IN NODES(path) WHERE x.name <> "matt")"""
     }
 
+    "allow singular node conditions" in {
+      val predicate = Single nodeIn path where { node =>
+        node.property("name") <> "matt"
+      }
+
+      predicate.toQuery(referenceableMap) shouldBe """SINGLE (x IN NODES(path) WHERE x.name <> "matt")"""
+    }
+
     "allow simple relationship conditions" in {
       val predicate = All relationshipsIn path where { relationship =>
         relationship.property("name") <> "matt"
