@@ -57,9 +57,6 @@ case class ActionReference(reference: Reference, as: Option[String] = None) {
   }
 
   def toColumn(referenceableMap: ReferenceableMap): String =
-    as match {
-      case Some(column) => column
-      case _ => reference.toQuery(referenceableMap)
-    }
+    as getOrElse reference.toQuery(referenceableMap)
 
 }

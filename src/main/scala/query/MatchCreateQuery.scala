@@ -27,10 +27,7 @@ trait MatchCreateQuery extends Query {
     withReturnAction(ReturnAll)
 
   def getReturnColumns: Set[String] =
-    returnAction match {
-      case Some(action) => matchActionToReturnColumns(action)
-      case _ => Set.empty
-    }
+    returnAction map matchActionToReturnColumns getOrElse Set.empty
 
   protected def withReturnAction(action: ReturnAction): MatchCreateQuery
 

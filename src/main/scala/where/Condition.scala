@@ -36,13 +36,21 @@ case class NullCondition(reference: Reference, check: NullCheck) extends Conditi
     reference.getReferenceable.toSet
 }
 
-case class PredicateCondition(predicate: Predicate, projection: Collection, where: AnyNode => Condition) extends Condition {
+case class PredicateCondition(
+  predicate: Predicate,
+  projection: Collection,
+  where: ObjectReference => Where
+) extends Condition {
   def toQuery(referenceableMap: ReferenceableMap): String = {
     val identifier = "x"
-    val node = AnyNode()
-    val fakeMap: ReferenceableMap = Map(node -> identifier)
-    val conditionString = where(node).toQuery(fakeMap)
-    s"${predicate.toQuery} ($identifier in ${projection.toQuery(referenceableMap)} where $conditionString)"
+    val referenceable = AnyNode()
+    val adjustedMap = referenceableMap + (referenceable -> identifier)
+    val conditionString = where(ObjectReference(referenceable)).toQuery(adjustedMap)
+
+    Seq(
+      predicate.toQuery,
+      s"($identifier IN ${projection.toQuery(referenceableMap)} WHERE $conditionString)"
+    ) mkString " "
   }
 
   def referenceables: Set[Referenceable] =

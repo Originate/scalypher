@@ -6,7 +6,11 @@ import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.path.Path
 
-sealed trait Projection extends ToQuery
+sealed trait Projection extends ToQuery {
+  def apply(path: Path): PathProjection =
+    PathProjection(this, path)
+}
+
 case object Relationships extends ConstantString("RELATIONSHIPS") with Projection
 case object Nodes extends ConstantString("NODES") with Projection
 
