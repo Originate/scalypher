@@ -75,18 +75,18 @@ object Reference {
 
 sealed trait ReferenceableReference extends Reference
 
-case class ObjectReference(identifiable: Referenceable) extends ReferenceableReference {
+case class ObjectReference(referenceable: Referenceable) extends ReferenceableReference {
   def property(property: String): ReferenceWithProperty =
-    ReferenceWithProperty(identifiable, PropertyName(property))
+    ReferenceWithProperty(referenceable, PropertyName(property))
 
   def toQuery(identifiableMap: IdentifiableMap): String =
-    toQueryWithProperty(identifiableMap, identifiable, None)
+    toQueryWithProperty(identifiableMap, referenceable, None)
 
-  def getIdentifiable = Some(identifiable)
+  def getIdentifiable = Some(referenceable)
 }
 
 case class ReferenceWithProperty(
-  identifiable: Referenceable,
+  referenceable: Referenceable,
   property: PropertyName
 ) extends ReferenceableReference {
   def :=[T](reference: ValueReference[T]): PropertyAssignment[T] =
@@ -99,12 +99,12 @@ case class ReferenceWithProperty(
     RemovePropertyAssignment(this)
 
   def toQuery(identifiableMap: IdentifiableMap): String =
-    toQueryWithProperty(identifiableMap, identifiable, Some(property))
+    toQueryWithProperty(identifiableMap, referenceable, Some(property))
 
   def set[T : CypherExpressible](value: T): SetProperty =
     SetProperty(this, value)
 
-  def getIdentifiable = Some(identifiable)
+  def getIdentifiable = Some(referenceable)
 }
 
 case class ValueReference[V](value: V)(implicit serializer: CypherExpressible[V]) extends Reference {

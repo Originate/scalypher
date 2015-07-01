@@ -19,11 +19,11 @@ package object types {
   trait NonReferenceable extends Identifiable
 
   object Referenceable {
-    implicit def toReference(identifiable: Referenceable): ReferenceableReference =
-      ObjectReference(identifiable)
+    implicit def toReference(referenceable: Referenceable): ReferenceableReference =
+      ObjectReference(referenceable)
 
-    implicit def toActionReference(identifiable: Referenceable): ActionReference =
-      ActionReference(identifiable)
+    implicit def toActionReference(referenceable: Referenceable): ActionReference =
+      ActionReference(referenceable)
   }
 
   type IdentifiableMap = Map[Identifiable, String]
