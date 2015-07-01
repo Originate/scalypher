@@ -49,7 +49,7 @@ trait Query extends ToQuery {
       case referenceListAction: ReferenceListAction => referenceListAction.returnColumns(identifiableMap)
     }
 
-  protected def referenceableMapWithPathWhereAndAction(
+  protected def identifiableMapWithPathWhereAndAction(
     paths: Seq[Path],
     where: Option[Where],
     action: Option[Action],

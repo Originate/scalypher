@@ -18,7 +18,7 @@ case class MatchQuery(pathMatch: Path, where: Option[Where], action: Action) ext
     )
 
   protected val identifiableMap: IdentifiableMap =
-    referenceableMapWithPathWhereAndAction(Seq(pathMatch), where, Some(action))
+    identifiableMapWithPathWhereAndAction(Seq(pathMatch), where, Some(action))
 
 }
 

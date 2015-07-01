@@ -42,7 +42,7 @@ case class SetQuery(
     )
 
   protected val identifiableMap: IdentifiableMap =
-    referenceableMapWithPathWhereAndAction(
+    identifiableMapWithPathWhereAndAction(
       Seq(pathMatch),
       where,
       action,

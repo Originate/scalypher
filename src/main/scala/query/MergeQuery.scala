@@ -56,7 +56,7 @@ case class MergeQuery(
   }
 
   protected val identifiableMap: IdentifiableMap =
-    referenceableMapWithPathWhereAndAction(
+    identifiableMapWithPathWhereAndAction(
       matchPaths,
       None,
       returnAction,

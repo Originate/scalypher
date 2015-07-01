@@ -38,7 +38,7 @@ case class CreateQuery(
     copy(returnAction = Some(action))
 
   protected val identifiableMap: IdentifiableMap =
-    referenceableMapWithPathWhereAndAction(
+    identifiableMapWithPathWhereAndAction(
       matchPaths,
       where,
       returnAction,
