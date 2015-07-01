@@ -1,6 +1,6 @@
 package com.originate.scalypher.path
 
-import com.originate.scalypher.action.ActionReference
+import com.originate.scalypher.action.ActionItem
 import com.originate.scalypher.action.Delete
 import com.originate.scalypher.action.ReturnAll
 import com.originate.scalypher.action.ReturnDistinct
@@ -36,16 +36,16 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Identif
   def where(whereFunction: Path => Where): PathWithWhere =
     PathWithWhere(this, whereFunction(this))
 
-  def returns(reference: ActionReference, rest: ActionReference*): Query =
+  def returns(reference: ActionItem, rest: ActionItem*): Query =
     MatchQuery(this, ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: ActionReference, rest: ActionReference*): Query =
+  def returnDistinct(reference: ActionItem, rest: ActionItem*): Query =
     MatchQuery(this, ReturnDistinct(reference, rest: _*))
 
   def returnAll: Query =
     MatchQuery(this, ReturnAll)
 
-  def delete(reference: ActionReference, rest: ActionReference*): Query =
+  def delete(reference: ActionItem, rest: ActionItem*): Query =
     MatchQuery(this, Delete(reference, rest: _*))
 
   def -->(node: Node): Path =

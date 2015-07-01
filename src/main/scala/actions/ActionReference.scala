@@ -10,13 +10,13 @@ import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
 import com.originate.scalypher.where.NodeOrRelationshipReference
 import com.originate.scalypher.where.ObjectReference
 
-sealed trait ActionReference extends ToQueryWithIdentifiers {
+sealed trait ActionItem extends ToQueryWithIdentifiers {
 
   val as: Option[String]
 
   def getReferenceable: Option[Identifiable]
 
-  def as(name: String): ActionReference
+  def as(name: String): ActionItem
 
   def toColumn(identifiableMap: IdentifiableMap): String
 
@@ -32,7 +32,7 @@ sealed trait ActionReference extends ToQueryWithIdentifiers {
 case class ActionPath(
   path: Path,
   as: Option[String] = None
-) extends ActionReference {
+) extends ActionItem {
 
   val getReferenceable = Some(path)
 
@@ -52,7 +52,7 @@ case class ActionPath(
 case class ActionNodeOrRelationship(
   reference: NodeOrRelationshipReference,
   as: Option[String] = None
-) extends ActionReference {
+) extends ActionItem {
 
   val getReferenceable = reference.getReferenceable
 

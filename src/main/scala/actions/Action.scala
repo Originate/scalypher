@@ -15,11 +15,11 @@ sealed trait Action {
 sealed trait ReturnAction extends Action
 
 abstract class ReferenceListAction(keyword: String) extends Action {
-  def reference: ActionReference
+  def reference: ActionItem
 
-  def rest: Seq[ActionReference]
+  def rest: Seq[ActionItem]
 
-  private val references: Set[ActionReference] = (reference +: rest).toSet
+  private val references: Set[ActionItem] = (reference +: rest).toSet
 
   def identifiables: Set[Identifiable] =
     references flatMap (_.getReferenceable)
@@ -31,11 +31,11 @@ abstract class ReferenceListAction(keyword: String) extends Action {
     references.map(_.toColumn(identifiableMap)).toSet
 }
 
-case class Delete(reference: ActionReference, rest: ActionReference*) extends ReferenceListAction("DELETE")
+case class Delete(reference: ActionItem, rest: ActionItem*) extends ReferenceListAction("DELETE")
 
-case class ReturnReference(reference: ActionReference, rest: ActionReference*) extends ReferenceListAction("RETURN") with ReturnAction
+case class ReturnReference(reference: ActionItem, rest: ActionItem*) extends ReferenceListAction("RETURN") with ReturnAction
 
-case class ReturnDistinct(reference: ActionReference, rest: ActionReference*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
+case class ReturnDistinct(reference: ActionItem, rest: ActionItem*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
 
 case object ReturnAll extends ReturnAction {
   def identifiables: Set[Identifiable] = Set()
