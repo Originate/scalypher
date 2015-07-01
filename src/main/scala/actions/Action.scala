@@ -22,10 +22,7 @@ abstract class ReferenceListAction(keyword: String) extends Action {
   private val references: Set[ActionReference] = (reference +: rest).toSet
 
   def referenceables: Set[Referenceable] =
-    references.collect{
-      case ActionPath(path, _) => Some(path)
-      case ActionNodeOrRelationship(reference, _) => reference.getReferenceable
-    }.flatten
+    references flatMap (_.getReferenceable)
 
   def toQuery(referenceableMap: ReferenceableMap): String =
     s"$keyword " + (references map (_.toQuery(referenceableMap)) mkString ", ")
