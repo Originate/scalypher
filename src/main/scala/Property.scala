@@ -7,8 +7,8 @@ class Property private (key: String, serializedValue: String) {
   def toQuery: String =
     s"""$key:$serializedValue"""
 
-  def toSetProperty(referenceable: NodeOrRelationship): SetProperty =
-    toSetProperty(ObjectReference(referenceable))
+  def toSetProperty(identifiable: NodeOrRelationship): SetProperty =
+    toSetProperty(ObjectReference(identifiable))
 
   def toSetProperty(reference: ObjectReference): SetProperty =
     SetProperty.withSerializedValue(reference.property(key), serializedValue)

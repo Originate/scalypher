@@ -14,11 +14,11 @@ package object types {
   }
 
   object NodeOrRelationship {
-    implicit def toReference(referenceable: NodeOrRelationship): NodeOrRelationshipReference =
-      ObjectReference(referenceable)
+    implicit def toReference(identifiable: NodeOrRelationship): NodeOrRelationshipReference =
+      ObjectReference(identifiable)
 
-    implicit def toActionReference(referenceable: NodeOrRelationship): ActionNodeOrRelationship =
-      ActionNodeOrRelationship(referenceable)
+    implicit def toActionReference(identifiable: NodeOrRelationship): ActionNodeOrRelationship =
+      ActionNodeOrRelationship(identifiable)
   }
 
   type ReferenceableMap = Map[Identifiable, String]

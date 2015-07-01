@@ -109,6 +109,6 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Identif
 }
 
 object Path {
-  private[path] def getIdentifierOrEmptyString(referenceableMap: ReferenceableMap, referenceable: Identifiable): String =
-    referenceableMap get referenceable getOrElse ""
+  private[path] def getIdentifierOrEmptyString(referenceableMap: ReferenceableMap, identifiable: Identifiable): String =
+    referenceableMap get identifiable getOrElse ""
 }

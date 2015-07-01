@@ -48,14 +48,14 @@ trait MatchCreateQuery extends Query {
       overlapReferenceables contains key
     }
 
-    val pathTransform = relevantMap.foldLeft(PathTranform(path)) { case (acc @ PathTranform(path, map), (referenceable, identifier)) =>
-      referenceable match {
+    val pathTransform = relevantMap.foldLeft(PathTranform(path)) { case (acc @ PathTranform(path, map), (identifiable, identifier)) =>
+      identifiable match {
         case node: Node =>
           val newNode = AnyNode()
-          PathTranform(path.replaceNode(node, newNode), map - referenceable + (newNode -> identifier))
+          PathTranform(path.replaceNode(node, newNode), map - identifiable + (newNode -> identifier))
         case relationship: Relationship =>
           val newRelationship = AnyRelationship()
-          PathTranform(path.replaceRelationship(relationship, newRelationship), map - referenceable + (newRelationship -> identifier))
+          PathTranform(path.replaceRelationship(relationship, newRelationship), map - identifiable + (newRelationship -> identifier))
         case _ =>
           acc
       }

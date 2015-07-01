@@ -80,7 +80,7 @@ class WhereSpec extends WordSpec with Matchers {
       }
     }
 
-    "fail if identifier doesn't exist in referenceable map" in {
+    "fail if identifier doesn't exist in identifiable map" in {
       an [IdentifierDoesntExistException] should be thrownBy {
         Expression("? > 1", node1.property("thing")).toQuery(Map.empty)
       }
