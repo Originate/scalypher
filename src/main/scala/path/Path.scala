@@ -82,10 +82,10 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Identif
   def --(relationship: Relationship): DanglingRelationship =
     DanglingRelationship(this, relationship)
 
-  def toQuery(referenceableMap: ReferenceableMap): String = {
-    val pathIdentifier = referenceableMap get this map (i => s"$i = ") getOrElse ""
+  def toQuery(identifiableMap: ReferenceableMap): String = {
+    val pathIdentifier = identifiableMap get this map (i => s"$i = ") getOrElse ""
 
-    pathIdentifier + start.toQuery(referenceableMap) + (pieces map (_.toQuery(referenceableMap)) mkString "")
+    pathIdentifier + start.toQuery(identifiableMap) + (pieces map (_.toQuery(identifiableMap)) mkString "")
   }
 
   private[scalypher] def replaceNode(oldNode: Node, newNode: Node): Path = {
@@ -109,6 +109,6 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Identif
 }
 
 object Path {
-  private[path] def getIdentifierOrEmptyString(referenceableMap: ReferenceableMap, identifiable: Identifiable): String =
-    referenceableMap get identifiable getOrElse ""
+  private[path] def getIdentifierOrEmptyString(identifiableMap: ReferenceableMap, identifiable: Identifiable): String =
+    identifiableMap get identifiable getOrElse ""
 }

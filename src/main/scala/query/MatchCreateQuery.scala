@@ -34,7 +34,7 @@ trait MatchCreateQuery extends Query {
   protected def forcedCreateReferenceables: Set[Identifiable]
 
   protected def modifiedReferenceableMap: ReferenceableMap = {
-    val forcedMap = referenceableMap filterKeys (forcedCreateReferenceables contains _)
+    val forcedMap = identifiableMap filterKeys (forcedCreateReferenceables contains _)
     createMap ++ forcedMap
   }
 
@@ -44,7 +44,7 @@ trait MatchCreateQuery extends Query {
 
   protected def cleanPathAndExtractMap(path: Path, matchPaths: Seq[Path]): (Path, ReferenceableMap) = {
     val overlapReferenceables = matchPaths flatMap (_.identifiables) intersect path.identifiables.toSeq
-    val relevantMap = referenceableMap filterKeys { key =>
+    val relevantMap = identifiableMap filterKeys { key =>
       overlapReferenceables contains key
     }
 

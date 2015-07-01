@@ -20,11 +20,11 @@ sealed trait Relationship
     ReferenceWithProperty(this, PropertyName(propertyName))
 
   protected def makeRelationshipString(
-    referenceableMap: ReferenceableMap,
+    identifiableMap: ReferenceableMap,
     kinds: Seq[String],
     rest: String = ""
   ): String =
-    s"[${getIdentifierOrEmptyString(referenceableMap, this)}${kindsToQuery(kinds)}$rest]"
+    s"[${getIdentifierOrEmptyString(identifiableMap, this)}${kindsToQuery(kinds)}$rest]"
 
   private def kindsToQuery(kinds: Seq[String]): String =
     if (kinds.isEmpty) ""
@@ -32,8 +32,8 @@ sealed trait Relationship
 }
 
 class CreateRelationship(val kind: String, val properties: Seq[Property]) extends Relationship {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    makeRelationshipString(referenceableMap, Seq(kind), Property.toQuery(properties))
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    makeRelationshipString(identifiableMap, Seq(kind), Property.toQuery(properties))
 }
 
 object CreateRelationship {
@@ -42,8 +42,8 @@ object CreateRelationship {
 }
 
 class AnyRelationship() extends Relationship {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    makeRelationshipString(referenceableMap, Seq.empty)
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    makeRelationshipString(identifiableMap, Seq.empty)
 }
 
 object AnyRelationship {
@@ -52,8 +52,8 @@ object AnyRelationship {
 }
 
 class KindRelationship(val kinds: String*) extends Relationship {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    makeRelationshipString(referenceableMap, kinds)
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    makeRelationshipString(identifiableMap, kinds)
 }
 
 object KindRelationship {
@@ -62,8 +62,8 @@ object KindRelationship {
 }
 
 class DistanceRelationship(val length: Int, val kinds: String*) extends Relationship {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    makeRelationshipString(referenceableMap, kinds, s"*$length")
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    makeRelationshipString(identifiableMap, kinds, s"*$length")
 }
 
 object DistanceRelationship {
@@ -72,8 +72,8 @@ object DistanceRelationship {
 }
 
 class MaxDistanceRelationship(val length: Int, val kinds: String*) extends Relationship {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    makeRelationshipString(referenceableMap, kinds, s"*..$length")
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    makeRelationshipString(identifiableMap, kinds, s"*..$length")
 }
 
 object MaxDistanceRelationship {
@@ -82,8 +82,8 @@ object MaxDistanceRelationship {
 }
 
 class MinDistanceRelationship(val length: Int, val kinds: String*) extends Relationship {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    makeRelationshipString(referenceableMap, kinds, s"*$length..")
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    makeRelationshipString(identifiableMap, kinds, s"*$length..")
 }
 
 object MinDistanceRelationship {
@@ -92,8 +92,8 @@ object MinDistanceRelationship {
 }
 
 class RangeRelationship(val min: Int, max: Int, val kinds: String*) extends Relationship {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    makeRelationshipString(referenceableMap, kinds, s"*$min..$max")
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    makeRelationshipString(identifiableMap, kinds, s"*$min..$max")
 }
 
 object RangeRelationship {
@@ -102,8 +102,8 @@ object RangeRelationship {
 }
 
 class AnyLengthRelationship(val kinds: String*) extends Relationship {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    makeRelationshipString(referenceableMap, kinds, s"*")
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    makeRelationshipString(identifiableMap, kinds, s"*")
 }
 
 object AnyLengthRelationship {

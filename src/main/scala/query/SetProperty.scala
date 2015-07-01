@@ -7,8 +7,8 @@ import com.originate.scalypher.types.Identifiable
 class SetProperty private (reference: ReferenceWithProperty, serializedValue: String) {
   def getReferenceable: Option[Identifiable] = reference.getReferenceable
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    s"${reference.toQuery(referenceableMap)} = $serializedValue"
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    s"${reference.toQuery(identifiableMap)} = $serializedValue"
 }
 
 object SetProperty {

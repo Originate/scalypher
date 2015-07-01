@@ -23,16 +23,16 @@ case class MergeQuery(
 
   def toQuery: String = {
     val matchString = ifNonEmpty(matchPaths) { paths =>
-      stringListWithPrefix("MATCH", matchPaths map (_.toQuery(referenceableMap)))
+      stringListWithPrefix("MATCH", matchPaths map (_.toQuery(identifiableMap)))
     }
     val mergeString = Some(s"MERGE " + cleanedCreatePath.toQuery(modifiedReferenceableMap))
     val onCreateString = ifNonEmpty(createProperties) { properties =>
-      stringListWithPrefix("ON CREATE SET", properties map (_.toQuery(referenceableMap)))
+      stringListWithPrefix("ON CREATE SET", properties map (_.toQuery(identifiableMap)))
     }
     val onMergeString = ifNonEmpty(mergeProperties) { properties =>
-      stringListWithPrefix("ON MATCH SET", properties map (_.toQuery(referenceableMap)))
+      stringListWithPrefix("ON MATCH SET", properties map (_.toQuery(identifiableMap)))
     }
-    val returnString = returnAction map (_.toQuery(referenceableMap))
+    val returnString = returnAction map (_.toQuery(identifiableMap))
 
     buildQuery(
       matchString,
@@ -55,7 +55,7 @@ case class MergeQuery(
     onCreateOrMergeReferenceables ++ returnReferenceables
   }
 
-  protected val referenceableMap: ReferenceableMap =
+  protected val identifiableMap: ReferenceableMap =
     referenceableMapWithPathWhereAndAction(
       matchPaths,
       None,

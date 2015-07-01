@@ -4,8 +4,8 @@ import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.types.Identifiable
 
 case class AndOrCondition(operator: BooleanOperator, condition: Condition) {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    Seq(operator.toQuery, condition.toQuery(referenceableMap)) mkString " "
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    Seq(operator.toQuery, condition.toQuery(identifiableMap)) mkString " "
 }
 
 case class Where(startCondition: Condition, conditions: Seq[AndOrCondition] = Seq.empty) {
@@ -21,11 +21,11 @@ case class Where(startCondition: Condition, conditions: Seq[AndOrCondition] = Se
   def or(condition: Condition): Where =
     copy(conditions = conditions :+ AndOrCondition(Or, condition))
 
-  def toQuery(referenceableMap: ReferenceableMap): String = {
-    val firstCondition = startCondition.toQuery(referenceableMap)
+  def toQuery(identifiableMap: ReferenceableMap): String = {
+    val firstCondition = startCondition.toQuery(identifiableMap)
     val rest =
       if (conditions.isEmpty) ""
-      else " " + (conditions map (_.toQuery(referenceableMap)) mkString " ")
+      else " " + (conditions map (_.toQuery(identifiableMap)) mkString " ")
 
     s"$firstCondition$rest"
   }

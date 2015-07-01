@@ -10,7 +10,7 @@ import com.originate.scalypher.where.Reference
 
 sealed trait Action {
   def identifiables: Set[Identifiable]
-  def toQuery(referenceableMap: ReferenceableMap): String
+  def toQuery(identifiableMap: ReferenceableMap): String
 }
 sealed trait ReturnAction extends Action
 
@@ -24,11 +24,11 @@ abstract class ReferenceListAction(keyword: String) extends Action {
   def identifiables: Set[Identifiable] =
     references flatMap (_.getReferenceable)
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    s"$keyword " + (references map (_.toQuery(referenceableMap)) mkString ", ")
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    s"$keyword " + (references map (_.toQuery(identifiableMap)) mkString ", ")
 
-  def returnColumns(referenceableMap: ReferenceableMap): Set[String] =
-    references.map(_.toColumn(referenceableMap)).toSet
+  def returnColumns(identifiableMap: ReferenceableMap): Set[String] =
+    references.map(_.toColumn(identifiableMap)).toSet
 }
 
 case class Delete(reference: ActionReference, rest: ActionReference*) extends ReferenceListAction("DELETE")
@@ -40,6 +40,6 @@ case class ReturnDistinct(reference: ActionReference, rest: ActionReference*) ex
 case object ReturnAll extends ReturnAction {
   def identifiables: Set[Identifiable] = Set()
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: ReferenceableMap): String =
     "RETURN *"
 }

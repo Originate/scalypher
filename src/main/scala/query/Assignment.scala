@@ -16,8 +16,8 @@ case class RemovePropertyAssignment(reference: ReferenceWithProperty) extends As
   def identifiables: Set[Identifiable] =
     reference.getReferenceable.toSet
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    s"${reference.toQuery(referenceableMap)} = NULL"
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    s"${reference.toQuery(identifiableMap)} = NULL"
 }
 
 case class MergePropertiesAssignment(
@@ -27,22 +27,22 @@ case class MergePropertiesAssignment(
   def identifiables: Set[Identifiable] =
     reference.getReferenceable.toSet
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    s"${reference.toQuery(referenceableMap)} += ${Property.toQuery(properties)}"
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    s"${reference.toQuery(identifiableMap)} += ${Property.toQuery(properties)}"
 }
 
 case class OverwriteAssignment(lhs: ObjectReference, rhs: ObjectReference) extends Assignment {
   def identifiables: Set[Identifiable] =
     Set(lhs.getReferenceable, rhs.getReferenceable).flatten
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    s"${lhs.toQuery(referenceableMap)} = ${rhs.toQuery(referenceableMap)}"
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    s"${lhs.toQuery(identifiableMap)} = ${rhs.toQuery(identifiableMap)}"
 }
 
 case class PropertyAssignment[T](lhs: ReferenceWithProperty, rhs: ValueReference[T]) extends Assignment {
   def identifiables: Set[Identifiable] =
     lhs.getReferenceable.toSet
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    s"${lhs.toQuery(referenceableMap)} = ${rhs.toQuery(referenceableMap)}"
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    s"${lhs.toQuery(identifiableMap)} = ${rhs.toQuery(identifiableMap)}"
 }

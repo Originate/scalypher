@@ -18,11 +18,11 @@ sealed trait ActionReference extends ToQueryWithIdentifiers {
 
   def as(name: String): ActionReference
 
-  def toColumn(referenceableMap: ReferenceableMap): String
+  def toColumn(identifiableMap: ReferenceableMap): String
 
-  protected def asString(referenceableMap: ReferenceableMap): Option[String] =
+  protected def asString(identifiableMap: ReferenceableMap): Option[String] =
     as map { name =>
-      if (referenceableMap.values.toSet contains name)
+      if (identifiableMap.values.toSet contains name)
         throw new IdentifierAliasCollisionException(name)
       s"AS $name"
     }
@@ -39,13 +39,13 @@ case class ActionPath(
   def as(name: String): ActionPath =
     copy(as = Some(name))
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    referenceableMap get path map { identifier =>
-      Seq(Some(identifier), asString(referenceableMap)).flatten mkString " "
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    identifiableMap get path map { identifier =>
+      Seq(Some(identifier), asString(identifiableMap)).flatten mkString " "
     } getOrElse (throw new IdentifierDoesntExistException())
 
-  def toColumn(referenceableMap: ReferenceableMap): String =
-    as orElse referenceableMap.get(path) getOrElse (throw new IdentifierDoesntExistException())
+  def toColumn(identifiableMap: ReferenceableMap): String =
+    as orElse identifiableMap.get(path) getOrElse (throw new IdentifierDoesntExistException())
 
 }
 
@@ -59,10 +59,10 @@ case class ActionNodeOrRelationship(
   def as(name: String): ActionNodeOrRelationship =
     copy(as = Some(name))
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    Seq(Some(reference.toQuery(referenceableMap)), asString(referenceableMap)).flatten mkString " "
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    Seq(Some(reference.toQuery(identifiableMap)), asString(identifiableMap)).flatten mkString " "
 
-  def toColumn(referenceableMap: ReferenceableMap): String =
-    as getOrElse reference.toQuery(referenceableMap)
+  def toColumn(identifiableMap: ReferenceableMap): String =
+    as getOrElse reference.toQuery(identifiableMap)
 
 }

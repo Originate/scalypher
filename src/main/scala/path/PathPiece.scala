@@ -39,8 +39,8 @@ case class PathPiece(
   def -->(node: Node): PathPieces =
     PathPieces(this, Seq(PathPiece(RightArrow, node)), None)
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    arrow.toQuery(referenceableMap, relationship) + node.toQuery(referenceableMap)
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    arrow.toQuery(identifiableMap, relationship) + node.toQuery(identifiableMap)
 
 }
 

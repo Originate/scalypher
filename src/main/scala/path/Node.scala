@@ -32,8 +32,8 @@ object Node {
 }
 
 class AnyNode extends Node {
-  def toQuery(referenceableMap: ReferenceableMap): String = {
-    val identifier = getIdentifierOrEmptyString(referenceableMap, this)
+  def toQuery(identifiableMap: ReferenceableMap): String = {
+    val identifier = getIdentifierOrEmptyString(identifiableMap, this)
     s"($identifier)"
   }
 }
@@ -47,8 +47,8 @@ class CypherNode(
   val labels: Seq[Label] = Seq.empty,
   val properties: Seq[Property] = Seq.empty
 ) extends Node {
-  def toQuery(referenceableMap: ReferenceableMap): String = {
-    val identifier = getIdentifierOrEmptyString(referenceableMap, this)
+  def toQuery(identifiableMap: ReferenceableMap): String = {
+    val identifier = getIdentifierOrEmptyString(identifiableMap, this)
     val labelsQuery = labels map (_.toQuery) mkString ""
     val propertiesQuery = Property.toQuery(properties)
 

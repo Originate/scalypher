@@ -67,8 +67,8 @@ case class ObjectReference(identifiable: NodeOrRelationship) extends NodeOrRelat
   def property(property: String): ReferenceWithProperty =
     ReferenceWithProperty(identifiable, PropertyName(property))
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    toQueryWithProperty(referenceableMap, identifiable, None)
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    toQueryWithProperty(identifiableMap, identifiable, None)
 
   def getReferenceable = Some(identifiable)
 }
@@ -86,8 +86,8 @@ case class ReferenceWithProperty(
   def assignNull: RemovePropertyAssignment =
     RemovePropertyAssignment(this)
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    toQueryWithProperty(referenceableMap, identifiable, Some(property))
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    toQueryWithProperty(identifiableMap, identifiable, Some(property))
 
   def set[T : CypherExpressible](value: T): SetProperty =
     SetProperty(this, value)
@@ -96,14 +96,14 @@ case class ReferenceWithProperty(
 }
 
 case class ValueReference[V](value: V)(implicit serializer: CypherExpressible[V]) extends Reference {
-  def toQuery(referenceableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: ReferenceableMap): String =
     serializer.toQuery(value)
 
   def getReferenceable = None
 }
 
 case class SeqValueReference[V](values: Seq[V])(implicit serializer: CypherExpressible[V]) extends Reference {
-  def toQuery(referenceableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: ReferenceableMap): String =
     "[" + (values map serializer.toQuery mkString ", ") + "]"
 
   def getReferenceable = None

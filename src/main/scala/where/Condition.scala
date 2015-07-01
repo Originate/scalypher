@@ -8,7 +8,7 @@ import com.originate.scalypher.path.AnyNode
 import scala.language.implicitConversions
 
 sealed trait Condition {
-  def toQuery(referenceableMap: ReferenceableMap): String
+  def toQuery(identifiableMap: ReferenceableMap): String
   def identifiables: Set[Identifiable]
 }
 
@@ -21,16 +21,16 @@ object Condition {
 }
 
 case class Comparison(reference1: Reference, comparator: Comparator, reference2: Reference) extends Condition {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    Seq(reference1.toQuery(referenceableMap), comparator.toQuery, reference2.toQuery(referenceableMap)) mkString " "
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    Seq(reference1.toQuery(identifiableMap), comparator.toQuery, reference2.toQuery(identifiableMap)) mkString " "
 
   def identifiables: Set[Identifiable] =
     Set(reference1, reference2) flatMap (_.getReferenceable)
 }
 
 case class NullCondition(reference: Reference, check: NullCheck) extends Condition {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    Seq(reference.toQuery(referenceableMap), check.toQuery) mkString " "
+  def toQuery(identifiableMap: ReferenceableMap): String =
+    Seq(reference.toQuery(identifiableMap), check.toQuery) mkString " "
 
   def identifiables: Set[Identifiable] =
     reference.getReferenceable.toSet
@@ -41,15 +41,15 @@ case class PredicateCondition(
   projection: Collection,
   where: ObjectReference => Where
 ) extends Condition {
-  def toQuery(referenceableMap: ReferenceableMap): String = {
+  def toQuery(identifiableMap: ReferenceableMap): String = {
     val identifier = "x"
     val identifiable = AnyNode()
-    val adjustedMap = referenceableMap + (identifiable -> identifier)
+    val adjustedMap = identifiableMap + (identifiable -> identifier)
     val conditionString = where(ObjectReference(identifiable)).toQuery(adjustedMap)
 
     Seq(
       predicate.toQuery,
-      s"($identifier IN ${projection.toQuery(referenceableMap)} WHERE $conditionString)"
+      s"($identifier IN ${projection.toQuery(identifiableMap)} WHERE $conditionString)"
     ) mkString " "
   }
 
@@ -58,7 +58,7 @@ case class PredicateCondition(
 }
 
 case class Expression(string: String, references: Reference*) extends Condition {
-  def toQuery(referenceableMap: ReferenceableMap): String = {
+  def toQuery(identifiableMap: ReferenceableMap): String = {
     val questionMarksCount = (string filter (_ == '?')).size
     if (questionMarksCount != references.size)
       throw new MismatchedInterpolatedStringWithReferences(string, questionMarksCount, references.size)
@@ -67,7 +67,7 @@ case class Expression(string: String, references: Reference*) extends Condition 
         // avoiding replaceFirst because it has special handling of escape characters:
         // http://docs.oracle.com/javase/7/docs/api/java/lang/String.html#replaceFirst%28java.lang.String,%20java.lang.String%29
         val pieces = acc.split("[?]", 2)
-        Seq(pieces.lift(0), Some(reference.toQuery(referenceableMap)), pieces.lift(1)).flatten mkString ""
+        Seq(pieces.lift(0), Some(reference.toQuery(identifiableMap)), pieces.lift(1)).flatten mkString ""
       }
       s"($expression)"
     }

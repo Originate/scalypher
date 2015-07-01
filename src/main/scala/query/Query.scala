@@ -21,10 +21,10 @@ trait Query extends ToQuery {
 
   def getReturnColumns: Set[String]
 
-  protected def referenceableMap: ReferenceableMap
+  protected def identifiableMap: ReferenceableMap
 
   def getIdentifier(identifiable: Identifiable): Option[String] =
-    referenceableMap get identifiable
+    identifiableMap get identifiable
 
   protected def ifNonEmpty[T](seq: Seq[T])(f: Seq[T] => String): Option[String] =
     if (seq.isEmpty) None
@@ -44,9 +44,9 @@ trait Query extends ToQuery {
 
   protected def matchActionToReturnColumns(action: Action): Set[String] =
     action match {
-      case ReturnAll => referenceableMap.values.toSet
+      case ReturnAll => identifiableMap.values.toSet
       case _: Delete => Set.empty
-      case referenceListAction: ReferenceListAction => referenceListAction.returnColumns(referenceableMap)
+      case referenceListAction: ReferenceListAction => referenceListAction.returnColumns(identifiableMap)
     }
 
   protected def referenceableMapWithPathWhereAndAction(
@@ -71,11 +71,11 @@ trait Query extends ToQuery {
 object Query {
 
   def toQueryWithProperty(
-    referenceableMap: ReferenceableMap,
+    identifiableMap: ReferenceableMap,
     identifiable: Identifiable,
     property: Option[PropertyName] = None
   ): String = {
-    val identifier = referenceableMap.get(identifiable) getOrElse (throw new IdentifierDoesntExistException())
+    val identifier = identifiableMap.get(identifiable) getOrElse (throw new IdentifierDoesntExistException())
     val propertyString = property map (p => s".${p.name}") getOrElse ""
     s"$identifier$propertyString"
   }

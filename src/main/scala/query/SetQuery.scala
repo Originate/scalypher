@@ -35,13 +35,13 @@ case class SetQuery(
 
   def toQuery: String =
     buildQuery(
-      Some("MATCH " + pathMatch.toQuery(referenceableMap)),
-      where map ("WHERE " + _.toQuery(referenceableMap)),
-      Some("SET " + (assignments map (_.toQuery(referenceableMap)) mkString ", ")),
-      action map (_.toQuery(referenceableMap))
+      Some("MATCH " + pathMatch.toQuery(identifiableMap)),
+      where map ("WHERE " + _.toQuery(identifiableMap)),
+      Some("SET " + (assignments map (_.toQuery(identifiableMap)) mkString ", ")),
+      action map (_.toQuery(identifiableMap))
     )
 
-  protected val referenceableMap: ReferenceableMap =
+  protected val identifiableMap: ReferenceableMap =
     referenceableMapWithPathWhereAndAction(
       Seq(pathMatch),
       where,
