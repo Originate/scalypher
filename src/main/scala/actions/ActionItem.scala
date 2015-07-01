@@ -14,7 +14,7 @@ sealed trait ActionItem extends ToQueryWithIdentifiers {
 
   val as: Option[String]
 
-  def getReferenceable: Option[Identifiable]
+  def getIdentifiable: Option[Identifiable]
 
   def as(name: String): ActionItem
 
@@ -34,7 +34,7 @@ case class ActionPath(
   as: Option[String] = None
 ) extends ActionItem {
 
-  val getReferenceable = Some(path)
+  val getIdentifiable = Some(path)
 
   def as(name: String): ActionPath =
     copy(as = Some(name))
@@ -54,7 +54,7 @@ case class ActionReference(
   as: Option[String] = None
 ) extends ActionItem {
 
-  val getReferenceable = reference.getReferenceable
+  val getIdentifiable = reference.getIdentifiable
 
   def as(name: String): ActionReference =
     copy(as = Some(name))

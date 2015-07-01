@@ -14,7 +14,7 @@ sealed trait Assignment extends ToQueryWithIdentifiers {
 
 case class RemovePropertyAssignment(reference: ReferenceWithProperty) extends Assignment {
   def identifiables: Set[Identifiable] =
-    reference.getReferenceable.toSet
+    reference.getIdentifiable.toSet
 
   def toQuery(identifiableMap: IdentifiableMap): String =
     s"${reference.toQuery(identifiableMap)} = NULL"
@@ -25,7 +25,7 @@ case class MergePropertiesAssignment(
   properties: Seq[Property]
 ) extends Assignment {
   def identifiables: Set[Identifiable] =
-    reference.getReferenceable.toSet
+    reference.getIdentifiable.toSet
 
   def toQuery(identifiableMap: IdentifiableMap): String =
     s"${reference.toQuery(identifiableMap)} += ${Property.toQuery(properties)}"
@@ -33,7 +33,7 @@ case class MergePropertiesAssignment(
 
 case class OverwriteAssignment(lhs: ObjectReference, rhs: ObjectReference) extends Assignment {
   def identifiables: Set[Identifiable] =
-    Set(lhs.getReferenceable, rhs.getReferenceable).flatten
+    Set(lhs.getIdentifiable, rhs.getIdentifiable).flatten
 
   def toQuery(identifiableMap: IdentifiableMap): String =
     s"${lhs.toQuery(identifiableMap)} = ${rhs.toQuery(identifiableMap)}"
@@ -41,7 +41,7 @@ case class OverwriteAssignment(lhs: ObjectReference, rhs: ObjectReference) exten
 
 case class PropertyAssignment[T](lhs: ReferenceWithProperty, rhs: ValueReference[T]) extends Assignment {
   def identifiables: Set[Identifiable] =
-    lhs.getReferenceable.toSet
+    lhs.getIdentifiable.toSet
 
   def toQuery(identifiableMap: IdentifiableMap): String =
     s"${lhs.toQuery(identifiableMap)} = ${rhs.toQuery(identifiableMap)}"

@@ -25,7 +25,7 @@ case class Comparison(reference1: Reference, comparator: Comparator, reference2:
     Seq(reference1.toQuery(identifiableMap), comparator.toQuery, reference2.toQuery(identifiableMap)) mkString " "
 
   def identifiables: Set[Identifiable] =
-    Set(reference1, reference2) flatMap (_.getReferenceable)
+    Set(reference1, reference2) flatMap (_.getIdentifiable)
 }
 
 case class NullCondition(reference: Reference, check: NullCheck) extends Condition {
@@ -33,7 +33,7 @@ case class NullCondition(reference: Reference, check: NullCheck) extends Conditi
     Seq(reference.toQuery(identifiableMap), check.toQuery) mkString " "
 
   def identifiables: Set[Identifiable] =
-    reference.getReferenceable.toSet
+    reference.getIdentifiable.toSet
 }
 
 case class PredicateCondition(
@@ -74,5 +74,5 @@ case class Expression(string: String, references: Reference*) extends Condition 
   }
 
   def identifiables: Set[Identifiable] =
-    (references flatMap (_.getReferenceable)).toSet
+    (references flatMap (_.getIdentifiable)).toSet
 }

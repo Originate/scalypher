@@ -16,7 +16,7 @@ import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
 import scala.language.implicitConversions
 
 sealed trait Reference extends ToQueryWithIdentifiers {
-  def getReferenceable: Option[Referenceable]
+  def getIdentifiable: Option[Referenceable]
 
   def ===(reference: Reference): Condition =
     Comparison(this, Equal, reference)
@@ -82,7 +82,7 @@ case class ObjectReference(identifiable: Referenceable) extends ReferenceableRef
   def toQuery(identifiableMap: IdentifiableMap): String =
     toQueryWithProperty(identifiableMap, identifiable, None)
 
-  def getReferenceable = Some(identifiable)
+  def getIdentifiable = Some(identifiable)
 }
 
 case class ReferenceWithProperty(
@@ -104,19 +104,19 @@ case class ReferenceWithProperty(
   def set[T : CypherExpressible](value: T): SetProperty =
     SetProperty(this, value)
 
-  def getReferenceable = Some(identifiable)
+  def getIdentifiable = Some(identifiable)
 }
 
 case class ValueReference[V](value: V)(implicit serializer: CypherExpressible[V]) extends Reference {
   def toQuery(identifiableMap: IdentifiableMap): String =
     serializer.toQuery(value)
 
-  def getReferenceable = None
+  def getIdentifiable = None
 }
 
 case class SeqValueReference[V](values: Seq[V])(implicit serializer: CypherExpressible[V]) extends Reference {
   def toQuery(identifiableMap: IdentifiableMap): String =
     "[" + (values map serializer.toQuery mkString ", ") + "]"
 
-  def getReferenceable = None
+  def getIdentifiable = None
 }

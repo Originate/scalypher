@@ -21,7 +21,7 @@ abstract class ReferenceListAction(keyword: String) extends Action {
   private val references: Set[ActionItem] = (reference +: rest).toSet
 
   def identifiables: Set[Identifiable] =
-    references flatMap (_.getReferenceable)
+    references flatMap (_.getIdentifiable)
 
   def toQuery(identifiableMap: IdentifiableMap): String =
     s"$keyword " + (references map (_.toQuery(identifiableMap)) mkString ", ")

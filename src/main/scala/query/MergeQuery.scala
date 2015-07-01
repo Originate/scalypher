@@ -47,8 +47,8 @@ case class MergeQuery(
     copy(returnAction = Some(action))
 
   private val onCreateOrMergeReferenceables =
-    createProperties.flatMap(_.getReferenceable).toSet ++
-      mergeProperties.flatMap(_.getReferenceable).toSet
+    createProperties.flatMap(_.getIdentifiable).toSet ++
+      mergeProperties.flatMap(_.getIdentifiable).toSet
 
   protected override val forcedCreateReferenceables: Set[Identifiable] = {
     val returnReferenceables = returnAction map (_.identifiables) getOrElse Set.empty
