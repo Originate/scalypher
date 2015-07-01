@@ -8,7 +8,6 @@ import com.originate.scalypher.Property
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.Query
 import com.originate.scalypher.ToQueryWithIdentifiers
-import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.where.ObjectReference
@@ -18,9 +17,9 @@ import scala.language.implicitConversions
 
 sealed trait Node
     extends ToQueryWithIdentifiers
-    with Identifiable
     with Referenceable
     with AddableProperties {
+
   def property(propertyName: String): ReferenceWithProperty =
     ReferenceWithProperty(this, PropertyName(propertyName))
 
@@ -29,6 +28,7 @@ sealed trait Node
 
   def assign(node: Node): OverwriteAssignment =
     OverwriteAssignment(ObjectReference(this), ObjectReference(node))
+
 }
 
 object Node {

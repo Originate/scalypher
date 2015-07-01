@@ -1,22 +1,27 @@
 package com.originate.scalypher.path
 
 import com.originate.scalypher.action.ActionItem
+import com.originate.scalypher.action.ActionPath
 import com.originate.scalypher.action.Delete
 import com.originate.scalypher.action.ReturnAll
 import com.originate.scalypher.action.ReturnDistinct
 import com.originate.scalypher.action.ReturnReference
+import com.originate.scalypher.Assignment
 import com.originate.scalypher.CreateQuery
 import com.originate.scalypher.MatchQuery
 import com.originate.scalypher.MergeQuery
-import com.originate.scalypher.SetQuery
 import com.originate.scalypher.Query
-import com.originate.scalypher.Assignment
+import com.originate.scalypher.SetQuery
 import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
+import com.originate.scalypher.types.NonReferenceable
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
-case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Identifiable {
+case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends NonReferenceable {
+
+  def as(name: String): ActionItem =
+    ActionPath(this, Some(name))
 
   def set(assignment: Assignment, rest: Assignment*): SetQuery =
     SetQuery(this, assignment, rest: _*)
@@ -111,4 +116,7 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Identif
 object Path {
   private[path] def getIdentifierOrEmptyString(identifiableMap: IdentifiableMap, identifiable: Identifiable): String =
     identifiableMap get identifiable getOrElse ""
+
+  implicit def toActionReference(path: Path): ActionItem =
+    ActionPath(path)
 }
