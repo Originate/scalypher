@@ -8,14 +8,14 @@ import com.originate.scalypher.Property
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.Query
 import com.originate.scalypher.ToQueryWithIdentifiers
-import com.originate.scalypher.types.NodeOrRelationship
+import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.where.ObjectReference
 import com.originate.scalypher.where.ReferenceWithProperty
 
 import scala.language.implicitConversions
 
-sealed trait Node extends ToQueryWithIdentifiers with NodeOrRelationship with AddableProperties {
+sealed trait Node extends ToQueryWithIdentifiers with Referenceable with AddableProperties {
   def property(propertyName: String): ReferenceWithProperty =
     ReferenceWithProperty(this, PropertyName(propertyName))
 

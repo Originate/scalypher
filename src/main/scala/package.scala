@@ -8,16 +8,16 @@ import com.originate.scalypher.where.NodeOrRelationshipReference
 package object types {
   trait Identifiable
 
-  trait NodeOrRelationship extends Identifiable {
+  trait Referenceable extends Identifiable {
     def as(name: String): ActionNodeOrRelationship =
       ActionNodeOrRelationship(ObjectReference(this), Some(name))
   }
 
-  object NodeOrRelationship {
-    implicit def toReference(identifiable: NodeOrRelationship): NodeOrRelationshipReference =
+  object Referenceable {
+    implicit def toReference(identifiable: Referenceable): NodeOrRelationshipReference =
       ObjectReference(identifiable)
 
-    implicit def toActionReference(identifiable: NodeOrRelationship): ActionNodeOrRelationship =
+    implicit def toActionReference(identifiable: Referenceable): ActionNodeOrRelationship =
       ActionNodeOrRelationship(identifiable)
   }
 

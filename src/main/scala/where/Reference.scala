@@ -9,12 +9,12 @@ import com.originate.scalypher.Query.toQueryWithProperty
 import com.originate.scalypher.RemovePropertyAssignment
 import com.originate.scalypher.SetProperty
 import com.originate.scalypher.ToQueryWithIdentifiers
-import com.originate.scalypher.types.NodeOrRelationship
+import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.IdentifiableMap
 import scala.language.implicitConversions
 
 sealed trait Reference extends ToQueryWithIdentifiers {
-  def getReferenceable: Option[NodeOrRelationship]
+  def getReferenceable: Option[Referenceable]
 
   def ===(reference: Reference): Condition =
     Comparison(this, Equal, reference)
@@ -63,7 +63,7 @@ object Reference {
     SeqValueReference[V](values)
 }
 
-case class ObjectReference(identifiable: NodeOrRelationship) extends NodeOrRelationshipReference {
+case class ObjectReference(identifiable: Referenceable) extends NodeOrRelationshipReference {
   def property(property: String): ReferenceWithProperty =
     ReferenceWithProperty(identifiable, PropertyName(property))
 
@@ -74,7 +74,7 @@ case class ObjectReference(identifiable: NodeOrRelationship) extends NodeOrRelat
 }
 
 case class ReferenceWithProperty(
-  identifiable: NodeOrRelationship,
+  identifiable: Referenceable,
   property: PropertyName
 ) extends NodeOrRelationshipReference {
   def :=[T](reference: ValueReference[T]): PropertyAssignment[T] =

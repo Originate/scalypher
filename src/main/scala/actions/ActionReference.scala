@@ -2,7 +2,7 @@ package com.originate.scalypher.action
 
 import com.originate.scalypher.path.Path
 import com.originate.scalypher.ToQueryWithIdentifiers
-import com.originate.scalypher.types.NodeOrRelationship
+import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.util.Exceptions.IdentifierAliasCollisionException

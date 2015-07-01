@@ -1,9 +1,9 @@
 package com.originate.scalypher
 
-import com.originate.scalypher.types.NodeOrRelationship
+import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.where.ObjectReference
 
-trait AddableProperties { self: NodeOrRelationship =>
+trait AddableProperties { self: Referenceable =>
   def :=(properties: Property*): MergePropertiesAssignment =
     assign(properties: _*)
 
