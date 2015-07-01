@@ -1,7 +1,7 @@
 package com.originate.scalypher.where
 
 import com.originate.scalypher.action.ActionItem
-import com.originate.scalypher.action.ActionNodeOrRelationship
+import com.originate.scalypher.action.ActionReference
 import com.originate.scalypher.CypherExpressible
 import com.originate.scalypher.PropertyAssignment
 import com.originate.scalypher.PropertyName
@@ -43,18 +43,18 @@ sealed trait NodeOrRelationshipReference extends Reference
 
 object Reference {
   implicit def toActionReference(reference: ObjectReference): ActionItem =
-    ActionNodeOrRelationship(reference)
+    ActionReference(reference)
 
   implicit def toActionReference(reference: ReferenceWithProperty): ActionItem =
-    ActionNodeOrRelationship(reference)
+    ActionReference(reference)
 
   implicit def objectReferencesToActionReferences(references: Seq[ObjectReference]): Seq[ActionItem] =
-    references map (ActionNodeOrRelationship.apply(_))
+    references map (ActionReference.apply(_))
 
   implicit def referencesWithPropertiesToActionReferences(
     references: Seq[ReferenceWithProperty]
   ): Seq[ActionItem] =
-    references map (ActionNodeOrRelationship.apply(_))
+    references map (ActionReference.apply(_))
 
   implicit def toValueReference[V : CypherExpressible](value: V): ValueReference[V] =
     ValueReference[V](value)

@@ -49,14 +49,14 @@ case class ActionPath(
 
 }
 
-case class ActionNodeOrRelationship(
+case class ActionReference(
   reference: NodeOrRelationshipReference,
   as: Option[String] = None
 ) extends ActionItem {
 
   val getReferenceable = reference.getReferenceable
 
-  def as(name: String): ActionNodeOrRelationship =
+  def as(name: String): ActionReference =
     copy(as = Some(name))
 
   def toQuery(identifiableMap: IdentifiableMap): String =

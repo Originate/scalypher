@@ -1,6 +1,6 @@
 package com.originate.scalypher.test.action
 
-import com.originate.scalypher.action.ActionNodeOrRelationship
+import com.originate.scalypher.action.ActionReference
 import com.originate.scalypher.path.AnyNode
 import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.util.Exceptions.IdentifierAliasCollisionException
@@ -24,7 +24,7 @@ class ActionsSpec extends WordSpec with Matchers {
     }
 
     "allow no aliases" in {
-      ActionNodeOrRelationship(node).toQuery(map) shouldBe nodeName
+      ActionReference(node).toQuery(map) shouldBe nodeName
     }
 
     "throw an exception when the alias collides" in {
