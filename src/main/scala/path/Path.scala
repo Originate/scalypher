@@ -18,6 +18,8 @@ import com.originate.scalypher.types.NonReferenceable
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
+import scala.language.implicitConversions
+
 case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends NonReferenceable {
 
   def as(name: String): ActionItem =

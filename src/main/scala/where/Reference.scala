@@ -13,6 +13,8 @@ import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
 
+import scala.language.implicitConversions
+
 sealed trait Reference extends ToQueryWithIdentifiers {
   def getReferenceable: Option[Referenceable]
 

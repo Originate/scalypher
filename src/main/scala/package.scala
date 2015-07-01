@@ -5,6 +5,8 @@ import com.originate.scalypher.action.ActionReference
 import com.originate.scalypher.where.ObjectReference
 import com.originate.scalypher.where.ReferenceableReference
 
+import scala.language.implicitConversions
+
 package object types {
 
   sealed trait Identifiable
