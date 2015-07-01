@@ -10,9 +10,9 @@ case class AndOrCondition(operator: BooleanOperator, condition: Condition) {
 
 case class Where(startCondition: Condition, conditions: Seq[AndOrCondition] = Seq.empty) {
 
-  val referenceables: Set[Identifiable] = {
+  val identifiables: Set[Identifiable] = {
     val cs = (conditions map (_.condition)) :+ startCondition
-    cs.flatMap(_.referenceables).toSet
+    cs.flatMap(_.identifiables).toSet
   }
 
   def and(condition: Condition): Where =

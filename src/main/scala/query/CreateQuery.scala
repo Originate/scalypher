@@ -32,7 +32,7 @@ case class CreateQuery(
   }
 
   protected val forcedCreateReferenceables: Set[Identifiable] =
-    returnAction map (_.referenceables) getOrElse Set.empty
+    returnAction map (_.identifiables) getOrElse Set.empty
 
   protected def withReturnAction(action: ReturnAction): CreateQuery =
     copy(returnAction = Some(action))
@@ -42,7 +42,7 @@ case class CreateQuery(
       matchPaths,
       where,
       returnAction,
-      createPath.referenceables - createPath
+      createPath.identifiables - createPath
     )
 
   protected val (cleanedCreatePath, createMap) =

@@ -87,7 +87,7 @@ class MatchQuerySpec extends WordSpec with Matchers {
 
     "given a return all expression" must {
 
-      "return columns for as many referenceables there are in the match expression" in {
+      "return columns for as many identifiables there are in the match expression" in {
         val query = (AnyNode() -- AnyRelationship() -- AnyNode()).returnAll
         query.getReturnColumns.size shouldBe 4
       }

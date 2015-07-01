@@ -9,7 +9,7 @@ import scala.language.implicitConversions
 
 sealed trait Condition {
   def toQuery(referenceableMap: ReferenceableMap): String
-  def referenceables: Set[Identifiable]
+  def identifiables: Set[Identifiable]
 }
 
 object Condition {
@@ -24,7 +24,7 @@ case class Comparison(reference1: Reference, comparator: Comparator, reference2:
   def toQuery(referenceableMap: ReferenceableMap): String =
     Seq(reference1.toQuery(referenceableMap), comparator.toQuery, reference2.toQuery(referenceableMap)) mkString " "
 
-  def referenceables: Set[Identifiable] =
+  def identifiables: Set[Identifiable] =
     Set(reference1, reference2) flatMap (_.getReferenceable)
 }
 
@@ -32,7 +32,7 @@ case class NullCondition(reference: Reference, check: NullCheck) extends Conditi
   def toQuery(referenceableMap: ReferenceableMap): String =
     Seq(reference.toQuery(referenceableMap), check.toQuery) mkString " "
 
-  def referenceables: Set[Identifiable] =
+  def identifiables: Set[Identifiable] =
     reference.getReferenceable.toSet
 }
 
@@ -53,8 +53,8 @@ case class PredicateCondition(
     ) mkString " "
   }
 
-  def referenceables: Set[Identifiable] =
-    projection.referenceables
+  def identifiables: Set[Identifiable] =
+    projection.identifiables
 }
 
 case class Expression(string: String, references: Reference*) extends Condition {
@@ -73,6 +73,6 @@ case class Expression(string: String, references: Reference*) extends Condition 
     }
   }
 
-  def referenceables: Set[Identifiable] =
+  def identifiables: Set[Identifiable] =
     (references flatMap (_.getReferenceable)).toSet
 }

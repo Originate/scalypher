@@ -125,7 +125,7 @@ class WhereSpec extends WordSpec with Matchers {
       val where = Comparison(node1.property("test"), Equal, node2.property("test")) and
         Comparison(node3.property("test"), NotEqual, node1.property("test"))
 
-      where.referenceables.size shouldBe 3
+      where.identifiables.size shouldBe 3
     }
 
   }
@@ -140,7 +140,7 @@ class WhereSpec extends WordSpec with Matchers {
       val where = Comparison(node1.property("test"), Equal, node2.property("test")) and
         Comparison(node3.property("test"), NotEqual, node1.property("test"))
 
-      where.referenceables.size shouldBe 3
+      where.identifiables.size shouldBe 3
     }
 
   }
@@ -155,7 +155,7 @@ class WhereSpec extends WordSpec with Matchers {
       val where = Comparison(relationship1.property("label"), Equal, relationship2.property("label")) and
         Comparison(relationship2.property("label"), NotEqual, relationship3.property("label"))
 
-      where.referenceables.size shouldBe 3
+      where.identifiables.size shouldBe 3
     }
 
   }

@@ -51,7 +51,7 @@ case class MergeQuery(
       mergeProperties.flatMap(_.getReferenceable).toSet
 
   protected override val forcedCreateReferenceables: Set[Identifiable] = {
-    val returnReferenceables = returnAction map (_.referenceables) getOrElse Set.empty
+    val returnReferenceables = returnAction map (_.identifiables) getOrElse Set.empty
     onCreateOrMergeReferenceables ++ returnReferenceables
   }
 
@@ -60,7 +60,7 @@ case class MergeQuery(
       matchPaths,
       None,
       returnAction,
-      mergePath.referenceables - mergePath ++ onCreateOrMergeReferenceables
+      mergePath.identifiables - mergePath ++ onCreateOrMergeReferenceables
     )
 
   protected val (cleanedCreatePath, createMap) =

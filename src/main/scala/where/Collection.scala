@@ -16,13 +16,13 @@ case object Nodes extends ConstantString("NODES") with Projection
 
 sealed trait Collection {
   def toQuery(referenceableMap: ReferenceableMap): String
-  def referenceables: Set[Identifiable]
+  def identifiables: Set[Identifiable]
 }
 
 case class PathProjection(projection: Projection, path: Path) extends Collection {
   def toQuery(referenceableMap: ReferenceableMap): String =
     s"${projection.toQuery}(${referenceableMap(path)})"
 
-  def referenceables: Set[Identifiable] =
+  def identifiables: Set[Identifiable] =
     Set(path)
 }

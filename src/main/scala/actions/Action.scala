@@ -9,7 +9,7 @@ import com.originate.scalypher.where.ObjectReference
 import com.originate.scalypher.where.Reference
 
 sealed trait Action {
-  def referenceables: Set[Identifiable]
+  def identifiables: Set[Identifiable]
   def toQuery(referenceableMap: ReferenceableMap): String
 }
 sealed trait ReturnAction extends Action
@@ -21,7 +21,7 @@ abstract class ReferenceListAction(keyword: String) extends Action {
 
   private val references: Set[ActionReference] = (reference +: rest).toSet
 
-  def referenceables: Set[Identifiable] =
+  def identifiables: Set[Identifiable] =
     references flatMap (_.getReferenceable)
 
   def toQuery(referenceableMap: ReferenceableMap): String =
@@ -38,7 +38,7 @@ case class ReturnReference(reference: ActionReference, rest: ActionReference*) e
 case class ReturnDistinct(reference: ActionReference, rest: ActionReference*) extends ReferenceListAction("RETURN DISTINCT") with ReturnAction
 
 case object ReturnAll extends ReturnAction {
-  def referenceables: Set[Identifiable] = Set()
+  def identifiables: Set[Identifiable] = Set()
 
   def toQuery(referenceableMap: ReferenceableMap): String =
     "RETURN *"

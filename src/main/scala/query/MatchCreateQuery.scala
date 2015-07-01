@@ -43,7 +43,7 @@ trait MatchCreateQuery extends Query {
   protected def createMap: ReferenceableMap
 
   protected def cleanPathAndExtractMap(path: Path, matchPaths: Seq[Path]): (Path, ReferenceableMap) = {
-    val overlapReferenceables = matchPaths flatMap (_.referenceables) intersect path.referenceables.toSeq
+    val overlapReferenceables = matchPaths flatMap (_.identifiables) intersect path.identifiables.toSeq
     val relevantMap = referenceableMap filterKeys { key =>
       overlapReferenceables contains key
     }

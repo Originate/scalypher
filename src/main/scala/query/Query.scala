@@ -55,13 +55,13 @@ trait Query extends ToQuery {
     action: Option[Action],
     forcedReferenceables: Set[Identifiable] = Set.empty
   ): ReferenceableMap = {
-    val whereReferenceables = where map (_.referenceables) getOrElse Set()
-    val referenceables = action match {
-      case Some(ReturnAll) => paths flatMap (_.referenceables)
-      case Some(action) => whereReferenceables ++ action.referenceables
+    val whereReferenceables = where map (_.identifiables) getOrElse Set()
+    val identifiables = action match {
+      case Some(ReturnAll) => paths flatMap (_.identifiables)
+      case Some(action) => whereReferenceables ++ action.identifiables
       case _ => whereReferenceables
     }
-    val referenceIdentifiers = (referenceables ++ forcedReferenceables) map ((_, nextIdentifier))
+    val referenceIdentifiers = (identifiables ++ forcedReferenceables) map ((_, nextIdentifier))
 
     referenceIdentifiers.toMap
   }

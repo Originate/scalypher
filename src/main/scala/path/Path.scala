@@ -98,7 +98,7 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Identif
   private[scalypher] def replaceRelationship(oldRelationship: Relationship, newRelationship: Relationship): Path =
     copy(pieces = pieces map (_.replaceRelationship(oldRelationship, newRelationship)))
 
-  private[scalypher] def referenceables: Set[Identifiable] = {
+  private[scalypher] def identifiables: Set[Identifiable] = {
     val extraReferenceables = pieces flatMap { piece =>
       Seq(Some(piece.node), piece.relationship).flatten
     }
