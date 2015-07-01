@@ -52,15 +52,15 @@ trait Query extends ToQuery {
     paths: Seq[Path],
     where: Option[Where],
     action: Option[Action],
-    forcedReferenceables: Set[Identifiable] = Set.empty
+    forcedIdentifiables: Set[Identifiable] = Set.empty
   ): IdentifiableMap = {
-    val whereReferenceables = where map (_.identifiables) getOrElse Set()
+    val whereIdentifiables = where map (_.identifiables) getOrElse Set()
     val identifiables = action match {
       case Some(ReturnAll) => paths flatMap (_.identifiables)
-      case Some(action) => whereReferenceables ++ action.identifiables
-      case _ => whereReferenceables
+      case Some(action) => whereIdentifiables ++ action.identifiables
+      case _ => whereIdentifiables
     }
-    val referenceIdentifiers = (identifiables ++ forcedReferenceables) map ((_, nextIdentifier))
+    val referenceIdentifiers = (identifiables ++ forcedIdentifiables) map ((_, nextIdentifier))
 
     referenceIdentifiers.toMap
   }
