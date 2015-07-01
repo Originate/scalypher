@@ -5,12 +5,14 @@ import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
 import com.originate.scalypher.Property
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.ToQueryWithIdentifiers
-import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
+import com.originate.scalypher.types.Referenceable
 import com.originate.scalypher.where.ReferenceWithProperty
 
 sealed trait Relationship
     extends ToQueryWithIdentifiers
+    with Identifiable
     with Referenceable
     with AddableProperties {
   def --(node: Node): PathPiece =
