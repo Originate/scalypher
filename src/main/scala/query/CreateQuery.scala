@@ -31,7 +31,7 @@ case class CreateQuery(
     )
   }
 
-  protected val forcedCreateReferenceables: Set[Referenceable] =
+  protected val forcedCreateReferenceables: Set[Identifiable] =
     returnAction map (_.referenceables) getOrElse Set.empty
 
   protected def withReturnAction(action: ReturnAction): CreateQuery =

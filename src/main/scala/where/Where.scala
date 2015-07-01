@@ -1,7 +1,7 @@
 package com.originate.scalypher.where
 
 import com.originate.scalypher.types.ReferenceableMap
-import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.Identifiable
 
 case class AndOrCondition(operator: BooleanOperator, condition: Condition) {
   def toQuery(referenceableMap: ReferenceableMap): String =
@@ -10,7 +10,7 @@ case class AndOrCondition(operator: BooleanOperator, condition: Condition) {
 
 case class Where(startCondition: Condition, conditions: Seq[AndOrCondition] = Seq.empty) {
 
-  val referenceables: Set[Referenceable] = {
+  val referenceables: Set[Identifiable] = {
     val cs = (conditions map (_.condition)) :+ startCondition
     cs.flatMap(_.referenceables).toSet
   }

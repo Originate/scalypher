@@ -1,6 +1,6 @@
 package com.originate.scalypher.path
 
-import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.ReferenceableMap
 
 case class PathPieces(startPiece: PathPiece, tail: Seq[PathPiece], relationship: Option[Relationship]) {

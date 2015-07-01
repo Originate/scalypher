@@ -11,12 +11,12 @@ import com.originate.scalypher.MergeQuery
 import com.originate.scalypher.SetQuery
 import com.originate.scalypher.Query
 import com.originate.scalypher.Assignment
-import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
-case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referenceable {
+case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Identifiable {
 
   def set(assignment: Assignment, rest: Assignment*): SetQuery =
     SetQuery(this, assignment, rest: _*)
@@ -98,7 +98,7 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referen
   private[scalypher] def replaceRelationship(oldRelationship: Relationship, newRelationship: Relationship): Path =
     copy(pieces = pieces map (_.replaceRelationship(oldRelationship, newRelationship)))
 
-  private[scalypher] def referenceables: Set[Referenceable] = {
+  private[scalypher] def referenceables: Set[Identifiable] = {
     val extraReferenceables = pieces flatMap { piece =>
       Seq(Some(piece.node), piece.relationship).flatten
     }
@@ -109,6 +109,6 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Referen
 }
 
 object Path {
-  private[path] def getIdentifierOrEmptyString(referenceableMap: ReferenceableMap, referenceable: Referenceable): String =
+  private[path] def getIdentifierOrEmptyString(referenceableMap: ReferenceableMap, referenceable: Identifiable): String =
     referenceableMap get referenceable getOrElse ""
 }

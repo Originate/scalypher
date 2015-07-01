@@ -2,10 +2,10 @@ package com.originate.scalypher
 
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.where.ReferenceWithProperty
-import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.Identifiable
 
 class SetProperty private (reference: ReferenceWithProperty, serializedValue: String) {
-  def getReferenceable: Option[Referenceable] = reference.getReferenceable
+  def getReferenceable: Option[Identifiable] = reference.getReferenceable
 
   def toQuery(referenceableMap: ReferenceableMap): String =
     s"${reference.toQuery(referenceableMap)} = $serializedValue"

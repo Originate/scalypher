@@ -6,9 +6,9 @@ import com.originate.scalypher.where.ObjectReference
 import com.originate.scalypher.where.NodeOrRelationshipReference
 
 package object types {
-  trait Referenceable
+  trait Identifiable
 
-  trait NodeOrRelationship extends Referenceable {
+  trait NodeOrRelationship extends Identifiable {
     def as(name: String): ActionNodeOrRelationship =
       ActionNodeOrRelationship(ObjectReference(this), Some(name))
   }
@@ -21,5 +21,5 @@ package object types {
       ActionNodeOrRelationship(referenceable)
   }
 
-  type ReferenceableMap = Map[Referenceable, String]
+  type ReferenceableMap = Map[Identifiable, String]
 }

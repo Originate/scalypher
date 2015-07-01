@@ -2,14 +2,14 @@ package com.originate.scalypher.where
 
 import com.originate.scalypher.util.Exceptions.MismatchedInterpolatedStringWithReferences
 import com.originate.scalypher.PropertyName
-import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.ReferenceableMap
 import com.originate.scalypher.path.AnyNode
 import scala.language.implicitConversions
 
 sealed trait Condition {
   def toQuery(referenceableMap: ReferenceableMap): String
-  def referenceables: Set[Referenceable]
+  def referenceables: Set[Identifiable]
 }
 
 object Condition {
@@ -24,7 +24,7 @@ case class Comparison(reference1: Reference, comparator: Comparator, reference2:
   def toQuery(referenceableMap: ReferenceableMap): String =
     Seq(reference1.toQuery(referenceableMap), comparator.toQuery, reference2.toQuery(referenceableMap)) mkString " "
 
-  def referenceables: Set[Referenceable] =
+  def referenceables: Set[Identifiable] =
     Set(reference1, reference2) flatMap (_.getReferenceable)
 }
 
@@ -32,7 +32,7 @@ case class NullCondition(reference: Reference, check: NullCheck) extends Conditi
   def toQuery(referenceableMap: ReferenceableMap): String =
     Seq(reference.toQuery(referenceableMap), check.toQuery) mkString " "
 
-  def referenceables: Set[Referenceable] =
+  def referenceables: Set[Identifiable] =
     reference.getReferenceable.toSet
 }
 
@@ -53,7 +53,7 @@ case class PredicateCondition(
     ) mkString " "
   }
 
-  def referenceables: Set[Referenceable] =
+  def referenceables: Set[Identifiable] =
     projection.referenceables
 }
 
@@ -73,6 +73,6 @@ case class Expression(string: String, references: Reference*) extends Condition 
     }
   }
 
-  def referenceables: Set[Referenceable] =
+  def referenceables: Set[Identifiable] =
     (references flatMap (_.getReferenceable)).toSet
 }

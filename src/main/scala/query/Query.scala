@@ -23,7 +23,7 @@ trait Query extends ToQuery {
 
   protected def referenceableMap: ReferenceableMap
 
-  def getIdentifier(referenceable: Referenceable): Option[String] =
+  def getIdentifier(referenceable: Identifiable): Option[String] =
     referenceableMap get referenceable
 
   protected def ifNonEmpty[T](seq: Seq[T])(f: Seq[T] => String): Option[String] =
@@ -53,7 +53,7 @@ trait Query extends ToQuery {
     paths: Seq[Path],
     where: Option[Where],
     action: Option[Action],
-    forcedReferenceables: Set[Referenceable] = Set.empty
+    forcedReferenceables: Set[Identifiable] = Set.empty
   ): ReferenceableMap = {
     val whereReferenceables = where map (_.referenceables) getOrElse Set()
     val referenceables = action match {
@@ -72,7 +72,7 @@ object Query {
 
   def toQueryWithProperty(
     referenceableMap: ReferenceableMap,
-    referenceable: Referenceable,
+    referenceable: Identifiable,
     property: Option[PropertyName] = None
   ): String = {
     val identifier = referenceableMap.get(referenceable) getOrElse (throw new IdentifierDoesntExistException())
