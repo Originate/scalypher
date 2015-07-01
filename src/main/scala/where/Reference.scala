@@ -39,7 +39,7 @@ sealed trait Reference extends ToQueryWithIdentifiers {
 
 }
 
-sealed trait NodeOrRelationshipReference extends Reference
+sealed trait ReferenceableReference extends Reference
 
 object Reference {
   implicit def toActionReference(reference: ObjectReference): ActionItem =
@@ -63,7 +63,7 @@ object Reference {
     SeqValueReference[V](values)
 }
 
-case class ObjectReference(identifiable: Referenceable) extends NodeOrRelationshipReference {
+case class ObjectReference(identifiable: Referenceable) extends ReferenceableReference {
   def property(property: String): ReferenceWithProperty =
     ReferenceWithProperty(identifiable, PropertyName(property))
 
@@ -76,7 +76,7 @@ case class ObjectReference(identifiable: Referenceable) extends NodeOrRelationsh
 case class ReferenceWithProperty(
   identifiable: Referenceable,
   property: PropertyName
-) extends NodeOrRelationshipReference {
+) extends ReferenceableReference {
   def :=[T](reference: ValueReference[T]): PropertyAssignment[T] =
     assign(reference)
 

@@ -3,7 +3,7 @@ package com.originate.scalypher
 import com.originate.scalypher.action.ActionReference
 import com.originate.scalypher.action.ActionItem
 import com.originate.scalypher.where.ObjectReference
-import com.originate.scalypher.where.NodeOrRelationshipReference
+import com.originate.scalypher.where.ReferenceableReference
 
 package object types {
   trait Identifiable
@@ -14,7 +14,7 @@ package object types {
   }
 
   object Referenceable {
-    implicit def toReference(identifiable: Referenceable): NodeOrRelationshipReference =
+    implicit def toReference(identifiable: Referenceable): ReferenceableReference =
       ObjectReference(identifiable)
 
     implicit def toActionReference(identifiable: Referenceable): ActionReference =
