@@ -1,13 +1,13 @@
 package com.originate.scalypher
 
 import com.originate.scalypher.where.ObjectReference
-import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.NodeOrRelationship
 
 class Property private (key: String, serializedValue: String) {
   def toQuery: String =
     s"""$key:$serializedValue"""
 
-  def toSetProperty(referenceable: Referenceable): SetProperty =
+  def toSetProperty(referenceable: NodeOrRelationship): SetProperty =
     toSetProperty(ObjectReference(referenceable))
 
   def toSetProperty(reference: ObjectReference): SetProperty =
