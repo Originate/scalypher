@@ -57,12 +57,12 @@ object Reference {
     ActionReference(reference)
 
   implicit def objectReferencesToActionReferences(references: Seq[ObjectReference]): Seq[ActionItem] =
-    references map (ActionReference.apply(_))
+    references map (ActionReference(_))
 
   implicit def referencesWithPropertiesToActionReferences(
     references: Seq[ReferenceWithProperty]
   ): Seq[ActionItem] =
-    references map (ActionReference.apply(_))
+    references map (ActionReference(_))
 
   implicit def toValueReference[V : CypherExpressible](value: V): ValueReference[V] =
     ValueReference[V](value)
