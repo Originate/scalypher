@@ -5,13 +5,13 @@ import com.originate.scalypher.action.ActionReference
 import com.originate.scalypher.CypherExpressible
 import com.originate.scalypher.PropertyAssignment
 import com.originate.scalypher.PropertyName
-import com.originate.scalypher.Query.toQueryWithProperty
 import com.originate.scalypher.RemovePropertyAssignment
 import com.originate.scalypher.SetProperty
 import com.originate.scalypher.ToQueryWithIdentifiers
-import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
-import scala.language.implicitConversions
+import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
 
 sealed trait Reference extends ToQueryWithIdentifiers {
   def getReferenceable: Option[Referenceable]
@@ -37,9 +37,17 @@ sealed trait Reference extends ToQueryWithIdentifiers {
   def in[V](reference: SeqValueReference[V]): Condition =
     Comparison(this, IN, reference)
 
-}
+  protected def toQueryWithProperty(
+    identifiableMap: IdentifiableMap,
+    identifiable: Identifiable,
+    property: Option[PropertyName] = None
+  ): String = {
+    val identifier = identifiableMap.get(identifiable) getOrElse (throw new IdentifierDoesntExistException())
+    val propertyString = property map (p => s".${p.name}") getOrElse ""
+    s"$identifier$propertyString"
+  }
 
-sealed trait ReferenceableReference extends Reference
+}
 
 object Reference {
   implicit def toActionReference(reference: ObjectReference): ActionItem =
@@ -62,6 +70,8 @@ object Reference {
   implicit def seqToValueReference[V : CypherExpressible](values: Seq[V]): SeqValueReference[V] =
     SeqValueReference[V](values)
 }
+
+sealed trait ReferenceableReference extends Reference
 
 case class ObjectReference(identifiable: Referenceable) extends ReferenceableReference {
   def property(property: String): ReferenceWithProperty =

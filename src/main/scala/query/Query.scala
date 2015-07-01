@@ -13,7 +13,6 @@ import com.originate.scalypher.path.Node
 import com.originate.scalypher.path.Path
 import com.originate.scalypher.path.Relationship
 import com.originate.scalypher.types._
-import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
@@ -64,20 +63,6 @@ trait Query extends ToQuery {
     val referenceIdentifiers = (identifiables ++ forcedReferenceables) map ((_, nextIdentifier))
 
     referenceIdentifiers.toMap
-  }
-
-}
-
-object Query {
-
-  def toQueryWithProperty(
-    identifiableMap: IdentifiableMap,
-    identifiable: Identifiable,
-    property: Option[PropertyName] = None
-  ): String = {
-    val identifier = identifiableMap.get(identifiable) getOrElse (throw new IdentifierDoesntExistException())
-    val propertyString = property map (p => s".${p.name}") getOrElse ""
-    s"$identifier$propertyString"
   }
 
 }

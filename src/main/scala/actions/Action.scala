@@ -1,7 +1,6 @@
 package com.originate.scalypher.action
 
 import com.originate.scalypher.PropertyName
-import com.originate.scalypher.Query.toQueryWithProperty
 import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.util.Exceptions.IdentifierAliasCollisionException
