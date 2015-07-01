@@ -43,20 +43,3 @@ case object ReturnAll extends ReturnAction {
   def toQuery(referenceableMap: ReferenceableMap): String =
     "RETURN *"
 }
-
-case class ActionReference(reference: Reference, as: Option[String] = None) {
-  def as(name: String): ActionReference =
-    copy(as = Some(name))
-
-  def toQuery(referenceableMap: ReferenceableMap): String = {
-    val asString = as map { name =>
-      if (referenceableMap.values.toSet contains name) throw new IdentifierAliasCollisionException(name)
-      s"AS $name"
-    }
-    Seq(Some(reference.toQuery(referenceableMap)), asString).flatten mkString " "
-  }
-
-  def toColumn(referenceableMap: ReferenceableMap): String =
-    as getOrElse reference.toQuery(referenceableMap)
-
-}
