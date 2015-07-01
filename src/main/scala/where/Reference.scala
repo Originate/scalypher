@@ -1,19 +1,20 @@
 package com.originate.scalypher.where
 
 import com.originate.scalypher.action.ActionReference
-import com.originate.scalypher.Query.toQueryWithProperty
-import com.originate.scalypher.types.Referenceable
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.action.ActionNodeOrRelationship
+import com.originate.scalypher.CypherExpressible
 import com.originate.scalypher.PropertyAssignment
-import com.originate.scalypher.RemovePropertyAssignment
 import com.originate.scalypher.PropertyName
+import com.originate.scalypher.Query.toQueryWithProperty
+import com.originate.scalypher.RemovePropertyAssignment
 import com.originate.scalypher.SetProperty
 import com.originate.scalypher.ToQueryWithIdentifiers
-import com.originate.scalypher.CypherExpressible
+import com.originate.scalypher.types.NodeOrRelationship
+import com.originate.scalypher.types.ReferenceableMap
 import scala.language.implicitConversions
 
 sealed trait Reference extends ToQueryWithIdentifiers {
-  def getReferenceable: Option[Referenceable]
+  def getReferenceable: Option[NodeOrRelationship]
 
   def ===(reference: Reference): Condition =
     Comparison(this, Equal, reference)
@@ -38,12 +39,22 @@ sealed trait Reference extends ToQueryWithIdentifiers {
 
 }
 
-object Reference {
-  implicit def toActionReference(reference: Reference): ActionReference =
-    ActionReference(reference)
+sealed trait NodeOrRelationshipReference extends Reference
 
-  implicit def toActionReferenceSeq(references: Seq[Reference]): Seq[ActionReference] =
-    references map (ActionReference(_))
+object Reference {
+  implicit def toActionReference(reference: ObjectReference): ActionReference =
+    ActionNodeOrRelationship(reference)
+
+  implicit def toActionReference(reference: ReferenceWithProperty): ActionReference =
+    ActionNodeOrRelationship(reference)
+
+  implicit def objectReferencesToActionReferences(references: Seq[ObjectReference]): Seq[ActionReference] =
+    references map (ActionNodeOrRelationship.apply(_))
+
+  implicit def referencesWithPropertiesToActionReferences(
+    references: Seq[ReferenceWithProperty]
+  ): Seq[ActionReference] =
+    references map (ActionNodeOrRelationship.apply(_))
 
   implicit def toValueReference[V : CypherExpressible](value: V): ValueReference[V] =
     ValueReference[V](value)
@@ -52,7 +63,7 @@ object Reference {
     SeqValueReference[V](values)
 }
 
-case class ObjectReference(referenceable: Referenceable) extends Reference {
+case class ObjectReference(referenceable: NodeOrRelationship) extends NodeOrRelationshipReference {
   def property(property: String): ReferenceWithProperty =
     ReferenceWithProperty(referenceable, PropertyName(property))
 
@@ -62,7 +73,10 @@ case class ObjectReference(referenceable: Referenceable) extends Reference {
   def getReferenceable = Some(referenceable)
 }
 
-case class ReferenceWithProperty(referenceable: Referenceable, property: PropertyName) extends Reference {
+case class ReferenceWithProperty(
+  referenceable: NodeOrRelationship,
+  property: PropertyName
+) extends NodeOrRelationshipReference {
   def :=[T](reference: ValueReference[T]): PropertyAssignment[T] =
     assign(reference)
 
