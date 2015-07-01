@@ -2,7 +2,7 @@ package com.originate.scalypher
 
 import com.originate.scalypher.path.Node
 import com.originate.scalypher.types.Identifiable
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.ReferenceWithProperty
 import com.originate.scalypher.where.ObjectReference
@@ -16,7 +16,7 @@ case class RemovePropertyAssignment(reference: ReferenceWithProperty) extends As
   def identifiables: Set[Identifiable] =
     reference.getReferenceable.toSet
 
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     s"${reference.toQuery(identifiableMap)} = NULL"
 }
 
@@ -27,7 +27,7 @@ case class MergePropertiesAssignment(
   def identifiables: Set[Identifiable] =
     reference.getReferenceable.toSet
 
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     s"${reference.toQuery(identifiableMap)} += ${Property.toQuery(properties)}"
 }
 
@@ -35,7 +35,7 @@ case class OverwriteAssignment(lhs: ObjectReference, rhs: ObjectReference) exten
   def identifiables: Set[Identifiable] =
     Set(lhs.getReferenceable, rhs.getReferenceable).flatten
 
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     s"${lhs.toQuery(identifiableMap)} = ${rhs.toQuery(identifiableMap)}"
 }
 
@@ -43,6 +43,6 @@ case class PropertyAssignment[T](lhs: ReferenceWithProperty, rhs: ValueReference
   def identifiables: Set[Identifiable] =
     lhs.getReferenceable.toSet
 
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     s"${lhs.toQuery(identifiableMap)} = ${rhs.toQuery(identifiableMap)}"
 }

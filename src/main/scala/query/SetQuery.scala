@@ -7,7 +7,7 @@ import com.originate.scalypher.action.ReturnDistinct
 import com.originate.scalypher.action.ReturnReference
 import com.originate.scalypher.path.Path
 import com.originate.scalypher.types.Identifiable
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
@@ -41,7 +41,7 @@ case class SetQuery(
       action map (_.toQuery(identifiableMap))
     )
 
-  protected val identifiableMap: ReferenceableMap =
+  protected val identifiableMap: IdentifiableMap =
     referenceableMapWithPathWhereAndAction(
       Seq(pathMatch),
       where,

@@ -4,7 +4,7 @@ import com.originate.scalypher.path.Path
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.types.NodeOrRelationship
 import com.originate.scalypher.types.Identifiable
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.util.Exceptions.IdentifierAliasCollisionException
 import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
 import com.originate.scalypher.where.NodeOrRelationshipReference
@@ -18,9 +18,9 @@ sealed trait ActionReference extends ToQueryWithIdentifiers {
 
   def as(name: String): ActionReference
 
-  def toColumn(identifiableMap: ReferenceableMap): String
+  def toColumn(identifiableMap: IdentifiableMap): String
 
-  protected def asString(identifiableMap: ReferenceableMap): Option[String] =
+  protected def asString(identifiableMap: IdentifiableMap): Option[String] =
     as map { name =>
       if (identifiableMap.values.toSet contains name)
         throw new IdentifierAliasCollisionException(name)
@@ -39,12 +39,12 @@ case class ActionPath(
   def as(name: String): ActionPath =
     copy(as = Some(name))
 
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     identifiableMap get path map { identifier =>
       Seq(Some(identifier), asString(identifiableMap)).flatten mkString " "
     } getOrElse (throw new IdentifierDoesntExistException())
 
-  def toColumn(identifiableMap: ReferenceableMap): String =
+  def toColumn(identifiableMap: IdentifiableMap): String =
     as orElse identifiableMap.get(path) getOrElse (throw new IdentifierDoesntExistException())
 
 }
@@ -59,10 +59,10 @@ case class ActionNodeOrRelationship(
   def as(name: String): ActionNodeOrRelationship =
     copy(as = Some(name))
 
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     Seq(Some(reference.toQuery(identifiableMap)), asString(identifiableMap)).flatten mkString " "
 
-  def toColumn(identifiableMap: ReferenceableMap): String =
+  def toColumn(identifiableMap: IdentifiableMap): String =
     as getOrElse reference.toQuery(identifiableMap)
 
 }

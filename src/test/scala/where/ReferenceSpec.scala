@@ -6,7 +6,7 @@ import com.originate.scalypher.where._
 import com.originate.scalypher.path.AnyNode
 import com.originate.scalypher.path.CypherNode
 import com.originate.scalypher.path.KindRelationship
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.CypherExpressible._
 
 import org.scalatest._
@@ -14,7 +14,7 @@ import org.scalatest._
 class ReferenceSpec extends WordSpec with Matchers {
 
   val node1 = AnyNode()
-  val emptyMap: ReferenceableMap = Map.empty
+  val emptyMap: IdentifiableMap = Map.empty
 
   "SeqValueReference" when {
 

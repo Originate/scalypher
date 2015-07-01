@@ -12,7 +12,7 @@ import com.originate.scalypher.SetQuery
 import com.originate.scalypher.Query
 import com.originate.scalypher.Assignment
 import com.originate.scalypher.types.Identifiable
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
@@ -82,7 +82,7 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Identif
   def --(relationship: Relationship): DanglingRelationship =
     DanglingRelationship(this, relationship)
 
-  def toQuery(identifiableMap: ReferenceableMap): String = {
+  def toQuery(identifiableMap: IdentifiableMap): String = {
     val pathIdentifier = identifiableMap get this map (i => s"$i = ") getOrElse ""
 
     pathIdentifier + start.toQuery(identifiableMap) + (pieces map (_.toQuery(identifiableMap)) mkString "")
@@ -109,6 +109,6 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends Identif
 }
 
 object Path {
-  private[path] def getIdentifierOrEmptyString(identifiableMap: ReferenceableMap, identifiable: Identifiable): String =
+  private[path] def getIdentifierOrEmptyString(identifiableMap: IdentifiableMap, identifiable: Identifiable): String =
     identifiableMap get identifiable getOrElse ""
 }

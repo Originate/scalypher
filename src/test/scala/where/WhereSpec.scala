@@ -6,7 +6,7 @@ import com.originate.scalypher.where._
 import com.originate.scalypher.path.AnyNode
 import com.originate.scalypher.path.CypherNode
 import com.originate.scalypher.path.KindRelationship
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 
 import org.scalatest._
 
@@ -16,7 +16,7 @@ class WhereSpec extends WordSpec with Matchers {
 
     val startNode = AnyNode()
     val path = startNode --> AnyNode()
-    val identifiableMap: ReferenceableMap = Map(path -> "path")
+    val identifiableMap: IdentifiableMap = Map(path -> "path")
 
     "allow simple node conditions" in {
       val predicate = All nodesIn path where { node =>
@@ -66,7 +66,7 @@ class WhereSpec extends WordSpec with Matchers {
 
     val node1 = AnyNode()
     val node2 = AnyNode()
-    val identifiableMap: ReferenceableMap = Map(node1 -> "a", node2 -> "b")
+    val identifiableMap: IdentifiableMap = Map(node1 -> "a", node2 -> "b")
 
     "fail if not enough arguments are given" in {
       a [MismatchedInterpolatedStringWithReferences] should be thrownBy {

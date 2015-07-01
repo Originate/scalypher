@@ -21,7 +21,7 @@ trait Query extends ToQuery {
 
   def getReturnColumns: Set[String]
 
-  protected def identifiableMap: ReferenceableMap
+  protected def identifiableMap: IdentifiableMap
 
   def getIdentifier(identifiable: Identifiable): Option[String] =
     identifiableMap get identifiable
@@ -54,7 +54,7 @@ trait Query extends ToQuery {
     where: Option[Where],
     action: Option[Action],
     forcedReferenceables: Set[Identifiable] = Set.empty
-  ): ReferenceableMap = {
+  ): IdentifiableMap = {
     val whereReferenceables = where map (_.identifiables) getOrElse Set()
     val identifiables = action match {
       case Some(ReturnAll) => paths flatMap (_.identifiables)
@@ -71,7 +71,7 @@ trait Query extends ToQuery {
 object Query {
 
   def toQueryWithProperty(
-    identifiableMap: ReferenceableMap,
+    identifiableMap: IdentifiableMap,
     identifiable: Identifiable,
     property: Option[PropertyName] = None
   ): String = {

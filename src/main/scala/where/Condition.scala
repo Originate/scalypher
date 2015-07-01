@@ -3,12 +3,12 @@ package com.originate.scalypher.where
 import com.originate.scalypher.util.Exceptions.MismatchedInterpolatedStringWithReferences
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.types.Identifiable
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.path.AnyNode
 import scala.language.implicitConversions
 
 sealed trait Condition {
-  def toQuery(identifiableMap: ReferenceableMap): String
+  def toQuery(identifiableMap: IdentifiableMap): String
   def identifiables: Set[Identifiable]
 }
 
@@ -21,7 +21,7 @@ object Condition {
 }
 
 case class Comparison(reference1: Reference, comparator: Comparator, reference2: Reference) extends Condition {
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     Seq(reference1.toQuery(identifiableMap), comparator.toQuery, reference2.toQuery(identifiableMap)) mkString " "
 
   def identifiables: Set[Identifiable] =
@@ -29,7 +29,7 @@ case class Comparison(reference1: Reference, comparator: Comparator, reference2:
 }
 
 case class NullCondition(reference: Reference, check: NullCheck) extends Condition {
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     Seq(reference.toQuery(identifiableMap), check.toQuery) mkString " "
 
   def identifiables: Set[Identifiable] =
@@ -41,7 +41,7 @@ case class PredicateCondition(
   projection: Collection,
   where: ObjectReference => Where
 ) extends Condition {
-  def toQuery(identifiableMap: ReferenceableMap): String = {
+  def toQuery(identifiableMap: IdentifiableMap): String = {
     val identifier = "x"
     val identifiable = AnyNode()
     val adjustedMap = identifiableMap + (identifiable -> identifier)
@@ -58,7 +58,7 @@ case class PredicateCondition(
 }
 
 case class Expression(string: String, references: Reference*) extends Condition {
-  def toQuery(identifiableMap: ReferenceableMap): String = {
+  def toQuery(identifiableMap: IdentifiableMap): String = {
     val questionMarksCount = (string filter (_ == '?')).size
     if (questionMarksCount != references.size)
       throw new MismatchedInterpolatedStringWithReferences(string, questionMarksCount, references.size)

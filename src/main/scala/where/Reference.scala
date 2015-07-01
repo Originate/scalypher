@@ -10,7 +10,7 @@ import com.originate.scalypher.RemovePropertyAssignment
 import com.originate.scalypher.SetProperty
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.types.NodeOrRelationship
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import scala.language.implicitConversions
 
 sealed trait Reference extends ToQueryWithIdentifiers {
@@ -67,7 +67,7 @@ case class ObjectReference(identifiable: NodeOrRelationship) extends NodeOrRelat
   def property(property: String): ReferenceWithProperty =
     ReferenceWithProperty(identifiable, PropertyName(property))
 
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     toQueryWithProperty(identifiableMap, identifiable, None)
 
   def getReferenceable = Some(identifiable)
@@ -86,7 +86,7 @@ case class ReferenceWithProperty(
   def assignNull: RemovePropertyAssignment =
     RemovePropertyAssignment(this)
 
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     toQueryWithProperty(identifiableMap, identifiable, Some(property))
 
   def set[T : CypherExpressible](value: T): SetProperty =
@@ -96,14 +96,14 @@ case class ReferenceWithProperty(
 }
 
 case class ValueReference[V](value: V)(implicit serializer: CypherExpressible[V]) extends Reference {
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     serializer.toQuery(value)
 
   def getReferenceable = None
 }
 
 case class SeqValueReference[V](values: Seq[V])(implicit serializer: CypherExpressible[V]) extends Reference {
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     "[" + (values map serializer.toQuery mkString ", ") + "]"
 
   def getReferenceable = None

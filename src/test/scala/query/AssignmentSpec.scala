@@ -1,6 +1,6 @@
 package com.originate.scalypher.test.query
 
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.Property
 import com.originate.scalypher.Label
 import com.originate.scalypher.path.AnyNode
@@ -25,7 +25,7 @@ class AssignmentSpec extends WordSpec with Matchers {
     Property("age", 12)
   )
 
-  val map: ReferenceableMap = Map(
+  val map: IdentifiableMap = Map(
     startNode -> "a1",
     endNode -> "a2",
     relationship -> "a3"

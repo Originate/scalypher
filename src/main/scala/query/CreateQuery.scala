@@ -37,7 +37,7 @@ case class CreateQuery(
   protected def withReturnAction(action: ReturnAction): CreateQuery =
     copy(returnAction = Some(action))
 
-  protected val identifiableMap: ReferenceableMap =
+  protected val identifiableMap: IdentifiableMap =
     referenceableMapWithPathWhereAndAction(
       matchPaths,
       where,

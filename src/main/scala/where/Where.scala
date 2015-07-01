@@ -1,10 +1,10 @@
 package com.originate.scalypher.where
 
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.types.Identifiable
 
 case class AndOrCondition(operator: BooleanOperator, condition: Condition) {
-  def toQuery(identifiableMap: ReferenceableMap): String =
+  def toQuery(identifiableMap: IdentifiableMap): String =
     Seq(operator.toQuery, condition.toQuery(identifiableMap)) mkString " "
 }
 
@@ -21,7 +21,7 @@ case class Where(startCondition: Condition, conditions: Seq[AndOrCondition] = Se
   def or(condition: Condition): Where =
     copy(conditions = conditions :+ AndOrCondition(Or, condition))
 
-  def toQuery(identifiableMap: ReferenceableMap): String = {
+  def toQuery(identifiableMap: IdentifiableMap): String = {
     val firstCondition = startCondition.toQuery(identifiableMap)
     val rest =
       if (conditions.isEmpty) ""

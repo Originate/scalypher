@@ -21,5 +21,5 @@ package object types {
       ActionNodeOrRelationship(identifiable)
   }
 
-  type ReferenceableMap = Map[Identifiable, String]
+  type IdentifiableMap = Map[Identifiable, String]
 }

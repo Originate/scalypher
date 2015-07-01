@@ -7,5 +7,5 @@ trait ToQuery {
 }
 
 trait ToQueryWithIdentifiers {
-  def toQuery(identifiableMap: ReferenceableMap): String
+  def toQuery(identifiableMap: IdentifiableMap): String
 }

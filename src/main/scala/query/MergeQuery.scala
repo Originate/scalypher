@@ -55,7 +55,7 @@ case class MergeQuery(
     onCreateOrMergeReferenceables ++ returnReferenceables
   }
 
-  protected val identifiableMap: ReferenceableMap =
+  protected val identifiableMap: IdentifiableMap =
     referenceableMapWithPathWhereAndAction(
       matchPaths,
       None,

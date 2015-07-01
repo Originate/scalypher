@@ -2,7 +2,7 @@ package com.originate.scalypher.test.action
 
 import com.originate.scalypher.action.ActionNodeOrRelationship
 import com.originate.scalypher.path.AnyNode
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.util.Exceptions.IdentifierAliasCollisionException
 
 import org.scalatest._
@@ -11,7 +11,7 @@ class ActionsSpec extends WordSpec with Matchers {
 
   val node = AnyNode()
   val nodeName = "a1"
-  val map: ReferenceableMap = Map(node -> nodeName)
+  val map: IdentifiableMap = Map(node -> nodeName)
 
   "action references" must {
 

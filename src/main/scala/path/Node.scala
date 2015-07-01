@@ -9,7 +9,7 @@ import com.originate.scalypher.PropertyName
 import com.originate.scalypher.Query
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.types.NodeOrRelationship
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.where.ObjectReference
 import com.originate.scalypher.where.ReferenceWithProperty
 
@@ -32,7 +32,7 @@ object Node {
 }
 
 class AnyNode extends Node {
-  def toQuery(identifiableMap: ReferenceableMap): String = {
+  def toQuery(identifiableMap: IdentifiableMap): String = {
     val identifier = getIdentifierOrEmptyString(identifiableMap, this)
     s"($identifier)"
   }
@@ -47,7 +47,7 @@ class CypherNode(
   val labels: Seq[Label] = Seq.empty,
   val properties: Seq[Property] = Seq.empty
 ) extends Node {
-  def toQuery(identifiableMap: ReferenceableMap): String = {
+  def toQuery(identifiableMap: IdentifiableMap): String = {
     val identifier = getIdentifierOrEmptyString(identifiableMap, this)
     val labelsQuery = labels map (_.toQuery) mkString ""
     val propertiesQuery = Property.toQuery(properties)
