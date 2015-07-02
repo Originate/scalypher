@@ -26,6 +26,11 @@ class PathSpec extends WordSpec with Matchers {
       MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)--()--() RETURN DISTINCT a1"
     }
 
+    "allows simple syntax" in {
+      val path = startNode -- AnyNode() -- AnyNode()
+      (path returnDistinct startNode).toQuery shouldBe "MATCH (a1)--()--() RETURN DISTINCT a1"
+    }
+
   }
 
   "defining paths with conditions" must {
@@ -62,6 +67,11 @@ class PathSpec extends WordSpec with Matchers {
     "respect left arrows" in {
       val path = startNode <-- relationship1 -- AnyNode()
       MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-() RETURN DISTINCT a1"
+    }
+
+    "respect left arrows on longer path chains" in {
+      val path = startNode <-- relationship1 -- AnyNode() <-- AnyNode()
+      MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()<--() RETURN DISTINCT a1"
     }
 
     "handle deep nesting regardless of '-' operator precedence" when {
