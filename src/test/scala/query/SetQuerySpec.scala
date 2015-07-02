@@ -16,6 +16,7 @@ class SetQuerySpec extends WordSpec with Matchers {
   val startNode = AnyNode()
   val path = startNode --> AnyNode()
   val returns = ReturnReference(startNode)
+  val setQuery = path set (startNode.property("name") := "dan")
 
   "building a set query" must {
 
@@ -57,6 +58,14 @@ class SetQuerySpec extends WordSpec with Matchers {
         startNode.property("name") := "x"
       ) returns startNode
       query.toQuery shouldBe """MATCH (a1)-->() WHERE a1.name <> 1 SET a1.name = "x" RETURN a1"""
+    }
+
+    "allow simple syntax for returnAll statements" in {
+      setQuery.returnAll.toQuery shouldBe """MATCH a1 = (a4)-->(a3) SET a4.name = "dan" RETURN *"""
+    }
+
+    "allow simple syntax for returnDistinct statements" in {
+      setQuery.returnDistinct(startNode).toQuery shouldBe """MATCH (a1)-->() SET a1.name = "dan" RETURN DISTINCT a1"""
     }
 
   }
