@@ -112,11 +112,3 @@ object AnyLengthRelationship {
   def apply(kinds: String*): AnyLengthRelationship =
     new AnyLengthRelationship(kinds: _*)
 }
-
-case class DanglingRelationship(path: Path, relationship: Relationship) {
-  def --(node: Node): Path =
-    path --(relationship, node)
-
-  def -->(node: Node): Path =
-    path -->(relationship, node)
-}
