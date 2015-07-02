@@ -11,11 +11,6 @@ case class PathPieces(startPiece: PathPiece, tail: Seq[PathPiece], relationship:
     copy(tail = tail :+ PathPiece(RightArrow, node, relationship), relationship = None)
 }
 
-object PathPieces {
-  def apply(pathPiece: PathPiece, relationship: Relationship): PathPieces =
-    PathPieces(pathPiece, Seq(), Some(relationship))
-}
-
 case class PathPiece(
   arrow: Arrow,
   node: Node,

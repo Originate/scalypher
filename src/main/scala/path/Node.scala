@@ -63,28 +63,16 @@ class CypherNode(
 
 object CypherNode {
 
-  def apply(label: String): CypherNode =
-    CypherNode(Label(label))
-
   def apply(label: Label): CypherNode =
     new CypherNode(labels = Seq(label))
 
   def apply(property: Property): CypherNode =
     new CypherNode(properties = Seq(property))
 
-  def apply(label: Label, property: Property): CypherNode =
-    new CypherNode(Seq(label), Seq(property))
-
-  def apply(label: String, kv: (String, String)): CypherNode =
-    new CypherNode(Seq(Label(label)), Seq(Property.apply(kv)))
-
-  def apply(labels: Seq[String], keyValues: Seq[(String, String)]): CypherNode =
-    new CypherNode(labels map Label.apply, keyValues map (kv => Property.apply(kv)))
-
-  def apply(label: String, properties: Seq[Property]): CypherNode =
-    new CypherNode(Seq(Label(label)), properties)
-
-  def apply(label: Label, properties: Seq[Property]): CypherNode =
+  def apply(label: Label, properties: Property*): CypherNode =
     new CypherNode(Seq(label), properties)
+
+  def apply(labels: Seq[String], properties: Seq[Property]): CypherNode =
+    new CypherNode(labels map (Label(_)), properties)
 
 }

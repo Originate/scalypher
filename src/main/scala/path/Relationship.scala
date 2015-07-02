@@ -7,6 +7,7 @@ import com.originate.scalypher.PropertyName
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.util.Exceptions.CharacterNotAllowedInLabel
 import com.originate.scalypher.where.ReferenceWithProperty
 
 sealed trait Relationship
@@ -29,7 +30,12 @@ sealed trait Relationship
 
   private def kindsToQuery(kinds: Seq[String]): String =
     if (kinds.isEmpty) ""
-    else ":" + (kinds mkString "|")
+    else ":" + (kinds map escape mkString "|")
+
+  private def escape(kind: String): String =
+    if (kind contains '`') throw new CharacterNotAllowedInLabel('`', kind)
+    else if (kind contains ' ') s"`$kind`"
+    else kind
 
 }
 
@@ -111,12 +117,4 @@ class AnyLengthRelationship(val kinds: String*) extends Relationship {
 object AnyLengthRelationship {
   def apply(kinds: String*): AnyLengthRelationship =
     new AnyLengthRelationship(kinds: _*)
-}
-
-case class DanglingRelationship(path: Path, relationship: Relationship) {
-  def --(node: Node): Path =
-    path --(relationship, node)
-
-  def -->(node: Node): Path =
-    path -->(relationship, node)
 }
