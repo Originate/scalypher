@@ -49,8 +49,19 @@ class CreateQuerySpec extends WordSpec with Matchers {
     }
 
     "include a return statement if provided" in {
+      val create = matchPath create createPath returns startNode
+      create.toQuery shouldBe """MATCH (a1:label1)--(a2:label2) CREATE (a1)-[:label]-(a2) RETURN a1"""
+    }
+
+    "include a return distinct statement if provided" in {
       val create = matchPath create createPath returnDistinct startNode
       create.toQuery shouldBe """MATCH (a1:label1)--(a2:label2) CREATE (a1)-[:label]-(a2) RETURN DISTINCT a1"""
+    }
+
+    "include a return all statement if provided" in {
+      val create = matchPath.create(createPath).returnAll
+      create.toQuery should startWith ("""MATCH a1 = """)
+      create.toQuery should endWith (""" RETURN *""")
     }
 
     "add identifier to reference if it appears in the return statement" in {
