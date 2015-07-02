@@ -2,6 +2,7 @@ package com.originate.scalypher.test.path
 
 import com.originate.scalypher.path.AnyNode
 import com.originate.scalypher.path.KindRelationship
+import com.originate.scalypher.path.AnyRelationship
 import com.originate.scalypher.action.ReturnDistinct
 import com.originate.scalypher.MatchQuery
 import com.originate.scalypher.Query
@@ -72,6 +73,11 @@ class PathSpec extends WordSpec with Matchers {
     "respect left arrows on longer path chains" in {
       val path = startNode <-- relationship1 -- AnyNode() <-- AnyNode()
       MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()<--() RETURN DISTINCT a1"
+    }
+
+    "respect left arrows then rights arrows on longer path chains" in {
+      val path = startNode <-- relationship1 -- AnyNode() <-- AnyRelationship() -- AnyNode() --> AnyNode() --> AnyNode()
+      MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)<-[:a]-()<-[]-()-->()-->() RETURN DISTINCT a1"
     }
 
     "handle deep nesting regardless of '-' operator precedence" when {
