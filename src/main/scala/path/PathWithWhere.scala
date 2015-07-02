@@ -1,6 +1,6 @@
 package com.originate.scalypher.path
 
-import com.originate.scalypher.action.ActionReference
+import com.originate.scalypher.action.ActionItem
 import com.originate.scalypher.action.Delete
 import com.originate.scalypher.action.ReturnAll
 import com.originate.scalypher.action.ReturnDistinct
@@ -18,16 +18,16 @@ case class PathWithWhere(path: Path, where: Option[Where]) {
   def set(assignment: Assignment, rest: Assignment*): SetQuery =
     SetQuery(path, where, assignment, rest: _*)
 
-  def returns(reference: ActionReference, rest: ActionReference*): Query =
+  def returns(reference: ActionItem, rest: ActionItem*): Query =
     MatchQuery(path, where, ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: ActionReference, rest: ActionReference*): Query =
+  def returnDistinct(reference: ActionItem, rest: ActionItem*): Query =
     MatchQuery(path, where, ReturnDistinct(reference, rest: _*))
 
   def returnAll: Query =
     MatchQuery(path, where, ReturnAll)
 
-  def delete(reference: ActionReference, rest: ActionReference*): Query =
+  def delete(reference: ActionItem, rest: ActionItem*): Query =
     MatchQuery(path, where, Delete(reference, rest: _*))
 
   def create(createPath: Path): CreateQuery =

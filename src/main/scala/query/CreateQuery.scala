@@ -15,13 +15,13 @@ case class CreateQuery(
 
   def toQuery: String = {
     val matchString = ifNonEmpty(matchPaths) { paths =>
-      stringListWithPrefix("MATCH", matchPaths map (_.toQuery(referenceableMap)))
+      stringListWithPrefix("MATCH", matchPaths map (_.toQuery(identifiableMap)))
     }
     val whereString =
       if (matchString.isEmpty) None
-      else where map ("WHERE " + _.toQuery(referenceableMap))
+      else where map ("WHERE " + _.toQuery(identifiableMap))
     val createString = Some("CREATE " + cleanedCreatePath.toQuery(modifiedReferenceableMap))
-    val returnString = returnAction map (_.toQuery(referenceableMap))
+    val returnString = returnAction map (_.toQuery(identifiableMap))
 
     buildQuery(
       matchString,
@@ -31,18 +31,18 @@ case class CreateQuery(
     )
   }
 
-  protected val forcedCreateReferenceables: Set[Referenceable] =
-    returnAction map (_.referenceables) getOrElse Set.empty
+  protected val forcedCreateReferenceables: Set[Identifiable] =
+    returnAction map (_.identifiables) getOrElse Set.empty
 
   protected def withReturnAction(action: ReturnAction): CreateQuery =
     copy(returnAction = Some(action))
 
-  protected val referenceableMap: ReferenceableMap =
-    referenceableMapWithPathWhereAndAction(
+  protected val identifiableMap: IdentifiableMap =
+    identifiableMapWithPathWhereAndAction(
       matchPaths,
       where,
       returnAction,
-      createPath.referenceables - createPath
+      createPath.identifiables - createPath
     )
 
   protected val (cleanedCreatePath, createMap) =

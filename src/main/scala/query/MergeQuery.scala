@@ -23,16 +23,16 @@ case class MergeQuery(
 
   def toQuery: String = {
     val matchString = ifNonEmpty(matchPaths) { paths =>
-      stringListWithPrefix("MATCH", matchPaths map (_.toQuery(referenceableMap)))
+      stringListWithPrefix("MATCH", matchPaths map (_.toQuery(identifiableMap)))
     }
     val mergeString = Some(s"MERGE " + cleanedCreatePath.toQuery(modifiedReferenceableMap))
     val onCreateString = ifNonEmpty(createProperties) { properties =>
-      stringListWithPrefix("ON CREATE SET", properties map (_.toQuery(referenceableMap)))
+      stringListWithPrefix("ON CREATE SET", properties map (_.toQuery(identifiableMap)))
     }
     val onMergeString = ifNonEmpty(mergeProperties) { properties =>
-      stringListWithPrefix("ON MATCH SET", properties map (_.toQuery(referenceableMap)))
+      stringListWithPrefix("ON MATCH SET", properties map (_.toQuery(identifiableMap)))
     }
-    val returnString = returnAction map (_.toQuery(referenceableMap))
+    val returnString = returnAction map (_.toQuery(identifiableMap))
 
     buildQuery(
       matchString,
@@ -47,20 +47,20 @@ case class MergeQuery(
     copy(returnAction = Some(action))
 
   private val onCreateOrMergeReferenceables =
-    createProperties.flatMap(_.getReferenceable).toSet ++
-      mergeProperties.flatMap(_.getReferenceable).toSet
+    createProperties.flatMap(_.getIdentifiable).toSet ++
+      mergeProperties.flatMap(_.getIdentifiable).toSet
 
-  protected override val forcedCreateReferenceables: Set[Referenceable] = {
-    val returnReferenceables = returnAction map (_.referenceables) getOrElse Set.empty
+  protected override val forcedCreateReferenceables: Set[Identifiable] = {
+    val returnReferenceables = returnAction map (_.identifiables) getOrElse Set.empty
     onCreateOrMergeReferenceables ++ returnReferenceables
   }
 
-  protected val referenceableMap: ReferenceableMap =
-    referenceableMapWithPathWhereAndAction(
+  protected val identifiableMap: IdentifiableMap =
+    identifiableMapWithPathWhereAndAction(
       matchPaths,
       None,
       returnAction,
-      mergePath.referenceables - mergePath ++ onCreateOrMergeReferenceables
+      mergePath.identifiables - mergePath ++ onCreateOrMergeReferenceables
     )
 
   protected val (cleanedCreatePath, createMap) =

@@ -2,8 +2,8 @@ package com.originate.scalypher.where
 
 import com.originate.scalypher.ConstantString
 import com.originate.scalypher.ToQuery
-import com.originate.scalypher.types.ReferenceableMap
-import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.types.IdentifiableMap
+import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.path.Path
 
 sealed trait Projection extends ToQuery {
@@ -15,14 +15,14 @@ case object Relationships extends ConstantString("RELATIONSHIPS") with Projectio
 case object Nodes extends ConstantString("NODES") with Projection
 
 sealed trait Collection {
-  def toQuery(referenceableMap: ReferenceableMap): String
-  def referenceables: Set[Referenceable]
+  def toQuery(identifiableMap: IdentifiableMap): String
+  def identifiables: Set[Identifiable]
 }
 
 case class PathProjection(projection: Projection, path: Path) extends Collection {
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    s"${projection.toQuery}(${referenceableMap(path)})"
+  def toQuery(identifiableMap: IdentifiableMap): String =
+    s"${projection.toQuery}(${identifiableMap(path)})"
 
-  def referenceables: Set[Referenceable] =
+  def identifiables: Set[Identifiable] =
     Set(path)
 }

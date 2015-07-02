@@ -6,7 +6,7 @@ import com.originate.scalypher.where._
 import com.originate.scalypher.path.AnyNode
 import com.originate.scalypher.path.CypherNode
 import com.originate.scalypher.path.KindRelationship
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 
 import org.scalatest._
 
@@ -16,14 +16,14 @@ class WhereSpec extends WordSpec with Matchers {
 
     val startNode = AnyNode()
     val path = startNode --> AnyNode()
-    val referenceableMap: ReferenceableMap = Map(path -> "path")
+    val identifiableMap: IdentifiableMap = Map(path -> "path")
 
     "allow simple node conditions" in {
       val predicate = All nodesIn path where { node =>
         node.property("name") <> "matt"
       }
 
-      predicate.toQuery(referenceableMap) shouldBe """ALL (x IN NODES(path) WHERE x.name <> "matt")"""
+      predicate.toQuery(identifiableMap) shouldBe """ALL (x IN NODES(path) WHERE x.name <> "matt")"""
     }
 
     "allow singular node conditions" in {
@@ -31,7 +31,7 @@ class WhereSpec extends WordSpec with Matchers {
         node.property("name") <> "matt"
       }
 
-      predicate.toQuery(referenceableMap) shouldBe """SINGLE (x IN NODES(path) WHERE x.name <> "matt")"""
+      predicate.toQuery(identifiableMap) shouldBe """SINGLE (x IN NODES(path) WHERE x.name <> "matt")"""
     }
 
     "allow simple relationship conditions" in {
@@ -39,11 +39,11 @@ class WhereSpec extends WordSpec with Matchers {
         relationship.property("name") <> "matt"
       }
 
-      predicate.toQuery(referenceableMap) shouldBe """ALL (x IN RELATIONSHIPS(path) WHERE x.name <> "matt")"""
+      predicate.toQuery(identifiableMap) shouldBe """ALL (x IN RELATIONSHIPS(path) WHERE x.name <> "matt")"""
     }
 
     "allow referencing elements outside of the predicate condition" in {
-      val map = referenceableMap + (startNode -> "node")
+      val map = identifiableMap + (startNode -> "node")
       val predicate = All nodesIn path where { node =>
         (node.property("name") <> startNode.property("name"))
       }
@@ -57,7 +57,7 @@ class WhereSpec extends WordSpec with Matchers {
           (node.property("age") <> 12)
       }
 
-      predicate.toQuery(referenceableMap) shouldBe """ALL (x IN NODES(path) WHERE x.name <> "matt" AND x.age <> 12)"""
+      predicate.toQuery(identifiableMap) shouldBe """ALL (x IN NODES(path) WHERE x.name <> "matt" AND x.age <> 12)"""
     }
 
   }
@@ -66,28 +66,28 @@ class WhereSpec extends WordSpec with Matchers {
 
     val node1 = AnyNode()
     val node2 = AnyNode()
-    val referenceableMap: ReferenceableMap = Map(node1 -> "a", node2 -> "b")
+    val identifiableMap: IdentifiableMap = Map(node1 -> "a", node2 -> "b")
 
     "fail if not enough arguments are given" in {
       a [MismatchedInterpolatedStringWithReferences] should be thrownBy {
-        Expression("? > ?", node1.property("thing")).toQuery(referenceableMap)
+        Expression("? > ?", node1.property("thing")).toQuery(identifiableMap)
       }
     }
 
     "fail if too many arguments are given" in {
       a [MismatchedInterpolatedStringWithReferences] should be thrownBy {
-        Expression("? > 1", node1.property("thing"), node2.property("thing")).toQuery(referenceableMap)
+        Expression("? > 1", node1.property("thing"), node2.property("thing")).toQuery(identifiableMap)
       }
     }
 
-    "fail if identifier doesn't exist in referenceable map" in {
+    "fail if identifier doesn't exist in identifiable map" in {
       an [IdentifierDoesntExistException] should be thrownBy {
         Expression("? > 1", node1.property("thing")).toQuery(Map.empty)
       }
     }
 
     "replace question marks with node references" in {
-      Expression("? > 1", node1.property("thing")).toQuery(referenceableMap) shouldBe """(a.thing > 1)"""
+      Expression("? > 1", node1.property("thing")).toQuery(identifiableMap) shouldBe """(a.thing > 1)"""
     }
 
     "replace multiple question marks with multiple references" in {
@@ -95,11 +95,11 @@ class WhereSpec extends WordSpec with Matchers {
         "? > 1 AND ? < 2",
         node1.property("thing"),
         node1.property("thang")
-      ).toQuery(referenceableMap) shouldBe """(a.thing > 1 AND a.thang < 2)"""
+      ).toQuery(identifiableMap) shouldBe """(a.thing > 1 AND a.thang < 2)"""
     }
 
     "replace question marks with serialized value references" in {
-      val expression = Expression("? > ?", node1.property("thing"), """string "with" quotes""").toQuery(referenceableMap)
+      val expression = Expression("? > ?", node1.property("thing"), """string "with" quotes""").toQuery(identifiableMap)
       expression shouldBe """(a.thing > "string \"with\" quotes")"""
     }
 
@@ -121,11 +121,11 @@ class WhereSpec extends WordSpec with Matchers {
     val node2 = AnyNode()
     val node3 = AnyNode()
 
-    "generate a referenceableMap with unique identifiers for each" in {
+    "generate a identifiableMap with unique identifiers for each" in {
       val where = Comparison(node1.property("test"), Equal, node2.property("test")) and
         Comparison(node3.property("test"), NotEqual, node1.property("test"))
 
-      where.referenceables.size shouldBe 3
+      where.identifiables.size shouldBe 3
     }
 
   }
@@ -136,11 +136,11 @@ class WhereSpec extends WordSpec with Matchers {
     val node2 = CypherNode("a")
     val node3 = CypherNode("a")
 
-    "generate a referenceableMap with unique identifiers for each" in {
+    "generate a identifiableMap with unique identifiers for each" in {
       val where = Comparison(node1.property("test"), Equal, node2.property("test")) and
         Comparison(node3.property("test"), NotEqual, node1.property("test"))
 
-      where.referenceables.size shouldBe 3
+      where.identifiables.size shouldBe 3
     }
 
   }
@@ -151,11 +151,11 @@ class WhereSpec extends WordSpec with Matchers {
     val relationship2 = KindRelationship("a")
     val relationship3 = KindRelationship("a")
 
-    "generate a referenceableMap with unique identifiers for each" in {
+    "generate a identifiableMap with unique identifiers for each" in {
       val where = Comparison(relationship1.property("label"), Equal, relationship2.property("label")) and
         Comparison(relationship2.property("label"), NotEqual, relationship3.property("label"))
 
-      where.referenceables.size shouldBe 3
+      where.identifiables.size shouldBe 3
     }
 
   }

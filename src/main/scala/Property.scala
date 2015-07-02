@@ -4,6 +4,7 @@ import com.originate.scalypher.where.ObjectReference
 import com.originate.scalypher.types.Referenceable
 
 class Property private (key: String, serializedValue: String) {
+
   def toQuery: String =
     s"""$key:$serializedValue"""
 
@@ -12,9 +13,11 @@ class Property private (key: String, serializedValue: String) {
 
   def toSetProperty(reference: ObjectReference): SetProperty =
     SetProperty.withSerializedValue(reference.property(key), serializedValue)
+
 }
 
 object Property {
+
   def apply[T](tuple: (String, T))(implicit serializer: CypherExpressible[T]): Property =
     new Property(tuple._1, serializer.toQuery(tuple._2))
 

@@ -12,13 +12,13 @@ case class MatchQuery(pathMatch: Path, where: Option[Where], action: Action) ext
 
   def toQuery: String =
     buildQuery(
-      Some("MATCH " + pathMatch.toQuery(referenceableMap)),
-      where map ("WHERE " + _.toQuery(referenceableMap)),
-      Some(action.toQuery(referenceableMap))
+      Some("MATCH " + pathMatch.toQuery(identifiableMap)),
+      where map ("WHERE " + _.toQuery(identifiableMap)),
+      Some(action.toQuery(identifiableMap))
     )
 
-  protected val referenceableMap: ReferenceableMap =
-    referenceableMapWithPathWhereAndAction(Seq(pathMatch), where, Some(action))
+  protected val identifiableMap: IdentifiableMap =
+    identifiableMapWithPathWhereAndAction(Seq(pathMatch), where, Some(action))
 
 }
 

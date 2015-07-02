@@ -1,10 +1,10 @@
 package com.originate.scalypher.path
 
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.IdentifiableMap
 
 sealed case class Arrow(firstPart: String, secondPart: String) {
-  def toQuery(referenceableMap: ReferenceableMap, relationship: Option[Relationship] = None): String =
-    firstPart + (relationship map (_.toQuery(referenceableMap)) getOrElse "") + secondPart
+  def toQuery(identifiableMap: IdentifiableMap, relationship: Option[Relationship] = None): String =
+    firstPart + (relationship map (_.toQuery(identifiableMap)) getOrElse "") + secondPart
 }
 
 object RightArrow extends Arrow("-", "->")

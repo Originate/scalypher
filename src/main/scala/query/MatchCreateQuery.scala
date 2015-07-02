@@ -1,6 +1,6 @@
 package com.originate.scalypher
 
-import com.originate.scalypher.action.ActionReference
+import com.originate.scalypher.action.ActionItem
 import com.originate.scalypher.action.ReturnAction
 import com.originate.scalypher.action.ReturnAll
 import com.originate.scalypher.action.ReturnDistinct
@@ -17,10 +17,10 @@ trait MatchCreateQuery extends Query {
 
   def returnAction: Option[ReturnAction]
 
-  def returns(reference: ActionReference, rest: ActionReference*): MatchCreateQuery =
+  def returns(reference: ActionItem, rest: ActionItem*): MatchCreateQuery =
     withReturnAction(ReturnReference(reference, rest: _*))
 
-  def returnDistinct(reference: ActionReference, rest: ActionReference*): MatchCreateQuery =
+  def returnDistinct(reference: ActionItem, rest: ActionItem*): MatchCreateQuery =
     withReturnAction(ReturnDistinct(reference, rest: _*))
 
   def returnAll: MatchCreateQuery =
@@ -31,31 +31,31 @@ trait MatchCreateQuery extends Query {
 
   protected def withReturnAction(action: ReturnAction): MatchCreateQuery
 
-  protected def forcedCreateReferenceables: Set[Referenceable]
+  protected def forcedCreateReferenceables: Set[Identifiable]
 
-  protected def modifiedReferenceableMap: ReferenceableMap = {
-    val forcedMap = referenceableMap filterKeys (forcedCreateReferenceables contains _)
+  protected def modifiedReferenceableMap: IdentifiableMap = {
+    val forcedMap = identifiableMap filterKeys (forcedCreateReferenceables contains _)
     createMap ++ forcedMap
   }
 
   protected def cleanedCreatePath: Path
 
-  protected def createMap: ReferenceableMap
+  protected def createMap: IdentifiableMap
 
-  protected def cleanPathAndExtractMap(path: Path, matchPaths: Seq[Path]): (Path, ReferenceableMap) = {
-    val overlapReferenceables = matchPaths flatMap (_.referenceables) intersect path.referenceables.toSeq
-    val relevantMap = referenceableMap filterKeys { key =>
+  protected def cleanPathAndExtractMap(path: Path, matchPaths: Seq[Path]): (Path, IdentifiableMap) = {
+    val overlapReferenceables = matchPaths flatMap (_.identifiables) intersect path.identifiables.toSeq
+    val relevantMap = identifiableMap filterKeys { key =>
       overlapReferenceables contains key
     }
 
-    val pathTransform = relevantMap.foldLeft(PathTranform(path)) { case (acc @ PathTranform(path, map), (referenceable, identifier)) =>
-      referenceable match {
+    val pathTransform = relevantMap.foldLeft(PathTranform(path)) { case (acc @ PathTranform(path, map), (identifiable, identifier)) =>
+      identifiable match {
         case node: Node =>
           val newNode = AnyNode()
-          PathTranform(path.replaceNode(node, newNode), map - referenceable + (newNode -> identifier))
+          PathTranform(path.replaceNode(node, newNode), map - identifiable + (newNode -> identifier))
         case relationship: Relationship =>
           val newRelationship = AnyRelationship()
-          PathTranform(path.replaceRelationship(relationship, newRelationship), map - referenceable + (newRelationship -> identifier))
+          PathTranform(path.replaceRelationship(relationship, newRelationship), map - identifiable + (newRelationship -> identifier))
         case _ =>
           acc
       }
@@ -64,6 +64,6 @@ trait MatchCreateQuery extends Query {
     (pathTransform.path, pathTransform.map)
   }
 
-  private case class PathTranform(path: Path, map: ReferenceableMap = Map[Referenceable, String]())
+  private case class PathTranform(path: Path, map: IdentifiableMap = Map[Identifiable, String]())
 
 }

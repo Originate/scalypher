@@ -1,21 +1,25 @@
 package com.originate.scalypher.path
 
-import com.originate.scalypher.Label
-import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
 import com.originate.scalypher.AddableProperties
+import com.originate.scalypher.Label
 import com.originate.scalypher.OverwriteAssignment
+import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
 import com.originate.scalypher.Property
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.Query
 import com.originate.scalypher.ToQueryWithIdentifiers
+import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.types.Referenceable
-import com.originate.scalypher.types.ReferenceableMap
-import com.originate.scalypher.where.ReferenceWithProperty
 import com.originate.scalypher.where.ObjectReference
+import com.originate.scalypher.where.ReferenceWithProperty
 
 import scala.language.implicitConversions
 
-sealed trait Node extends ToQueryWithIdentifiers with Referenceable with AddableProperties {
+sealed trait Node
+    extends ToQueryWithIdentifiers
+    with Referenceable
+    with AddableProperties {
+
   def property(propertyName: String): ReferenceWithProperty =
     ReferenceWithProperty(this, PropertyName(propertyName))
 
@@ -24,6 +28,7 @@ sealed trait Node extends ToQueryWithIdentifiers with Referenceable with Addable
 
   def assign(node: Node): OverwriteAssignment =
     OverwriteAssignment(ObjectReference(this), ObjectReference(node))
+
 }
 
 object Node {
@@ -32,8 +37,8 @@ object Node {
 }
 
 class AnyNode extends Node {
-  def toQuery(referenceableMap: ReferenceableMap): String = {
-    val identifier = getIdentifierOrEmptyString(referenceableMap, this)
+  def toQuery(identifiableMap: IdentifiableMap): String = {
+    val identifier = getIdentifierOrEmptyString(identifiableMap, this)
     s"($identifier)"
   }
 }
@@ -47,8 +52,8 @@ class CypherNode(
   val labels: Seq[Label] = Seq.empty,
   val properties: Seq[Property] = Seq.empty
 ) extends Node {
-  def toQuery(referenceableMap: ReferenceableMap): String = {
-    val identifier = getIdentifierOrEmptyString(referenceableMap, this)
+  def toQuery(identifiableMap: IdentifiableMap): String = {
+    val identifier = getIdentifierOrEmptyString(identifiableMap, this)
     val labelsQuery = labels map (_.toQuery) mkString ""
     val propertiesQuery = Property.toQuery(properties)
 

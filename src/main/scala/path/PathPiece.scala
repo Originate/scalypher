@@ -1,7 +1,7 @@
 package com.originate.scalypher.path
 
-import com.originate.scalypher.types.Referenceable
-import com.originate.scalypher.types.ReferenceableMap
+import com.originate.scalypher.types.Identifiable
+import com.originate.scalypher.types.IdentifiableMap
 
 case class PathPieces(startPiece: PathPiece, tail: Seq[PathPiece], relationship: Option[Relationship]) {
   def --(node: Node): PathPieces =
@@ -39,8 +39,8 @@ case class PathPiece(
   def -->(node: Node): PathPieces =
     PathPieces(this, Seq(PathPiece(RightArrow, node)), None)
 
-  def toQuery(referenceableMap: ReferenceableMap): String =
-    arrow.toQuery(referenceableMap, relationship) + node.toQuery(referenceableMap)
+  def toQuery(identifiableMap: IdentifiableMap): String =
+    arrow.toQuery(identifiableMap, relationship) + node.toQuery(identifiableMap)
 
 }
 
