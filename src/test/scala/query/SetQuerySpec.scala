@@ -70,4 +70,24 @@ class SetQuerySpec extends WordSpec with Matchers {
 
   }
 
+  "getting return columns" when {
+
+    "action is empty" must {
+
+      "return an empty set" in {
+        setQuery.getReturnColumns shouldBe 'empty
+      }
+
+    }
+
+    "action is not empty" must {
+
+      "return the return columns" in {
+        setQuery.returnAll.getReturnColumns shouldNot be ('empty)
+      }
+
+    }
+
+  }
+
 }
