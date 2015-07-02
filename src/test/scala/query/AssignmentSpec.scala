@@ -33,9 +33,14 @@ class AssignmentSpec extends WordSpec with Matchers {
 
   "removing properties" must {
 
+    val assignment = startNode.property("name").assignNull
+
     "set elements to null" in {
-      val assignment = startNode.property("name").assignNull
       assignment.toQuery(map) shouldBe "a1.name = NULL"
+    }
+
+    "return identifiables" in {
+      assignment.identifiables shouldBe Set(startNode)
     }
 
   }
@@ -50,6 +55,11 @@ class AssignmentSpec extends WordSpec with Matchers {
     "set elements to numbers" in {
       val assignment = startNode.property("name") := 12
       assignment.toQuery(map) shouldBe "a1.name = 12"
+    }
+
+    "return identifiables" in {
+      val assignment = startNode.property("name") := 12
+      assignment.identifiables shouldBe Set(startNode)
     }
 
   }
@@ -72,13 +82,23 @@ class AssignmentSpec extends WordSpec with Matchers {
       assignment.toQuery(map) shouldBe """a3 += {name:"matt",name:"andy"}"""
     }
 
+    "return identifiables" in {
+      val assignment = startNode := (properties: _*)
+      assignment.identifiables shouldBe Set(startNode)
+    }
+
   }
 
   "overwriting all properties" must {
 
+    val assignment = startNode := endNode
+
     "assign an object to another object" in {
-      val assignment = startNode := endNode
       assignment.toQuery(map) shouldBe "a1 = a2"
+    }
+
+    "return identifiables" in {
+      assignment.identifiables shouldBe Set(startNode, endNode)
     }
 
   }
