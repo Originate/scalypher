@@ -25,6 +25,12 @@ class PathSpec extends WordSpec with Matchers {
       MatchQuery(path, returns).toQuery shouldBe "MATCH (a1)--()--() RETURN DISTINCT a1"
     }
 
+    "allow optional where conditions" in {
+      val path = startNode -- AnyNode() -- AnyNode()
+      (path where None returns startNode).toQuery shouldBe "MATCH (a1)--()--() RETURN a1"
+      (path where Some(startNode <> "a") returns startNode).toQuery shouldBe """MATCH (a1)--()--() WHERE a1 <> "a" RETURN a1"""
+    }
+
   }
 
   "definining paths with relationships" must {
