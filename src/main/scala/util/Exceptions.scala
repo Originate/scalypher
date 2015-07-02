@@ -11,4 +11,7 @@ object Exceptions {
   class IdentifierAliasCollisionException(name: String)
     extends Exception(s"Alias $name cannot be used because it collides with an object's name in your path, consider using a different name")
 
+  class CharacterNotAllowedInLabel(char: Char, label: String)
+    extends Exception(s"The character '$char' in '$label' is not allowed")
+
 }

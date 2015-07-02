@@ -2,6 +2,7 @@ package com.originate.scalypher.test.path
 
 import com.originate.scalypher.path._
 import com.originate.scalypher.types.IdentifiableMap
+import com.originate.scalypher.util.Exceptions.CharacterNotAllowedInLabel
 
 import org.scalatest._
 
@@ -30,6 +31,14 @@ class RelationshipSpec extends WordSpec with Matchers {
 
     "convert to query with a label and properties" in {
       toQuery(CreateRelationship(Label, Seq("a" -> 1))) shouldBe s"""[a1:$Label{a:1}]"""
+    }
+
+    "escape labels with spaces" in {
+      toQuery(CreateRelationship("asdf asdf")) shouldBe s"""[a1:`asdf asdf`]"""
+    }
+
+    "throw an exception for invalid characters" in {
+      a [CharacterNotAllowedInLabel] should be thrownBy toQuery(CreateRelationship("a`sdf"))
     }
 
   }
