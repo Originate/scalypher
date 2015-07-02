@@ -3,7 +3,7 @@ package com.originate.scalypher
 import com.originate.scalypher.action.ActionItem
 import com.originate.scalypher.action.ActionReference
 import com.originate.scalypher.where.ObjectReference
-import com.originate.scalypher.where.ReferenceableReference
+import com.originate.scalypher.where.BoxedReferenceable
 
 import scala.language.implicitConversions
 
@@ -19,7 +19,7 @@ package object types {
   trait NonReferenceable extends Identifiable
 
   object Referenceable {
-    implicit def toReference(referenceable: Referenceable): ReferenceableReference =
+    implicit def toReference(referenceable: Referenceable): BoxedReferenceable =
       ObjectReference(referenceable)
 
     implicit def toActionReference(referenceable: Referenceable): ActionReference =

@@ -7,7 +7,7 @@ import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.util.Exceptions.IdentifierAliasCollisionException
 import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
-import com.originate.scalypher.where.ReferenceableReference
+import com.originate.scalypher.where.BoxedReferenceable
 import com.originate.scalypher.where.ObjectReference
 
 sealed trait ActionItem extends ToQueryWithIdentifiers {
@@ -50,7 +50,7 @@ case class ActionPath(
 }
 
 case class ActionReference(
-  reference: ReferenceableReference,
+  reference: BoxedReferenceable,
   as: Option[String] = None
 ) extends ActionItem {
 

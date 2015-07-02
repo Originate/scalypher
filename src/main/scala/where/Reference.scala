@@ -73,9 +73,9 @@ object Reference {
     SeqValueReference[V](values)
 }
 
-sealed trait ReferenceableReference extends Reference
+sealed trait BoxedReferenceable extends Reference
 
-case class ObjectReference(referenceable: Referenceable) extends ReferenceableReference {
+case class ObjectReference(referenceable: Referenceable) extends BoxedReferenceable {
   def property(property: String): ReferenceWithProperty =
     ReferenceWithProperty(referenceable, PropertyName(property))
 
@@ -88,7 +88,7 @@ case class ObjectReference(referenceable: Referenceable) extends ReferenceableRe
 case class ReferenceWithProperty(
   referenceable: Referenceable,
   property: PropertyName
-) extends ReferenceableReference {
+) extends BoxedReferenceable {
   def :=[T](reference: ValueReference[T]): PropertyAssignment[T] =
     assign(reference)
 
