@@ -40,7 +40,7 @@ class AssignmentSpec extends WordSpec with Matchers {
     }
 
     "return identifiables" in {
-      assignment.identifiables shouldBe Set(startNode)
+      assignment.referenceables shouldBe Set(startNode)
     }
 
   }
@@ -59,7 +59,7 @@ class AssignmentSpec extends WordSpec with Matchers {
 
     "return identifiables" in {
       val assignment = startNode.property("name") := 12
-      assignment.identifiables shouldBe Set(startNode)
+      assignment.referenceables shouldBe Set(startNode)
     }
 
   }
@@ -84,7 +84,7 @@ class AssignmentSpec extends WordSpec with Matchers {
 
     "return identifiables" in {
       val assignment = startNode := (properties: _*)
-      assignment.identifiables shouldBe Set(startNode)
+      assignment.referenceables shouldBe Set(startNode)
     }
 
   }
@@ -98,7 +98,7 @@ class AssignmentSpec extends WordSpec with Matchers {
     }
 
     "return identifiables" in {
-      assignment.identifiables shouldBe Set(startNode, endNode)
+      assignment.referenceables shouldBe Set(startNode, endNode)
     }
 
   }

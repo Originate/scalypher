@@ -46,7 +46,7 @@ case class SetQuery(
       Seq(pathMatch),
       where,
       action,
-      assignments.flatMap(_.identifiables).toSet
+      assignments.flatMap(_.referenceables).toSet
     )
 
 }

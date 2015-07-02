@@ -54,7 +54,7 @@ case class ActionReference(
   as: Option[String] = None
 ) extends ActionItem {
 
-  val getIdentifiable = reference.getIdentifiable
+  val getIdentifiable = reference.getReferenceable
 
   def as(name: String): ActionReference =
     copy(as = Some(name))
