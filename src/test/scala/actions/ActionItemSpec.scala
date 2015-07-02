@@ -57,6 +57,10 @@ class ActionItemSpec extends WordSpec with Matchers {
       an [IdentifierDoesntExistException] should be thrownBy actionPath.toColumn(Map.empty)
     }
 
+    "implicitly convert paths to action paths" in {
+      (path as "path").toQuery(map) shouldBe s"$pathName AS path"
+    }
+
   }
 
 }
