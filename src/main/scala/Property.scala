@@ -3,6 +3,8 @@ package com.originate.scalypher
 import com.originate.scalypher.where.ObjectReference
 import com.originate.scalypher.types.Referenceable
 
+import scala.language.implicitConversions
+
 class Property private (key: String, serializedValue: String) {
 
   def toQuery: String =
@@ -17,6 +19,9 @@ class Property private (key: String, serializedValue: String) {
 }
 
 object Property {
+
+  implicit def tupleToProperty[T : CypherExpressible](tuple: (String, T)): Property =
+    Property(tuple)
 
   def apply[T](tuple: (String, T))(implicit serializer: CypherExpressible[T]): Property =
     new Property(tuple._1, serializer.toQuery(tuple._2))
