@@ -4,7 +4,7 @@ import com.originate.scalypher.util.Exceptions.MismatchedInterpolatedStringWithR
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
-import com.originate.scalypher.path.AnyNode
+import com.originate.scalypher.path.{AnyNode, Node}
 import scala.language.implicitConversions
 
 sealed trait Condition {
@@ -75,4 +75,11 @@ case class Expression(string: String, references: Reference*) extends Condition 
 
   def identifiables: Set[Identifiable] =
     (references flatMap (_.getReferenceable)).toSet
+}
+
+case class NoRelationshipCondition(node: Node) extends Condition {
+  def toQuery(identifiableMap: IdentifiableMap): String =
+    "NOT " + node.toQuery(identifiableMap) + "-[]-()"
+
+  def identifiables: Set[Identifiable] = Set(node)
 }
