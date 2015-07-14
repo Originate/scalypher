@@ -78,7 +78,7 @@ case class Expression(string: String, references: Reference*) extends Condition 
     (references flatMap (_.getReferenceable)).toSet
 }
 
-case class NoRelationshipCondition(node: Node) extends Condition {
+case class HasNoRelationships(node: Node) extends Condition {
   def toQuery(identifiableMap: IdentifiableMap): String = {
     val identifier = identifiableMap.get(node) getOrElse (throw new IdentifierDoesntExistException())
     s"NOT ($identifier)-[]-()"
