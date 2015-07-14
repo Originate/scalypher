@@ -4,6 +4,7 @@ import com.originate.scalypher.util.Exceptions.MismatchedInterpolatedStringWithR
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
+import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
 import com.originate.scalypher.path.{AnyNode, Node}
 import scala.language.implicitConversions
 
@@ -78,8 +79,10 @@ case class Expression(string: String, references: Reference*) extends Condition 
 }
 
 case class NoRelationshipCondition(node: Node) extends Condition {
-  def toQuery(identifiableMap: IdentifiableMap): String =
-    "NOT " + node.toQuery(identifiableMap) + "-[]-()"
+  def toQuery(identifiableMap: IdentifiableMap): String = {
+    val identifier = identifiableMap.get(node) getOrElse (throw new IdentifierDoesntExistException())
+    "NOT (" + identifier + ")-[]-()"
+  }
 
   def identifiables: Set[Identifiable] = Set(node)
 }
