@@ -81,7 +81,7 @@ case class Expression(string: String, references: Reference*) extends Condition 
 case class NoRelationshipCondition(node: Node) extends Condition {
   def toQuery(identifiableMap: IdentifiableMap): String = {
     val identifier = identifiableMap.get(node) getOrElse (throw new IdentifierDoesntExistException())
-    "NOT (" + identifier + ")-[]-()"
+    s"NOT ($identifier)-[]-()"
   }
 
   def identifiables: Set[Identifiable] = Set(node)
