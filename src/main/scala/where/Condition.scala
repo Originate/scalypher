@@ -1,5 +1,6 @@
 package com.originate.scalypher.where
 
+import com.originate.scalypher.Label
 import com.originate.scalypher.util.Exceptions.MismatchedInterpolatedStringWithReferences
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.types.Identifiable
@@ -78,11 +79,14 @@ case class Expression(string: String, references: Reference*) extends Condition 
     (references flatMap (_.getReferenceable)).toSet
 }
 
-case class HasNoRelationships(node: Node) extends Condition {
+case class HasNoRelationships(node: Node, labels: Seq[Label] = Seq.empty) extends Condition {
   def toQuery(identifiableMap: IdentifiableMap): String = {
     val identifier = identifiableMap.get(node) getOrElse (throw new IdentifierDoesntExistException())
-    s"NOT ($identifier)-[]-()"
+    val labelsQuery = labels map (_.toQuery) mkString "|"
+    s"NOT ($identifier)-[$labelsQuery]-()"
   }
 
   def identifiables: Set[Identifiable] = Set(node)
+
+  def withLabel(label: Label): HasNoRelationships = copy(labels = labels :+ label)
 }
