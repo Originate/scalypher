@@ -8,7 +8,6 @@ import com.originate.scalypher.PropertyName
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.types.Referenceable
-import com.originate.scalypher.util.Exceptions.CharacterNotAllowedInLabel
 import com.originate.scalypher.where.ReferenceWithProperty
 
 sealed trait Relationship
@@ -35,12 +34,7 @@ object Relationship {
 
   def kindsToQuery(kinds: Seq[Label]): String =
     if (kinds.isEmpty) ""
-    else ":" + (kinds map escape mkString "|")
-
-  def escape(kind: Label): String =
-    if (kind contains "`") throw new CharacterNotAllowedInLabel('`', kind)
-    else if (kind contains " ") s"`$kind`"
-    else kind
+    else ":" + (kinds map (_.escapedName) mkString "|")
 
 }
 
