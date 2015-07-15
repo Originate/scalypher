@@ -1,10 +1,12 @@
 package com.originate.scalypher.where
 
+import com.originate.scalypher.Label
 import com.originate.scalypher.util.Exceptions.MismatchedInterpolatedStringWithReferences
 import com.originate.scalypher.PropertyName
 import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
-import com.originate.scalypher.path.AnyNode
+import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
+import com.originate.scalypher.path.{AnyNode, Node, Relationship}
 import scala.language.implicitConversions
 
 sealed trait Condition {
@@ -75,4 +77,16 @@ case class Expression(string: String, references: Reference*) extends Condition 
 
   def identifiables: Set[Identifiable] =
     (references flatMap (_.getReferenceable)).toSet
+}
+
+case class HasNoRelationships(node: Node, labels: Seq[Label] = Seq.empty) extends Condition {
+  def toQuery(identifiableMap: IdentifiableMap): String = {
+    val identifier = identifiableMap.get(node) getOrElse (throw new IdentifierDoesntExistException())
+    val labelsQuery = Relationship.kindsToQuery(labels)
+    s"NOT ($identifier)-[$labelsQuery]-()"
+  }
+
+  def identifiables: Set[Identifiable] = Set(node)
+
+  def withLabel(label: Label): HasNoRelationships = copy(labels = labels :+ label)
 }

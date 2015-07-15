@@ -10,6 +10,7 @@ import com.originate.scalypher.Query
 import com.originate.scalypher.ToQueryWithIdentifiers
 import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.types.Referenceable
+import com.originate.scalypher.where.HasNoRelationships
 import com.originate.scalypher.where.ObjectReference
 import com.originate.scalypher.where.ReferenceWithProperty
 
@@ -28,6 +29,9 @@ sealed trait Node
 
   def assign(node: Node): OverwriteAssignment =
     OverwriteAssignment(ObjectReference(this), ObjectReference(node))
+
+  def hasNoRelationships(labels: Seq[Label] = Seq.empty): HasNoRelationships =
+    HasNoRelationships(this, labels)
 
 }
 
