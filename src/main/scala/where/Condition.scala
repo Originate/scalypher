@@ -6,7 +6,7 @@ import com.originate.scalypher.PropertyName
 import com.originate.scalypher.types.Identifiable
 import com.originate.scalypher.types.IdentifiableMap
 import com.originate.scalypher.util.Exceptions.IdentifierDoesntExistException
-import com.originate.scalypher.path.{AnyNode, Node}
+import com.originate.scalypher.path.{AnyNode, Node, Relationship}
 import scala.language.implicitConversions
 
 sealed trait Condition {
@@ -82,7 +82,7 @@ case class Expression(string: String, references: Reference*) extends Condition 
 case class HasNoRelationships(node: Node, labels: Seq[Label] = Seq.empty) extends Condition {
   def toQuery(identifiableMap: IdentifiableMap): String = {
     val identifier = identifiableMap.get(node) getOrElse (throw new IdentifierDoesntExistException())
-    val labelsQuery = labels map (_.toQuery) mkString "|"
+    val labelsQuery = Relationship.kindsToQuery(labels)
     s"NOT ($identifier)-[$labelsQuery]-()"
   }
 

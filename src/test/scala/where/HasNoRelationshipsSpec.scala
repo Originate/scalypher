@@ -33,7 +33,7 @@ class HasNoRelationshipsSpec extends WordSpec with Matchers {
     val startNode = AnyNode()
     val identifiableMap: IdentifiableMap = Map(startNode -> "a1")
     val condition = startNode.hasNoRelationships(Seq("label1", "label2", "label3"))
-    condition.toQuery(identifiableMap) shouldBe "NOT (a1)-[:label1|:label2|:label3]-()"
+    condition.toQuery(identifiableMap) shouldBe "NOT (a1)-[:label1|label2|label3]-()"
   }
 
 }
