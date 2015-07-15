@@ -1,6 +1,7 @@
 package com.originate.scalypher.path
 
 import com.originate.scalypher.AddableProperties
+import com.originate.scalypher.Label
 import com.originate.scalypher.path.Path.getIdentifierOrEmptyString
 import com.originate.scalypher.Property
 import com.originate.scalypher.PropertyName
@@ -23,29 +24,33 @@ sealed trait Relationship
 
   protected def makeRelationshipString(
     identifiableMap: IdentifiableMap,
-    kinds: Seq[String],
+    kinds: Seq[Label],
     rest: String = ""
   ): String =
-    s"[${getIdentifierOrEmptyString(identifiableMap, this)}${kindsToQuery(kinds)}$rest]"
+    s"[${getIdentifierOrEmptyString(identifiableMap, this)}${Relationship.kindsToQuery(kinds)}$rest]"
 
-  private def kindsToQuery(kinds: Seq[String]): String =
+}
+
+object Relationship {
+
+  def kindsToQuery(kinds: Seq[Label]): String =
     if (kinds.isEmpty) ""
     else ":" + (kinds map escape mkString "|")
 
-  private def escape(kind: String): String =
-    if (kind contains '`') throw new CharacterNotAllowedInLabel('`', kind)
-    else if (kind contains ' ') s"`$kind`"
+  def escape(kind: Label): String =
+    if (kind contains "`") throw new CharacterNotAllowedInLabel('`', kind)
+    else if (kind contains " ") s"`$kind`"
     else kind
 
 }
 
-class CreateRelationship(val kind: String, val properties: Seq[Property]) extends Relationship {
+class CreateRelationship(val kind: Label, val properties: Seq[Property]) extends Relationship {
   def toQuery(identifiableMap: IdentifiableMap): String =
     makeRelationshipString(identifiableMap, Seq(kind), Property.toQuery(properties))
 }
 
 object CreateRelationship {
-  def apply(kind: String, properties: Seq[Property] = Seq.empty): CreateRelationship =
+  def apply(kind: Label, properties: Seq[Property] = Seq.empty): CreateRelationship =
     new CreateRelationship(kind, properties)
 }
 
@@ -59,62 +64,62 @@ object AnyRelationship {
     new AnyRelationship()
 }
 
-class KindRelationship(val kinds: String*) extends Relationship {
+class KindRelationship(val kinds: Label*) extends Relationship {
   def toQuery(identifiableMap: IdentifiableMap): String =
     makeRelationshipString(identifiableMap, kinds)
 }
 
 object KindRelationship {
-  def apply(kinds: String*): KindRelationship =
+  def apply(kinds: Label*): KindRelationship =
     new KindRelationship(kinds: _*)
 }
 
-class DistanceRelationship(val length: Int, val kinds: String*) extends Relationship {
+class DistanceRelationship(val length: Int, val kinds: Label*) extends Relationship {
   def toQuery(identifiableMap: IdentifiableMap): String =
     makeRelationshipString(identifiableMap, kinds, s"*$length")
 }
 
 object DistanceRelationship {
-  def apply(length: Int, kinds: String*): DistanceRelationship =
+  def apply(length: Int, kinds: Label*): DistanceRelationship =
     new DistanceRelationship(length, kinds: _*)
 }
 
-class MaxDistanceRelationship(val length: Int, val kinds: String*) extends Relationship {
+class MaxDistanceRelationship(val length: Int, val kinds: Label*) extends Relationship {
   def toQuery(identifiableMap: IdentifiableMap): String =
     makeRelationshipString(identifiableMap, kinds, s"*..$length")
 }
 
 object MaxDistanceRelationship {
-  def apply(length: Int, kinds: String*): MaxDistanceRelationship =
+  def apply(length: Int, kinds: Label*): MaxDistanceRelationship =
     new MaxDistanceRelationship(length, kinds: _*)
 }
 
-class MinDistanceRelationship(val length: Int, val kinds: String*) extends Relationship {
+class MinDistanceRelationship(val length: Int, val kinds: Label*) extends Relationship {
   def toQuery(identifiableMap: IdentifiableMap): String =
     makeRelationshipString(identifiableMap, kinds, s"*$length..")
 }
 
 object MinDistanceRelationship {
-  def apply(length: Int, kinds: String*): MinDistanceRelationship =
+  def apply(length: Int, kinds: Label*): MinDistanceRelationship =
     new MinDistanceRelationship(length, kinds: _*)
 }
 
-class RangeRelationship(val min: Int, max: Int, val kinds: String*) extends Relationship {
+class RangeRelationship(val min: Int, max: Int, val kinds: Label*) extends Relationship {
   def toQuery(identifiableMap: IdentifiableMap): String =
     makeRelationshipString(identifiableMap, kinds, s"*$min..$max")
 }
 
 object RangeRelationship {
-  def apply(min: Int, max: Int, kinds: String*): RangeRelationship =
+  def apply(min: Int, max: Int, kinds: Label*): RangeRelationship =
     new RangeRelationship(min, max, kinds: _*)
 }
 
-class AnyLengthRelationship(val kinds: String*) extends Relationship {
+class AnyLengthRelationship(val kinds: Label*) extends Relationship {
   def toQuery(identifiableMap: IdentifiableMap): String =
     makeRelationshipString(identifiableMap, kinds, s"*")
 }
 
 object AnyLengthRelationship {
-  def apply(kinds: String*): AnyLengthRelationship =
+  def apply(kinds: Label*): AnyLengthRelationship =
     new AnyLengthRelationship(kinds: _*)
 }

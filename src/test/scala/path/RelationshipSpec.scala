@@ -34,7 +34,7 @@ class RelationshipSpec extends WordSpec with Matchers {
     }
 
     "escape labels with spaces" in {
-      toQuery(CreateRelationship("asdf asdf")) shouldBe s"""[a1:`asdf asdf`]"""
+      toQuery(CreateRelationship("asdf asdf")) shouldBe s"""[a1: `Label(asdf asdf)`]"""
     }
 
     "throw an exception for invalid characters" in {

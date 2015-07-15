@@ -10,4 +10,7 @@ case class Label(name: String) {
 object Label {
   implicit def stringToLabel(string: String): Label =
     Label(string)
+
+  implicit def labelToString(label: Label): String =
+    label.name
 }
