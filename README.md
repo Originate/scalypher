@@ -1,6 +1,7 @@
 # Scalypher [![Circle CI](https://circleci.com/gh/Originate/scalypher/tree/master.svg?style=svg)](https://circleci.com/gh/Originate/scalypher/tree/master) [![Coverage Status](https://coveralls.io/repos/Originate/scalypher/badge.svg?branch=master)](https://coveralls.io/r/Originate/scalypher?branch=master)
 
-A DSL for building Neo4j Cypher queries in Scala. This project is in pre alpha, and is not ready for production use.
+A DSL for building Neo4j Cypher queries in Scala. This library is in use in production but does
+not yet cover the *full* spec of the Cypher query language.
 
 ## Adding To Your Project
 
