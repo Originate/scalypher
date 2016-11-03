@@ -15,8 +15,8 @@ import com.originate.scalypher.where.Reference
 import com.originate.scalypher.where.Where
 
 case class PathWithWhere(path: Path, where: Option[Where]) {
-  def set(assignment: Assignment, rest: Assignment*): SetQuery =
-    SetQuery(path, where, assignment, rest: _*)
+  def set(assignments: Assignment*): SetQuery =
+    SetQuery(path, where, assignments: _*)
 
   def returns(reference: ActionItem, rest: ActionItem*): Query =
     MatchQuery(path, where, ReturnReference(reference, rest: _*))

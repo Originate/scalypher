@@ -33,6 +33,15 @@ class SetQuerySpec extends WordSpec with Matchers {
       query.toQuery shouldBe """MATCH (a1)-->() SET a1.name = "x", a1.age = 2"""
     }
 
+    "allow setting multiple values passed as single varargs" in {
+      val setStatements = List(
+        startNode.property("name") := "z",
+        startNode.property("age") := 7
+      )
+      val query = path set (setStatements: _*)
+      query.toQuery shouldBe """MATCH (a1)-->() SET a1.name = "z", a1.age = 7"""
+    }
+
     "retain ordering when setting multiple values on the same property" in {
       val query = path set (
         startNode.property("name") := "x",
