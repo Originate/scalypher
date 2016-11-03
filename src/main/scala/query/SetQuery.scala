@@ -14,12 +14,9 @@ import com.originate.scalypher.where.Where
 case class SetQuery(
   pathMatch: Path,
   where: Option[Where],
-  assignment: Assignment,
-  rest: Seq[Assignment],
+  assignments: Seq[Assignment],
   action: Option[ReturnAction]
 ) extends Query {
-
-  private val assignments = assignment +: rest
 
   def returns(reference: ActionItem, rest: ActionItem*): Query =
     copy(action = Some(ReturnReference(reference, rest: _*)))
@@ -53,22 +50,21 @@ case class SetQuery(
 
 object SetQuery {
 
-  def apply(pathMatch: Path, assignment: Assignment, rest: Assignment*): SetQuery =
-    SetQuery(pathMatch, None, assignment, rest, None)
+  def apply(pathMatch: Path, assignments: Assignment*): SetQuery =
+    SetQuery(pathMatch, None, assignments, None)
 
-  def apply(pathMatch: Path, where: Where, assignment: Assignment, rest: Assignment*): SetQuery =
-    SetQuery(pathMatch, Some(where), assignment, rest, None)
+  def apply(pathMatch: Path, where: Where, assignments: Assignment*): SetQuery =
+    SetQuery(pathMatch, Some(where), assignments, None)
 
-  def apply(pathMatch: Path, where: Option[Where], assignment: Assignment, rest: Assignment*): SetQuery =
-    SetQuery(pathMatch, where, assignment, rest, None)
+  def apply(pathMatch: Path, where: Option[Where], assignments: Assignment*): SetQuery =
+    SetQuery(pathMatch, where, assignments, None)
 
   def apply(
     pathMatch: Path,
     where: Where,
     action: ReturnAction,
-    assignment: Assignment,
-    rest: Assignment*
+    assignments: Assignment*
   ): SetQuery =
-    SetQuery(pathMatch, Some(where), assignment, rest, Some(action))
+    SetQuery(pathMatch, Some(where), assignments, Some(action))
 
 }

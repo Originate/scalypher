@@ -25,8 +25,8 @@ case class Path(start: Node, pieces: Seq[PathPiece] = Seq.empty) extends NonRefe
   def as(name: String): ActionItem =
     ActionPath(this, Some(name))
 
-  def set(assignment: Assignment, rest: Assignment*): SetQuery =
-    SetQuery(this, assignment, rest: _*)
+  def set(assignments: Assignment*): SetQuery =
+    SetQuery(this, assignments: _*)
 
   def create(createPath: Path): CreateQuery =
     CreateQuery(createPath, Seq(this))
